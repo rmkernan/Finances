@@ -1,7 +1,7 @@
 # Process Document Command Template
 
 **Created:** 09/09/25 5:28PM ET  
-**Updated:** 09/09/25 5:28PM ET  
+**Updated:** 09/09/25 5:40PM ET - Fixed SQL references for actual 3-table schema, added LOCAL db warnings  
 **Purpose:** Claude Code command for processing new financial documents
 
 ## Command Overview
@@ -47,25 +47,37 @@ Analyze the CSV structure:
 
 ### 3. Data Extraction Process
 
+#### ⚠️ CRITICAL: LOCAL DATABASE ONLY
+**Use ONLY:** `psql postgresql://postgres:postgres@127.0.0.1:54322/postgres`  
+**NEVER use:** Any `mcp__supabase__` commands - they connect to wrong database
+
 #### Transaction Data Extraction
 ```sql
--- Extract and validate transaction data
--- Use processing rules from /docs/technical/processing-rules.md
+-- Extract and validate transaction data using LOCAL psql connection
+-- Store in actual 3-table schema (accounts, documents, transactions)
 
 INSERT INTO transactions (
-    document_id, account_id, transaction_date, transaction_type,
-    security_symbol, security_name, amount, description,
-    federal_taxable, state_taxable, tax_category, issuer_state_code
+    document_id, account_id, transaction_date, settlement_date, 
+    transaction_type, description, amount, 
+    security_info,  -- JSONB: {symbol, name, cusip, quantity, price}
+    tax_category, federal_taxable, state_taxable,
+    tax_details,    -- JSONB: {issuer_state, taxpayer_state, notes}
+    source_transaction_id, needs_review, review_notes
 ) VALUES (...);
 ```
 
-#### Tax Summary Extraction (1099 Forms)
+#### Tax Summary Storage (1099 Forms)
 ```sql
--- Extract tax form summary data
-INSERT INTO tax_reports (
-    account_id, document_id, tax_year, form_type, is_official,
-    ordinary_dividends, qualified_dividends, tax_exempt_interest
-) VALUES (...);
+-- Store 1099 summary data in documents.summary_data JSONB field
+UPDATE documents 
+SET summary_data = '{
+  "form_type": "1099-DIV",
+  "tax_year": 2024,
+  "ordinary_dividends": 1234.56,
+  "qualified_dividends": 1000.00,
+  "tax_exempt_interest": 234.56
+}'::jsonb
+WHERE id = [document_id];
 ```
 
 ### 4. Data Validation & Quality Checks
@@ -79,10 +91,15 @@ INSERT INTO tax_reports (
 
 #### Quality Flags to Check
 ```sql
--- Look for data quality issues
-SELECT * FROM data_quality_flags 
+-- Check extraction quality using LOCAL psql connection
+SELECT extraction_confidence, extraction_notes, needs_review
+FROM documents 
+WHERE id = [current_document_id];
+
+-- Check transactions needing review
+SELECT * FROM transactions 
 WHERE document_id = [current_document_id] 
-AND resolved_at IS NULL;
+AND needs_review = true;
 ```
 
 ### 5. File Management

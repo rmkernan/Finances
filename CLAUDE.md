@@ -1,49 +1,54 @@
 # CLAUDE.md - Financial Data Management System
 
 **Created:** 09/09/25 3:58PM ET  
-**Updated:** 09/09/25 3:58PM ET  
+**Updated:** 09/12/25 7:45PM ET - Removed outdated content, fixed paths, streamlined for clarity  
 **Purpose:** Primary context document for Claude instances working on this project
 
 ## 🎯 Quick Start
 
-**What This Is:** A Claude-assisted financial document processing system for personal tax management  
-**Your Role:** Intelligent partner helping process documents, make categorization decisions, and reconcile data  
-**User's Goal:** Get 2024 tax data organized from Fidelity statements and 1099 forms  
+**What This Is:** A Claude-assisted financial management system for multiple business entities and personal accounts  
+**Your Role:** Intelligent partner helping process documents, make categorization decisions, and manage multi-entity finances  
+**User's Goal:** Track finances across 4-5 S-Corps/LLCs plus personal accounts with proper tax treatment
 
-## 🚀 Immediate Context
+### 📋 For PRD/Design Work
+If asked to work on product requirements or design:
+1. **Start with:** `/docs/Design/01-Requirements/PRD-overview.md` - Core vision and architecture
+2. **Then choose based on task:**
+   - Building dashboards → `/docs/Design/01-Requirements/BUILD-dashboards.md`
+   - Document features → `/docs/Design/01-Requirements/BUILD-workflows-documents.md`
+   - Financial analysis → `/docs/Design/01-Requirements/BUILD-workflows-financial.md`
+   - Tax features → `/docs/Design/01-Requirements/BUILD-workflows-tax.md`
+   - Admin features → `/docs/Design/01-Requirements/BUILD-workflows-admin.md`
+3. **Current schema:** `/docs/Design/02-Technical/database-schema-enhanced.md`
+4. **Technical design:** `/docs/Design/02-Technical/technical-design.md`
 
-### Current Status
-- ✅ Project structure organized
-- ✅ Supabase local instance running (localhost:54323 for Studio)
-- ✅ Documentation framework complete
-- ⏳ **Next Step:** Create database schema migration
+**Key Design Decisions Already Made:**
+- Fixed dashboard layouts (no drag-and-drop widgets)
+- Read-only frontend (Claude processes documents via terminal)
+- No inter-entity loan tracking (out of scope)
+- Tax years are calendar years (use date functions)
+- Context-based navigation (Global → Entity → Institution → Account)  
+
+## 🚀 Current Status
+
+**Database:** 10 tables including real_assets and liabilities for net worth tracking
+**Schema:** `/docs/Design/02-Technical/database-schema-enhanced.md`
+**Requirements:** Organized in `/docs/Design/01-Requirements/BUILD-*.md` files
 
 ### Environment
-- **Database:** PostgreSQL via Supabase (local)
-- **Connection:** See `.env` file (DO NOT commit this file)
+- **Database:** PostgreSQL via LOCAL Supabase ONLY
+- **Connection:** postgresql://postgres:postgres@127.0.0.1:54322/postgres
+- **Studio:** http://localhost:54323 (LOCAL ONLY)
 - **Documents:** Located in `/documents/inbox/` for processing
 - **Platform:** Mac Mini M4 development environment
 
+### ⚠️ CRITICAL WARNING
+**ONLY use LOCAL Supabase** at localhost:54322. Never connect to cloud instances.
+All database operations must use local CLI or psql commands.
+
 ## 🧠 Core Philosophy
 
-### You Are NOT an Automation Bot
-This system is **Claude-assisted**, not automated. You work WITH the user, not FOR them.
-
-**Key Principles:**
-1. **Ask When Uncertain** - Better to pause than make mistakes
-2. **Database = Your Memory** - It stores context between sessions, not rules
-3. **User is the Expert** - They understand their finances; you help organize
-4. **Collaborative Processing** - Show your work, get confirmation
-
-### Example Interaction Pattern
-```
-User: "Process the January 2024 statement"
-Claude: "I'll read the January 2024 statement from /documents/inbox/. Let me show you what I found..."
-[Shows extracted data]
-Claude: "I identified 3 dividend payments totaling $4,329.68. Should I proceed with storing these?"
-User: "Yes"
-Claude: "Stored successfully. I noticed FSIXX dividends - marking as ordinary income based on doctrine."
-```
+**Claude-assisted, not automated.** Ask when uncertain. Show your work. Get confirmation before database changes.
 
 ## 📁 Project Structure
 
@@ -54,18 +59,12 @@ Claude: "Stored successfully. I noticed FSIXX dividends - marking as ordinary in
 - `/documents/` - PDF/CSV storage (inbox → processed → archived)
 - `/supabase/` - Database migrations and configuration
 
-### Essential Documents to Read
-1. **First:** `/config/doctrine.md` - Your decision-making guidelines
-2. **Second:** `/docs/technical/database-schema.md` - Current database structure
-3. **Third:** `/commands/process-document.md` - How to process documents
-4. **Reference:** `/IMPLEMENTATION_PLAN.md` - Overall project roadmap
+### Essential Documents
+1. **For Requirements:** See `/docs/Design/01-Requirements/` folder
+2. **For Technical:** See `/docs/Design/02-Technical/` folder
+3. **Database Schema:** `/docs/Design/02-Technical/database-schema-enhanced.md`
 
 ## 💡 Critical Information
-
-### The $58k Discrepancy
-**Problem:** Official 1099 shows $0 income, but actual income was $58,535+  
-**Reason:** Milton Preschool Inc is tax-exempt corporation  
-**Solution:** Process BOTH official and informational 1099s, reconcile differences
 
 ### Document Types You'll See
 1. **Fidelity Monthly Statements** - PDFs with transaction details
@@ -74,10 +73,12 @@ Claude: "Stored successfully. I noticed FSIXX dividends - marking as ordinary in
 4. **QuickBooks Exports** - CSV files with cash flow data
 
 ### Tax Complexity
-- **FSIXX/SPAXX** = Ordinary dividends (fully taxable)
-- **Georgia Municipal Bonds** = Exempt for Georgia residents
+- **FSIXX** = Treasury fund (~97% Georgia state tax exempt, federal taxable)
+- **SPAXX** = Money market (~55% Georgia state tax exempt, federal taxable)
+- **Georgia Municipal Bonds** = Double exempt (federal and state) for Georgia residents
 - **Other State Bonds** = Federal exempt, state taxable for Georgia residents
 - **Corporate Status** = Special handling for Milton Preschool Inc
+- **Multi-Entity** = Track 4-5 S-Corps/LLCs with flow-through to personal taxes
 
 ## 🔧 Common Tasks
 
@@ -125,10 +126,20 @@ AND document_type = 'statement';
 
 ## 🗄️ Database Quick Reference
 
-### Three Tables Only (Phase 1)
+### Current Schema (Phase 1: 3 tables operational)
 1. **accounts** - Financial institutions and account numbers
 2. **documents** - Source PDFs/CSVs with extraction metadata
 3. **transactions** - Individual financial transactions
+
+### Enhanced Schema (Ready for implementation: 8 tables)
+1. **entities** - S-Corps, LLCs, Individual (master hub)
+2. **institutions** - Fidelity, banks, etc.
+3. **accounts** - Links entities to institutions
+4. **documents** - Source documents with processing audit
+5. **transactions** - All financial transactions
+6. **tax_payments** - Quarterly estimated tax tracking
+7. **transfers** - Inter-entity money movements
+8. **asset_notes** - Investment strategies and price targets
 
 ### Key Fields to Use
 - `extraction_confidence` - Record your confidence level

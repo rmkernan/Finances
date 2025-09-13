@@ -1,7 +1,7 @@
 # Tax Categorization Rules
 
 **Created:** 09/09/25 5:48PM ET  
-**Updated:** 09/09/25 5:48PM ET  
+**Updated:** 09/09/25 5:55PM ET - Added detailed FSIXX/SPAXX Georgia tax exemption rules  
 **Purpose:** Tax treatment classification logic for financial transactions  
 **Taxpayer Context:** Georgia resident, corporate entity (Milton Preschool Inc)
 
@@ -72,26 +72,64 @@ AND security_type = 'municipal_bond';
 
 ### Money Market Fund Dividends
 
-#### FSIXX (Fidelity Government Income Fund)
+#### FSIXX (Fidelity Government Income Fund) - DETAILED
 ```yaml
 security_symbol: "FSIXX"
-security_type: "government_money_market"
-tax_treatment:
-  federal_taxable: true
-  state_taxable: true  
+security_type: "treasury_money_market"
+federal_tax_treatment:
+  taxable: true
   tax_category: "ordinary_dividend"
   qualified_dividend_eligible: false  # Money market dividends are ordinary
+georgia_state_treatment:
+  base_taxable: true
+  exemption_rate: "~97%"  # Approximately 97% of dividends are Georgia-exempt
+  exemption_source: "U.S. Treasury securities"
+  computation: "Multiply ordinary dividends by fund's annual % of U.S. govt securities income"
+  data_source: "Fidelity's annual 'U.S. Government Securities Income' report"
+notes: |
+  - FSIXX normally invests 99.5% in cash and U.S. Treasury securities
+  - Treasury-only strategy means most dividends are state-exempt in Georgia
+  - Use ~97% as estimate until Fidelity publishes exact annual percentage
+  - Georgia exempts dividends attributable to direct U.S. obligations
 ```
 
-#### SPAXX (Fidelity Government Money Market)
+#### SPAXX (Fidelity Government Money Market) - DETAILED  
 ```yaml
-security_symbol: "SPAXX"  
-security_type: "money_market"
-tax_treatment:
-  federal_taxable: true
-  state_taxable: true
+security_symbol: "SPAXX"
+security_type: "government_money_market"
+federal_tax_treatment:
+  taxable: true
   tax_category: "ordinary_dividend"
   qualified_dividend_eligible: false
+georgia_state_treatment:
+  base_taxable: true
+  exemption_rate: "~55%"  # Approximately 55% of dividends are Georgia-exempt
+  exemption_source: "U.S. Treasury securities portion"
+  computation: "Multiply ordinary dividends by fund's annual % of U.S. govt securities income"
+  data_source: "Fidelity reported 55.0877% U.S. government income for SPAXX in 2024"
+notes: |
+  - Mixed "government" fund includes Treasuries + agencies/repos
+  - Georgia exempts only direct federal obligations (not agencies/guarantees)
+  - Lower exemption % due to non-Treasury holdings (GNMA, FNMA, repo interest)
+  - Must use fund's specific annual percentage for accurate calculation
+```
+
+### Tax Computation Examples
+
+#### Example: FSIXX Dividend Tax Calculation
+```
+Scenario: $4,327.65 FSIXX dividend in 2024
+Federal: $4,327.65 × 100% = $4,327.65 (fully taxable ordinary income)
+Georgia: $4,327.65 × 97% = $4,197.82 (state-exempt)
+         $4,327.65 × 3% = $129.83 (state-taxable)
+```
+
+#### Example: SPAXX Dividend Tax Calculation  
+```
+Scenario: $2.03 SPAXX dividend in 2024
+Federal: $2.03 × 100% = $2.03 (fully taxable ordinary income)
+Georgia: $2.03 × 55% = $1.12 (state-exempt)
+         $2.03 × 45% = $0.91 (state-taxable)
 ```
 
 ### Corporate Stock Dividends (Future)

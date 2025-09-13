@@ -1,7 +1,7 @@
 # Database Resource Guide for Financial System Sub-Agents
 
 **Created:** 09/09/25 4:34PM ET  
-**Last Updated:** 09/09/25 4:34PM ET - Initial creation with Phase 1 schema deployment  
+**Last Updated:** 09/09/25 5:32PM ET - Removed ALL dangerous data deletion advice - financial data is sacred  
 **Purpose:** Essential database context and resources for future database sub-agents working on financial data management system  
 
 ## Your Role
@@ -34,12 +34,18 @@ You are a database expert working on a financial data management system designed
 - Key fields: amount (NUMERIC 15,2), security_info (JSONB), tax_details (JSONB)
 - Design: Precise money handling with flexible security and tax data
 
-## Connection Information
+## ⚠️ CRITICAL: LOCAL-ONLY CONNECTION
 
-- **Local URL:** postgresql://postgres:postgres@127.0.0.1:54322/postgres
-- **Supabase Studio:** http://localhost:54323
+### NEVER Use MCP Supabase Tools
+**WARNING:** MCP Supabase tools are configured globally for a DIFFERENT cloud project (childcare inspection system). 
+**DO NOT** use any `mcp__supabase__` commands as they will connect to the wrong database.
+
+### ONLY Use Local Connections
+- **Local Database URL:** postgresql://postgres:postgres@127.0.0.1:54322/postgres
+- **Local Studio:** http://localhost:54323
 - **Environment variables:** Check `.env` file in project root
-- **Project ID:** "Finances" (from supabase/config.toml)
+- **Connection Methods:** Use `psql`, `supabase` CLI, or direct SQL only
+- **NEVER connect to:** Any cloud Supabase instance for this project
 
 ## Migration Patterns
 
@@ -49,14 +55,9 @@ You are a database expert working on a financial data management system designed
 - Location: `/supabase/migrations/`
 
 ### Application Methods
-- **File-based:** `supabase db reset` (applies all migrations)
-- **Direct application:** `mcp__supabase__apply_migration` (when file-based fails)
-- **Important:** This project shares Supabase instance with childcare inspection system
-
-### Schema Coexistence
-- **Financial tables:** accounts, documents, transactions (our system)
-- **Existing tables:** ~20 childcare inspection tables (different system)
-- **No conflicts:** Systems coexist successfully
+- **Initial setup:** `supabase db reset` (WIPES ALL DATA - NEVER USE)
+- **New migrations:** `supabase migration new [name]` then `supabase db push`
+- **For updates:** Create new migration files, don't modify existing ones
 
 ## Common Query Patterns
 
@@ -208,7 +209,7 @@ amount DOUBLE        -- Same problem as FLOAT
 ### Supabase CLI
 ```bash
 supabase status                 # Check all services
-supabase db reset              # Apply all migrations (destructive)
+# supabase db reset            # NEVER USE - DESTROYS ALL DATA
 supabase studio                # Open Studio in browser
 supabase logs                  # View logs
 ```
@@ -280,8 +281,15 @@ idx_documents_summary_data     -- USING GIN (summary_data)
 
 ### Migration Process
 - **Direct application sometimes needed** - File-based migrations can fail in complex environments
-- **Shared database instances work** - Multiple systems can coexist safely
 - **Always verify NUMERIC precision** - Critical for financial accuracy
+- **Migration may already be applied** - Check table existence before running migrations
+
+### Migration Verification (09/09/25)
+- **Tables pre-existed with correct schema** - Migration was already successfully applied
+- **All NUMERIC(15,2) fields confirmed** - Financial precision maintained
+- **JSONB functionality verified** - Complex queries working correctly
+- **Foreign key relationships validated** - All constraints properly established
+- **Test data insertion successful** - Database ready for production use
 
 ### Schema Design
 - **JSONB is powerful** - Handles complex scenarios without schema changes
@@ -314,10 +322,11 @@ idx_documents_summary_data     -- USING GIN (summary_data)
 ## Emergency Procedures
 
 ### If Database is Corrupted
-1. Check `supabase status` - restart services if needed
-2. Try `supabase db reset` - reapplies all migrations
-3. Restore from backup if available
-4. Recreate test data for validation
+1. **STOP** - Never delete data without user permission
+2. Check `supabase status` - restart services if needed
+3. Run diagnostic queries to identify the specific problem
+4. Ask user for guidance on repair vs restore from backup
+5. **NEVER** use `supabase db reset` - it destroys all financial data
 
 ### If Migrations Fail
 1. Try direct application: `mcp__supabase__apply_migration`
