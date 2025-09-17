@@ -57,7 +57,19 @@ Thumbs.db
 *.CSV
 *.xlsx
 *.xls
+
+# Document processing folders
+documents/inbox/
+documents/processing/
+documents/processed/
+documents/failed/
+documents/archived/
+
+# Allow sample documents (redacted) but ignore real PDFs elsewhere
 *.pdf
+!documents/samples/**/*.pdf
+
+# Other sensitive folders
 personal_data/
 bank_statements/
 tax_documents/
