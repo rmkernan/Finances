@@ -1,7 +1,8 @@
 # Financial Data Management System
 
-**Created:** 09/09/25 4:47PM ET  
-**Updated:** 09/10/25 12:40AM ET - Multi-entity schema complete, frontend design/implementation plan ready  
+**Created:** 09/09/25 4:47PM ET
+**Updated:** 09/10/25 12:40AM ET - Multi-entity schema complete, frontend design/implementation plan ready
+**Updated:** 09/17/25 3:18PM ET - Added local Supabase setup, extraction guides, and source attribute documentation
 **Purpose:** Claude-assisted processing and analysis of financial documents with comprehensive tax treatment for multiple business entities
 
 ## Project Overview
@@ -38,10 +39,14 @@ This system manages financial data across multiple business entities (S-Corps, L
 ### 1. Setup Environment
 ```bash
 # Clone/navigate to project directory
-cd /Users/richkernan/Projects/Finances
+cd /Users/richkernan/projects/Finances
 
-# Supabase is ready with database schema applied
-# 3 tables: accounts, documents, transactions
+# Start local Supabase (if not running)
+supabase start
+
+# Verify connection
+# Database: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+# Studio: http://localhost:54323
 
 # Access LOCAL Studio to view data
 open http://localhost:54323
@@ -100,6 +105,15 @@ Processing rules and configuration:
 - **[doctrine.md](/Users/richkernan/Projects/Finances/config/doctrine.md)** - Core processing decisions and patterns
 - **[accounts-map.md](/Users/richkernan/Projects/Finances/config/accounts-map.md)** - QuickBooks account mappings
 - **[tax-rules.md](/Users/richkernan/Projects/Finances/config/tax-rules.md)** - Tax categorization rules
+- **[institution-patterns/fidelity.md](/Users/richkernan/Projects/Finances/config/institution-patterns/fidelity.md)** - Fidelity document extraction patterns
+
+### 📁 [docs/Design/02-Technical/source-attributes/](/Users/richkernan/Projects/Finances/docs/Design/02-Technical/source-attributes/)
+Complete attribute catalogs for source documents:
+- **[fidelity-attributes.md](/Users/richkernan/Projects/Finances/docs/Design/02-Technical/source-attributes/fidelity-attributes.md)** - All extractable fields from Fidelity documents
+
+### 📁 [documents/samples/](/Users/richkernan/Projects/Finances/documents/samples/)
+Sample documents for pattern validation:
+- **[fidelity/Statement8312025.pdf](/Users/richkernan/Projects/Finances/documents/samples/fidelity/Statement8312025.pdf)** - Real August 2024 combined statement
 
 ## Project Structure
 
@@ -145,19 +159,21 @@ Processing rules and configuration:
 
 ## Development Status
 
-**Current Phase:** Ready for frontend implementation  
+**Current Phase:** Local database setup complete, ready for schema implementation
 **Completed:**
-- ✅ Local Supabase database with 3-table schema
-- ✅ Successfully processed January 2024 statement ($4,329.68 extracted)
-- ✅ Georgia tax exemption rules documented (FSIXX ~97%, SPAXX ~55%)
-- ✅ Enhanced 8-table schema for multi-entity support
+- ✅ Local Supabase PostgreSQL instance running (localhost:54322)
+- ✅ Enhanced 10-table schema with source document mappings
+- ✅ Comprehensive Fidelity extraction guides and patterns
+- ✅ Source attribute catalogs preventing duplicate analysis
+- ✅ Sample document validation (August 2024 statement)
+- ✅ Data lineage tracking in schema design
 - ✅ Frontend technical design with eMoney-inspired UI
 - ✅ 9-week implementation roadmap
 
-**Next Steps:** 
-1. Initialize Next.js 14 project with shadcn/ui
-2. Implement core dashboard and entity management
-3. Build document viewer with PDF + data overlay
+**Next Steps:**
+1. Apply database schema migrations to local Supabase
+2. Begin document processing with improved extraction patterns
+3. Validate data lineage and source tracking functionality
 
 See [frontend-implementation-plan.md](/Users/richkernan/Projects/Finances/docs/technical/frontend-implementation-plan.md) for detailed roadmap.
 

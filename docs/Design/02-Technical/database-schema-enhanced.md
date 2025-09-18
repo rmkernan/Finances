@@ -1,7 +1,8 @@
 # Enhanced Database Schema - Financial Data Management System
 
-**Created:** 09/10/25 10:30AM ET  
-**Updated:** 09/11/25 12:58PM ET - Added real_assets and liabilities tables for complete net worth tracking  
+**Created:** 09/10/25 10:30AM ET
+**Updated:** 09/11/25 12:58PM ET - Added real_assets and liabilities tables for complete net worth tracking
+**Updated:** 09/17/25 3:15PM ET - Added source document mapping columns to transactions table
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system  
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -333,26 +334,26 @@ CREATE INDEX idx_document_accounts_acct ON document_accounts(account_id);
 
 **Purpose:** Individual financial transactions extracted from documents, with enhanced multi-entity support and comprehensive tax categorization.
 
-| Column (*R = Req)         | Data Type     | Constraints                                                       | Purpose/Source                                            |
-|---------------------------|---------------|-------------------------------------------------------------------|-----------------------------------------------------------|
+| Column (*R = Req)         | Data Type     | Constraints                                                       | Purpose/Source                                            | Source Documents |
+|---------------------------|---------------|-------------------------------------------------------------------|-----------------------------------------------------------|------------------|
 | `id`                      | UUID (PK)     | PRIMARY KEY DEFAULT gen_random_uuid()                             | Auto-generated unique identifier                          |
 | `entity_id` *R            | UUID (FK)     | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT               | Entity this transaction belongs to                        |
 | `document_id` *R          | UUID (FK)     | NOT NULL REFERENCES documents(id) ON DELETE CASCADE               | Source document for audit trail                           |
 | `account_id` *R           | UUID (FK)     | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT               | Account where transaction occurred                        |
 | **Transaction Core Data** |               |                                                                   |                                                           |
-| `transaction_date` *R     | DATE          | NOT NULL                                                          | Date transaction occurred                                 |
-| `settlement_date`         | DATE          |                                                                   | Settlement/clearing date                                  |
-| `transaction_type` *R     | TEXT          | NOT NULL CHECK (transaction_type IN ('dividend', 'interest',      | Transaction classification                                |
-|                           |               | 'buy', 'sell', 'transfer_in', 'transfer_out', 'fee',              |                                                           |
-|                           |               | 'return_of_capital', 'assignment',other'))                        |                                                           |
-| `transaction_subtype`     | TEXT          |                                                                   | Detailed subtype (e.g., 'qualified_dividend',             |
-|                           |               |                                                                   | 'municipal_interest', 'management_fee')                   |
-| `description` *R          | TEXT          | NOT NULL                                                          | Transaction description from source document              |
-| `amount` *R               | NUMERIC(15,2) | NOT NULL CHECK (amount != 0)                                      | Transaction amount                                        |
+| `transaction_date` *R     | DATE          | NOT NULL                                                          | Date transaction occurred                                 | Fidelity statements (Date MM/DD), Trade confirmations (Trade Date), 1099s (Payment Date) |
+| `settlement_date`         | DATE          |                                                                   | Settlement/clearing date                                  | Trade confirmations (Settlement Date) |
+| `transaction_type` *R     | TEXT          | NOT NULL CHECK (transaction_type IN ('dividend', 'interest',      | Transaction classification                                | Inferred from description patterns |
+|                           |               | 'buy', 'sell', 'transfer_in', 'transfer_out', 'fee',              |                                                           |  |
+|                           |               | 'return_of_capital', 'assignment',other'))                        |                                                           |  |
+| `transaction_subtype`     | TEXT          |                                                                   | Detailed subtype (e.g., 'qualified_dividend',             | Fidelity statements (description parsing), 1099s (box types) |
+|                           |               |                                                                   | 'municipal_interest', 'management_fee')                   |  |
+| `description` *R          | TEXT          | NOT NULL                                                          | Transaction description from source document              | Fidelity statements (Description column), QuickBooks exports (Memo field) |
+| `amount` *R               | NUMERIC(15,2) | NOT NULL CHECK (amount != 0)                                      | Transaction amount                                        | Fidelity statements (Amount column), 1099s (Box amounts), Trade confirmations (Net Amount) |
 | `source` *R               | TEXT          | NOT NULL CHECK (source IN ('statement','qb_export','ledger'))     | Origin of the transaction data                            |
 | **Security Information**  |               |                                                                   |                                                           |
-| `security_info`           | JSONB         |                                                                   | Security details: {"cusip": "string", "symbol": "string", |
-|                           |               |                                                                   | "name": "string", "quantity": number, "price": number}    |
+| `security_info`           | JSONB         |                                                                   | Security details: {"cusip": "string", "symbol": "string", | Fidelity statements (Security name + (SYMBOL)), Trade confirmations (Symbol/CUSIP), Holdings sections |
+|                           |               |                                                                   | "name": "string", "quantity": number, "price": number}    |  |
 | `security_type`           | TEXT          | CHECK (security_type IN ('stock', 'bond', 'mutual_fund', 'etf',   | Type of security involved                                 |
 |                           |               | 'money_market', 'cd', 'option', 'other'))                         |                                                           |
 | **Tax Categorization**    |               |                                                                   |                                                           |

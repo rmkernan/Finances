@@ -1,7 +1,9 @@
 # CLAUDE.md - Financial Data Management System
 
-**Created:** 09/09/25 3:58PM ET  
-**Updated:** 09/12/25 7:45PM ET - Removed outdated content, fixed paths, streamlined for clarity  
+**Created:** 09/09/25 3:58PM ET
+**Updated:** 09/12/25 7:45PM ET - Removed outdated content, fixed paths, streamlined for clarity
+**Updated:** 09/17/25 3:17PM ET - Added Supabase local setup, source attributes documentation, and extraction guides
+**Updated:** 09/18/25 9:42AM ET - Database schema applied, backup system tested, standardized paths for multi-machine sync
 **Purpose:** Primary context document for Claude instances working on this project
 
 ## 🎯 Quick Start
@@ -31,16 +33,40 @@ If asked to work on product requirements or design:
 
 ## 🚀 Current Status
 
-**Database:** 10 tables including real_assets and liabilities for net worth tracking
-**Schema:** `/docs/Design/02-Technical/database-schema-enhanced.md`
+**Database:** ✅ Complete 10-table enhanced schema applied and running
+**Schema:** `/docs/Design/02-Technical/database-schema-enhanced.md` with source document mappings
 **Requirements:** Organized in `/docs/Design/01-Requirements/BUILD-*.md` files
+**Documentation:** Comprehensive extraction guides and source attribute catalogs created
+**Backup System:** ✅ Tested and ready for multi-machine synchronization
 
 ### Environment
-- **Database:** PostgreSQL via LOCAL Supabase ONLY
+- **Database:** PostgreSQL via LOCAL Supabase ONLY (✅ Running with full schema)
 - **Connection:** postgresql://postgres:postgres@127.0.0.1:54322/postgres
 - **Studio:** http://localhost:54323 (LOCAL ONLY)
 - **Documents:** Located in `/documents/inbox/` for processing
-- **Platform:** Mac Mini M4 development environment
+- **Platform:** MacBook Air development environment
+- **Path:** `/Users/richkernan/Projects/Finances` (standardized for Mac Mini sync)
+
+### Database Tables Applied
+✅ **entities** - Business entities and individuals
+✅ **institutions** - Financial institutions (Fidelity, banks, etc.)
+✅ **accounts** - Financial accounts within institutions
+✅ **documents** - Source documents with extraction metadata
+✅ **document_accounts** - Many-to-many junction for multi-account statements
+✅ **transactions** - Individual financial transactions with tax categorization
+✅ **tax_payments** - Quarterly estimated tax tracking
+✅ **transfers** - Inter-entity money movements
+✅ **asset_notes** - Investment strategies and price targets
+✅ **real_assets** - Properties and physical assets
+✅ **liabilities** - Mortgages and long-term debt
+
+### Recent Additions
+- **Extraction Guides:** `/config/institution-patterns/fidelity.md` - Claude processing patterns
+- **Source Attributes:** `/docs/Design/02-Technical/source-attributes/fidelity-attributes.md` - Complete field catalog
+- **Schema Mapping:** Database tables now include source document columns for data lineage
+- **Sample Documents:** `/documents/samples/fidelity/` with real statement examples
+- **Backup Commands:** `/commands/backup-database.md` - Tested multi-machine sync procedures
+- **Database Protection:** Local settings prevent accidental resets
 
 ### ⚠️ CRITICAL WARNING
 **ONLY use LOCAL Supabase** at localhost:54322. Never connect to cloud instances.
@@ -81,6 +107,12 @@ All database operations must use local CLI or psql commands.
 - **Multi-Entity** = Track 4-5 S-Corps/LLCs with flow-through to personal taxes
 
 ## 🔧 Common Tasks
+
+### Database Backup and Sync
+See `/commands/backup-database.md` for complete procedures:
+- **Data backup:** `supabase db dump --data-only --local`
+- **Full backup:** `supabase db dump --local` (recommended for sync)
+- **Container backup:** `docker exec supabase_db_Finances pg_dump` (most reliable)
 
 ### Processing a Document
 ```bash

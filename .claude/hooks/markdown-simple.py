@@ -1,0 +1,1 @@
+/Users/richkernan/projects/ProjectToolkit/.claude/hooks/markdown-simple.py

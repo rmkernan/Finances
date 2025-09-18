@@ -1,9 +1,17 @@
 # Processing Doctrine - Claude-Assisted Financial Data Management
 
-**Created:** 09/09/25 5:40PM ET  
-**Updated:** 09/09/25 8:15PM ET - Updated for Claude-assisted collaborative approach  
-**Purpose:** Guidelines for intelligent Claude-assisted financial document processing  
+**Created:** 09/09/25 5:40PM ET
+**Updated:** 09/09/25 8:15PM ET - Updated for Claude-assisted collaborative approach
+**Updated:** 09/18/25 11:45AM ET - Clarified extraction (raw data) vs analysis (tax logic) separation
+**Purpose:** Guidelines for intelligent Claude-assisted financial document processing
 **Status:** Active - Living document for Claude decision-making support
+
+## Core Philosophy: Extract Facts, Don't Interpret
+
+### CRITICAL: Separation of Concerns
+- **EXTRACTION PHASE:** Pull raw data exactly as shown in documents - no interpretation
+- **DATABASE STORAGE:** Store facts without tax categorization or business logic
+- **FRONTEND/REPORTING:** Apply tax rules, categorization, and analysis at display time
 
 ## Core Philosophy: Claude as Intelligent Partner
 
