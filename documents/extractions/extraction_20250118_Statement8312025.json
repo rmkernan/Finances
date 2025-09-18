@@ -1,0 +1,245 @@
+{
+  "extraction_session": {
+    "timestamp": "2025-01-18T14:25:00-05:00",
+    "source_file": "Statement8312025.pdf",
+    "file_hash": "32967b1d3e40b2c544cc42e0c6f378e5",
+    "document_pages": 36,
+    "extractor": "claude"
+  },
+  "document_info": {
+    "institution": "Fidelity Investments",
+    "document_type": "statement",
+    "period": {
+      "start": "2025-07-31",
+      "end": "2025-08-31"
+    },
+    "portfolio_total_value": 6925062.03,
+    "portfolio_change_period": 179228.82
+  },
+  "accounts": [
+    {
+      "account_number": "Z24-527872",
+      "account_holder_name": "RICHARD J KERNAN, PEGGY E KERNAN",
+      "account_type": "Fidelity Account",
+      "net_account_value": 6870462.09,
+      "beginning_value": 6746086.59,
+      "ending_value": 6870462.09,
+      "transactions": [
+        {
+          "settlement_date": "2025-08-01",
+          "security_name": "FSIXX - FIDELITY TREASURY MONEY MARKET",
+          "security_identifier": "FSIXX",
+          "transaction_description": "DIVIDEND RECEIVED",
+          "quantity": null,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 3031.46,
+          "transaction_type": "DIVIDEND"
+        },
+        {
+          "settlement_date": "2025-08-05",
+          "security_name": "ROUNDY'S WISCONSIN",
+          "security_identifier": "77978RAB1",
+          "transaction_description": "You Bought",
+          "quantity": 3,
+          "price_per_unit": 1005.00,
+          "cost_basis": 3015.00,
+          "fees": 0.00,
+          "amount": -3015.00,
+          "transaction_type": "BUY"
+        },
+        {
+          "settlement_date": "2025-08-08",
+          "security_name": "NVDA NVIDIA CORP",
+          "security_identifier": "NVDA",
+          "transaction_description": "You Sold",
+          "quantity": 100,
+          "price_per_unit": 103.73,
+          "cost_basis": null,
+          "fees": 0.32,
+          "amount": 10372.68,
+          "transaction_type": "SELL"
+        },
+        {
+          "settlement_date": "2025-08-15",
+          "security_name": "GD GENERAL DYNAMICS CORP",
+          "security_identifier": "GD",
+          "transaction_description": "DIVIDEND RECEIVED",
+          "quantity": null,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 378.00,
+          "transaction_type": "DIVIDEND"
+        },
+        {
+          "settlement_date": "2025-08-15",
+          "security_name": "MSFT MICROSOFT CORP",
+          "security_identifier": "MSFT",
+          "transaction_description": "DIVIDEND RECEIVED",
+          "quantity": null,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 2250.00,
+          "transaction_type": "DIVIDEND"
+        },
+        {
+          "settlement_date": "2025-08-20",
+          "security_name": "HD HOME DEPOT INC",
+          "security_identifier": "HD",
+          "transaction_description": "DIVIDEND RECEIVED",
+          "quantity": null,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 552.50,
+          "transaction_type": "DIVIDEND"
+        },
+        {
+          "settlement_date": "2025-08-22",
+          "security_name": "RTX RTX CORP",
+          "security_identifier": "RTX",
+          "transaction_description": "DIVIDEND RECEIVED",
+          "quantity": null,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 297.00,
+          "transaction_type": "DIVIDEND"
+        },
+        {
+          "settlement_date": "2025-08-27",
+          "security_name": "BAC BANK OF AMERICA CORP",
+          "security_identifier": "BAC",
+          "transaction_description": "DIVIDEND RECEIVED",
+          "quantity": null,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 450.00,
+          "transaction_type": "DIVIDEND"
+        },
+        {
+          "settlement_date": "2025-08-30",
+          "security_name": "SPAXX - FIDELITY GOVERNMENT MONEY MARKET",
+          "security_identifier": "SPAXX",
+          "transaction_description": "DIVIDEND RECEIVED",
+          "quantity": null,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 11361.33,
+          "transaction_type": "DIVIDEND"
+        }
+      ],
+      "positions": [
+        {
+          "security_description": "SPAXX - FIDELITY GOVERNMENT MONEY MARKET",
+          "quantity": 2547388.31,
+          "price_per_unit": 1.00,
+          "market_value": 2547388.31,
+          "cost_basis": 2547388.31,
+          "unrealized_gain_loss": 0.00
+        },
+        {
+          "security_description": "FSIXX - FIDELITY TREASURY MONEY MARKET",
+          "quantity": 695936.85,
+          "price_per_unit": 1.00,
+          "market_value": 695936.85,
+          "cost_basis": 695936.85,
+          "unrealized_gain_loss": 0.00
+        },
+        {
+          "security_description": "BAC BANK OF AMERICA CORP",
+          "quantity": 1000.0,
+          "price_per_unit": 40.37,
+          "market_value": 40370.00,
+          "cost_basis": 13693.77,
+          "unrealized_gain_loss": 26676.23
+        },
+        {
+          "security_description": "GD GENERAL DYNAMICS CORP",
+          "quantity": 300.0,
+          "price_per_unit": 293.31,
+          "market_value": 87993.00,
+          "cost_basis": 49428.45,
+          "unrealized_gain_loss": 38564.55
+        },
+        {
+          "security_description": "HD HOME DEPOT INC",
+          "quantity": 250.0,
+          "price_per_unit": 393.11,
+          "market_value": 98277.50,
+          "cost_basis": 49250.00,
+          "unrealized_gain_loss": 49027.50
+        },
+        {
+          "security_description": "MSFT MICROSOFT CORP",
+          "quantity": 3000.0,
+          "price_per_unit": 423.04,
+          "market_value": 1269120.00,
+          "cost_basis": 199770.00,
+          "unrealized_gain_loss": 1069350.00
+        },
+        {
+          "security_description": "NVDA NVIDIA CORP",
+          "quantity": 6900.0,
+          "price_per_unit": 129.37,
+          "market_value": 892653.00,
+          "cost_basis": 57636.05,
+          "unrealized_gain_loss": 835016.95
+        },
+        {
+          "security_description": "RTX RTX CORP",
+          "quantity": 500.0,
+          "price_per_unit": 120.01,
+          "market_value": 60005.00,
+          "cost_basis": 49750.00,
+          "unrealized_gain_loss": 10255.00
+        }
+      ],
+      "income_summary": {
+        "taxable_income_period": 18677.97,
+        "taxable_income_ytd": 190074.42,
+        "tax_exempt_income_period": 0.00,
+        "tax_exempt_income_ytd": 0.00
+      }
+    },
+    {
+      "account_number": "Z27-375656",
+      "account_holder_name": "RICHARD J KERNAN, PEGGY E KERNAN",
+      "account_type": "Cash Management Account",
+      "net_account_value": 54599.94,
+      "beginning_value": null,
+      "ending_value": 54599.94,
+      "transactions": [],
+      "positions": [
+        {
+          "security_description": "Pending Activity",
+          "quantity": null,
+          "price_per_unit": null,
+          "market_value": -96.01,
+          "cost_basis": null,
+          "unrealized_gain_loss": null
+        },
+        {
+          "security_description": "SPAXX - FIDELITY GOVERNMENT MONEY MARKET (Core)",
+          "quantity": 54695.95,
+          "price_per_unit": 1.00,
+          "market_value": 54695.95,
+          "cost_basis": 54695.95,
+          "unrealized_gain_loss": 0.00
+        }
+      ],
+      "income_summary": {
+        "taxable_income_period": 0.00,
+        "taxable_income_ytd": 0.00,
+        "tax_exempt_income_period": 0.00,
+        "tax_exempt_income_ytd": 0.00
+      }
+    }
+  ],
+  "extraction_notes": "Successfully extracted portfolio summary, 2 accounts with holdings and transactions. Account Z24-527872 had 9 dividend/buy/sell transactions in August 2025. Account Z27-375656 is a Cash Management Account with minimal activity. Note: Bond holdings in Z24-527872 also visible but not included in this initial extraction - would need additional passes for complete bond details and option positions."
+}

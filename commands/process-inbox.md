@@ -28,18 +28,30 @@ Before extracting data, I will verify:
 - **Multi-Account Check:** Determine if this is a combined statement
 - **Confidence Assessment:** Flag any concerns before proceeding
 
-### Step 4: Pure Data Extraction (NO INTERPRETATION)
+### Step 4: Data Extraction (Collaborative Process)
+
+**APPROACH:** Reference `/config/institution-patterns/fidelity-guide.md` for patterns and principles.
+**REMEMBER:** You're intelligent - use your judgment. When uncertain, ASK THE USER for clarification.
 
 Based on document type, I will:
 
 #### For Financial Statements:
 - Extract EXACT entity/account holder names as shown in the document
 - Extract account numbers exactly as displayed
+- **IMPORTANT:** Look for and parse structured tables:
+  - "Securities Bought & Sold" sections with full trade details
+  - "Activity" tables with transaction information
+  - "Dividends and Interest" sections
+  - "Options Activity" with contract details
 - Parse all transactions with:
-  - Date as shown
+  - Date as shown (transaction AND settlement dates)
+  - Action indicators ("You Bought" / "You Sold" / etc.)
   - Description EXACTLY as written (no interpretation)
   - Amount with proper sign
-  - Security symbols/CUSIPs if present
+  - Quantity (number of shares/units)
+  - Price per share (execution price)
+  - Security symbols/CUSIPs from detail tables
+  - Commission and fees if itemized
 - Note page numbers for audit trail
 - DO NOT apply any tax rules or categorization
 - DO NOT interpret what type of income it is
@@ -59,7 +71,7 @@ Based on document type, I will:
 
 ### Step 5: Structured Output Generation
 
-I will create a JSON file with this structure:
+I will create a JSON file using field names from the Fidelity document map:
 ```json
 {
   "extraction_session": {
@@ -72,31 +84,49 @@ I will create a JSON file with this structure:
   "document_info": {
     "institution": "as shown on document",
     "document_type": "statement/1099/etc",
-    "period": {"start": "YYYY-MM-DD", "end": "YYYY-MM-DD"}
+    "period": {"start": "YYYY-MM-DD", "end": "YYYY-MM-DD"},
+    "portfolio_total_value": 1234567.89,
+    "portfolio_change_period": 12345.67
   },
   "accounts": [
     {
       "account_number": "EXACTLY as shown",
-      "account_holder": "EXACT name from document",
+      "account_holder_name": "EXACT name from document",
       "account_type": "as described in document",
+      "net_account_value": 1234567.89,
       "transactions": [
         {
-          "date": "YYYY-MM-DD",
-          "description": "EXACT text from document",
+          "settlement_date": "YYYY-MM-DD",
+          "security_name": "EXACT text from document",
+          "security_identifier": "symbol or CUSIP",
+          "transaction_description": "You Bought/You Sold/etc",
+          "quantity": 123.456,
+          "price_per_unit": 12.34,
+          "cost_basis": 1234.56,
+          "fees": 0.00,
           "amount": 1234.56,
-          "symbol": "if shown",
-          "cusip": "if shown",
-          "page": "source page number"
+          "transaction_type": "BUY/SELL/DIVIDEND/etc"
         }
-      ]
+      ],
+      "positions": [
+        {
+          "security_description": "Full security name",
+          "quantity": 123.456,
+          "price_per_unit": 12.34,
+          "market_value": 1234.56,
+          "cost_basis": 1000.00,
+          "unrealized_gain_loss": 234.56
+        }
+      ],
+      "income_summary": {
+        "taxable_income_period": 123.45,
+        "taxable_income_ytd": 1234.56,
+        "tax_exempt_income_period": 0.00,
+        "tax_exempt_income_ytd": 0.00
+      }
     }
   ],
-  "extraction_feedback": {
-    "confidence": "high/medium/low",
-    "ambiguities": ["things that were unclear"],
-    "assumptions": ["any decisions I had to make"],
-    "questions": ["things I need clarification on"]
-  }
+  "extraction_notes": "Any observations or issues encountered during extraction"
 }
 ```
 
@@ -134,10 +164,11 @@ mv /documents/inbox/[file] /documents/processing/[file]
 ## Institution-Specific Guides Referenced
 
 Based on the institution identified, I will use:
-- **Fidelity:** `/config/institution-patterns/fidelity.md`
+- **Fidelity Document Map:** `/config/institution-patterns/fidelity-document-map.md` (PRIMARY REFERENCE)
+- **Fidelity Patterns:** `/config/institution-patterns/fidelity.md` (tax treatment details)
+- **Generic patterns:** `/config/doctrine.md`
 - **Bank of America:** `/config/institution-patterns/boa.md` (to be created)
 - **SunTrust:** `/config/institution-patterns/suntrust.md` (to be created)
-- **Generic patterns:** `/config/doctrine.md`
 
 ## Tax Classification Rules (NOT APPLIED DURING EXTRACTION)
 
@@ -165,7 +196,7 @@ If extraction fails:
 Extraction is complete when:
 - [ ] All pages have been reviewed
 - [ ] All accounts are identified and mapped
-- [ ] All transactions are extracted with tax categories
+- [ ] All transactions are extracted with complete details (including buy/sell, quantities, prices)
 - [ ] JSON file is valid and complete
 - [ ] Original document is moved to processing folder
 - [ ] User has been notified of any items needing review

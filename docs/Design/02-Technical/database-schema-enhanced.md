@@ -3,7 +3,9 @@
 **Created:** 09/10/25 10:30AM ET
 **Updated:** 09/11/25 12:58PM ET - Added real_assets and liabilities tables for complete net worth tracking
 **Updated:** 09/17/25 3:15PM ET - Added source document mapping columns to transactions table
-**Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system  
+**Updated:** 09/18/25 1:45PM ET - Added positions and income_summaries tables, enhanced portfolio fields per Fidelity document map
+**Updated:** 09/18/25 2:30PM ET - Added Comment column to all tables with practical metadata for PostgreSQL COMMENT ON COLUMN feature
+**Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
 ---
@@ -47,23 +49,15 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 | `notes`            | TEXT        |                                                                                 | Claude context notes                                 |
 | `created_at`       | TIMESTAMPTZ | DEFAULT NOW()                                                                   | Record creation timestamp                           |
 | `updated_at`       | TIMESTAMPTZ | DEFAULT NOW()                                                                   | Last modification timestamp                         |
-
-**Indexes:**
-```sql
-CREATE INDEX idx_entities_type_status ON entities(entity_type, entity_status);
-CREATE INDEX idx_entities_tax_id ON entities(tax_id);
-```
+| `Comment`          |             |                                                                                 |                                                     |
+|--------------------|-------------|---------------------------------------------------------------------------------|-----------------------------------------------------|
+| Auto-generated unique identifier | Legal entity name from tax documents | IRS entity type classification | EIN for entities, SSN for individuals (encrypted/hashed) |
+| Last 4 digits for display (e.g. "***-**-1234") | Primary responsible party name | Tax year end (MM-DD format, e.g. "12-31", "09-30") | Georgia state tax residency status |
+| Current operational status | Entity formation/birth date | Claude context notes | Record creation timestamp |
+| Last modification timestamp |
 
 **Foreign Key References:**
 - Referenced by: `institutions.entity_id`, `accounts.entity_id`, `tax_payments.entity_id`
-
-**Example Data:**
-```sql
-INSERT INTO entities (entity_name, entity_type, tax_id, tax_id_display, primary_taxpayer) VALUES
-('Milton Preschool Inc', 's_corp', '58-1234567', '***-**-4567', 'Rich Kernan'),
-('Kernan Family Trust', 'trust', '59-7654321', '***-**-4321', 'Rich Kernan'),
-('Rich Kernan', 'individual', '123-45-6789', '***-**-6789', 'Rich Kernan');
-```
 
 ---
 
@@ -78,36 +72,18 @@ INSERT INTO entities (entity_name, entity_type, tax_id, tax_id_display, primary_
 | `institution_name` *R | TEXT        | NOT NULL                                                  | Institution name (e.g., "Fidelity Investments", "SunTrust Bank") |
 | `institution_type`    | TEXT        | CHECK (institution_type IN ('brokerage', 'bank',          | Type of financial institution                                    |
 |                       |             | 'credit_union', 'insurance', 'retirement_plan', 'other')) |
-| `routing_number`      | TEXT        |                                                           | ABA routing number for banks                                     |
-| `swift_code`          | TEXT        |                                                           | SWIFT code for international institutions                        |
-| `institution_address` | TEXT        |                                                           | Mailing address for tax documents                                |
-| `primary_contact`     | JSONB       |                                                           | Contact information: {"name": "advisor name", "phone": "number", |
-|                       |             |                                                           | "email": "address"}                                              |
-| `login_credentials`   | JSONB       |                                                           | Encrypted login info: {"username": "encrypted", "url":           |
-|                       |             |                                                           | "login_url", "notes": "2FA details"}                             |
-| `document_delivery`   | JSONB       |                                                           | How tax docs are delivered: {"method": "electronic/mail",        |
-|                       |             |                                                           | "email": "address", "special_instructions": ""}                  |
 | `status`              | TEXT        | DEFAULT 'active' CHECK (status IN ('active',              | Current relationship status                                      |
 |                       |             | 'inactive', 'closed'))                                    |                                                                  |
 | `notes`               | TEXT        |                                                           | Claude context notes for institution-specific handling           |
 | `created_at`          | TIMESTAMPTZ | DEFAULT NOW()                                             | Record creation timestamp                                        |
 | `updated_at`          | TIMESTAMPTZ | DEFAULT NOW()                                             | Last modification timestamp                                      |
-
-**Indexes:**
-```sql
-CREATE INDEX idx_institutions_entity ON institutions(entity_id);
-CREATE INDEX idx_institutions_name_status ON institutions(institution_name, status);
-```
+| `Comment`             |             |                                                           |                                                                  |
+|-----------------------|-------------|-----------------------------------------------------------|------------------------------------------------------------------|
+| Auto-generated unique identifier | FK to entities table | Institution name (e.g. "Fidelity Investments", "SunTrust Bank") | Type of financial institution |
+| Current relationship status | Claude context notes for institution-specific handling | Record creation timestamp | Last modification timestamp |
 
 **Foreign Key Constraints:**
 - `entity_id` → `entities(id)` ON DELETE RESTRICT (prevent deletion if accounts exist)
-
-**Example Data:**
-```sql
-INSERT INTO institutions (entity_id, institution_name, institution_type, primary_contact) VALUES
-('[milton-uuid]', 'Fidelity Investments', 'brokerage', '{"name": "John Advisor", "phone": "800-FIDELITY"}'),
-('[individual-uuid]', 'SunTrust Bank', 'bank', '{"name": "Personal Banking", "phone": "800-SUNTRUST"}');
-```
 
 ---
 
@@ -122,46 +98,33 @@ INSERT INTO institutions (entity_id, institution_name, institution_type, primary
 | `institution_id` *R      | UUID (FK)   | NOT NULL REFERENCES institutions(id) ON DELETE RESTRICT | Institution holding this account                        |
 | `account_number` *R      | TEXT        | NOT NULL                                                | Account number (encrypted/masked for security)          |
 | `account_number_display` | TEXT        |                                                         | Last 4 digits for display (e.g., "****1234")            |
+| `account_holder_name`    | TEXT        |                                                         | Name of the account holder                              |
 | `account_name`           | TEXT        |                                                         | Account nickname/description                            |
 | `account_type` *R        | TEXT        | NOT NULL CHECK (account_type IN ('checking', 'savings', | Account classification                                  |
 |                          |             | 'brokerage', 'ira', '401k', 'roth_ira', 'trust',        |                                                         |
 |                          |             | 'business', 'money_market', 'cd'))                      |                                                         |
 | `account_subtype`        | TEXT        |                                                         | Specific subtype (e.g., "traditional_ira",              |
 |                          |             |                                                         | "roth_401k", "taxable_brokerage")                       |
-| `tax_reporting_name`     | TEXT        |                                                         | Name as it appears on tax documents (may differ         |
-|                          |             |                                                         | from account_name)                                      |
-| `custodian_name`         | TEXT        |                                                         | Custodian name for retirement accounts                  |
 | `account_opening_date`   | DATE        |                                                         | When account was opened                                 |
 | `account_status`         | TEXT        | DEFAULT 'active' CHECK (account_status IN ('active',    | Current account status                                  |
 |                          |             | 'inactive', 'closed', 'transferred'))                   |                                                         |
 | `is_tax_deferred`        | BOOLEAN     | DEFAULT FALSE                                           | True for IRAs, 401ks, and other tax-deferred accounts   |
 | `is_tax_free`            | BOOLEAN     | DEFAULT FALSE                                           | True for Roth accounts and tax-free investments         |
 | `requires_rmd`           | BOOLEAN     | DEFAULT FALSE                                           | True if account requires Required Minimum Distributions |
-| `beneficiary_info`       | JSONB       |                                                         | Beneficiary information: [{"name": "person",            |
-|                          |             |                                                         | "relationship": "spouse", "percentage": 100}]           |
 | `notes`                  | TEXT        |                                                         | Claude context notes for account-specific handling      |
 | `created_at`             | TIMESTAMPTZ | DEFAULT NOW()                                           | Record creation timestamp                               |
 | `updated_at`             | TIMESTAMPTZ | DEFAULT NOW()                                           | Last modification timestamp                             |
-
-**Indexes:**
-```sql
-CREATE INDEX idx_accounts_entity ON accounts(entity_id);
-CREATE INDEX idx_accounts_institution ON accounts(institution_id);
-CREATE INDEX idx_accounts_type ON accounts(account_type);
-CREATE INDEX idx_accounts_composite ON accounts(entity_id, institution_id, account_status);
-CREATE INDEX idx_accounts_tax_attributes ON accounts(is_tax_deferred, is_tax_free, requires_rmd) WHERE account_status = 'active';
-```
+| `Comment`                |             |                                                         |                                                         |
+|--------------------------|-------------|------------------------------------------------------------|---------------------------------------------------------|
+| Auto-generated unique identifier | FK to entities table | FK to institutions table | Fidelity "Account #" field, JSON: account_number |
+| Last 4 digits for display (e.g. "****1234") | Name on account | Account nickname/description | Account classification |
+| Specific subtype (e.g. "traditional_ira", "roth_401k") | When account opened | Current account status | True for IRAs, 401ks, tax-deferred accounts |
+| True for Roth accounts and tax-free investments | True if requires Required Minimum Distributions | Claude context notes for account-specific handling | Record creation timestamp |
+| Last modification timestamp |
 
 **Foreign Key Constraints:**
 - `entity_id` → `entities(id)` ON DELETE RESTRICT
 - `institution_id` → `institutions(id)` ON DELETE RESTRICT
-
-**Example Data:**
-```sql
-INSERT INTO accounts (entity_id, institution_id, account_number_display, account_name, account_type, is_tax_deferred) VALUES
-('[milton-uuid]', '[fidelity-uuid]', '****4567', 'Milton Preschool Investment Account', 'brokerage', FALSE),
-('[individual-uuid]', '[fidelity-uuid]', '****8901', 'Rich Kernan Traditional IRA', 'ira', TRUE);
-```
 
 ---
 
@@ -192,44 +155,29 @@ INSERT INTO accounts (entity_id, institution_id, account_number_display, account
 | `is_amended`               | BOOLEAN     | DEFAULT FALSE                                                   | True if this document has been amended/corrected      |
 | `amends_document_id`       | UUID (FK)   | REFERENCES documents(id) ON DELETE SET NULL                     | Original document this amends                         |
 | `version_number`           | INTEGER     | DEFAULT 1                                                       | Version number for amended documents                  |
+| **Portfolio Summary**      |             |                                                                 |                                                       |
+| `portfolio_value`          | NUMERIC(15,2) |                                                               | Total portfolio value at statement date               |
+| `portfolio_value_with_ai`  | NUMERIC(15,2) |                                                               | Portfolio value including accrued interest            |
+| `portfolio_change_period`  | NUMERIC(15,2) |                                                               | Change in portfolio value for the period              |
+| `portfolio_change_ytd`     | NUMERIC(15,2) |                                                               | Year-to-date portfolio change                         |
 | **Processing Metadata**    |             |                                                                 |                                                       |
 | `processed_at`             | TIMESTAMPTZ |                                                                 | When document processing completed                    |
 | `processed_by`             | TEXT        | DEFAULT 'claude'                                                | Processing agent identifier                           |
-| `extraction_method`        | TEXT        | DEFAULT 'claude_ai' CHECK (extraction_method IN ('claude_ai',   | How data was extracted                                |
-|                            |             | 'ocr', 'manual', 'api_import'))                                 |                                                       |
-| `extraction_confidence` *R | TEXT        | NOT NULL DEFAULT 'needs_review' CHECK (extraction_confidence IN | Claude's confidence in extraction accuracy            |
-|                            |             | ('high', 'medium', 'low', 'needs_review', 'failed'))            |                                                       |
-| `extraction_notes`         | TEXT        |                                                                 | Claude's observations and decision rationale          |
-| `needs_human_review`       | BOOLEAN     | DEFAULT FALSE                                                   | Flag for human review required                        |
-| `human_reviewed_at`        | TIMESTAMPTZ |                                                                 | When human review was completed                       |
-| **Extraction Data**        |             |                                                                 |                                                       |
-| `raw_extraction`           | JSONB       |                                                                 | Complete unprocessed extraction data                  |
-| `structured_data`          | JSONB       |                                                                 | Parsed and validated structured data                  |
-| `summary_data`             | JSONB       |                                                                 | High-level summary (1099 totals, statement summaries) |
+| `extraction_notes`         | TEXT        |                                                                 | Claude's notes about the extraction                   |
+| `extraction_json_path`     | TEXT        |                                                                 | Path to JSON file with full extraction data           |
 | **Audit Trail**            |             |                                                                 |                                                       |
 | `created_at`               | TIMESTAMPTZ | DEFAULT NOW()                                                   | Record creation timestamp                             |
 | `updated_at`               | TIMESTAMPTZ | DEFAULT NOW()                                                   | Last modification timestamp                           |
 | `imported_at`              | TIMESTAMPTZ | DEFAULT NOW()                                                   | When document was first imported                      |
-
-**Indexes:**
-```sql
--- Core lookups
-CREATE INDEX idx_documents_institution ON documents(institution_id);
-CREATE UNIQUE INDEX uq_documents_file_hash ON documents(file_hash);
-
--- Processing queries
-CREATE INDEX idx_documents_processing ON documents(extraction_confidence, needs_human_review);
-CREATE INDEX idx_documents_tax_year ON documents(tax_year);
-CREATE INDEX idx_documents_type_period ON documents(document_type, period_start, period_end);
-
--- Amendment tracking
-CREATE INDEX idx_documents_amendments ON documents(amends_document_id) WHERE amends_document_id IS NOT NULL;
-
--- JSONB indexes
-CREATE INDEX idx_documents_raw_extraction ON documents USING GIN (raw_extraction);
-CREATE INDEX idx_documents_structured_data ON documents USING GIN (structured_data);
-CREATE INDEX idx_documents_summary_data ON documents USING GIN (summary_data);
-```
+| `Comment`                  |             |                                                                 |                                                       |
+|----------------------------|-------------|-------------------------------------------------------------------|-------------------------------------------------------|
+| Auto-generated unique identifier | FK to institutions table | Tax year document pertains to | Primary document classification |
+| Reporting period start date | Reporting period end date | Full path to stored document file | Original filename for reference |
+| File size in bytes | SHA256 hash for duplicate detection (global unique) | File MIME type | True if document has been amended/corrected |
+| Original document this amends | Version number for amended documents | Total portfolio value at statement date | Portfolio value including accrued interest |
+| Change in portfolio value for the period | Year-to-date portfolio change | When document processing completed | Processing agent identifier |
+| Claude notes about extraction | Path to JSON file with full extraction data | Record creation timestamp | Last modification timestamp |
+| When document was first imported |
 
 **Foreign Key Constraints:**
 - `institution_id` → `institutions(id)` ON DELETE RESTRICT
@@ -246,87 +194,16 @@ CREATE INDEX idx_documents_summary_data ON documents USING GIN (summary_data);
 | `document_id` *R    | UUID (FK)   | NOT NULL REFERENCES documents(id) ON DELETE CASCADE            | Linked document                                |
 | `account_id` *R     | UUID (FK)   | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT            | Linked account                                 |
 | `created_at`        | TIMESTAMPTZ | DEFAULT NOW()                                                   | Link creation timestamp                        |
+| `Comment`           |             |                                                                 |                                                |
+|---------------------|-------------|-------------------------------------------------------------------|------------------------------------------------|
+| FK to documents table | FK to accounts table | Link creation timestamp |
 
 **Constraints:**
-```sql
-ALTER TABLE document_accounts
-  ADD CONSTRAINT uq_document_accounts UNIQUE (document_id, account_id);
-```
-
-**Indexes:**
-```sql
-CREATE INDEX idx_document_accounts_doc ON document_accounts(document_id);
-CREATE INDEX idx_document_accounts_acct ON document_accounts(account_id);
-```
+- UNIQUE constraint on (document_id, account_id)
 
 **Foreign Key Constraints:**
 - `document_id` → `documents(id)` ON DELETE CASCADE
 - `account_id` → `accounts(id)` ON DELETE RESTRICT
-
-**Example JSONB Structures:**
-
-**raw_extraction:**
-```json
-{
-  "extraction_method": "claude_pdf_analysis",
-  "confidence_score": "high",
-  "raw_text_segments": ["Transaction details from page 2...", "Tax summary from page 5..."],
-  "claude_observations": "Clear dividend transaction, high confidence in amounts",
-  "extraction_timestamp": "2025-09-10T10:30:00Z",
-  "processing_time_ms": 2340,
-  "pages_processed": 8
-}
-```
-
-**structured_data (1099-DIV):**
-```json
-{
-  "form_type": "1099-DIV",
-  "tax_year": 2024,
-  "payer": {
-    "name": "Fidelity Investments",
-    "tin": "04-6123456",
-    "address": "245 Summer St, Boston MA 02210"
-  },
-  "recipient": {
-    "name": "Milton Preschool Inc",
-    "tin": "58-1234567",
-    "address": "123 Main St, Atlanta GA 30309"
-  },
-  "amounts": {
-    "ordinary_dividends": 1234.56,
-    "qualified_dividends": 1000.00,
-    "capital_gain_distributions": 234.56,
-    "exempt_interest_dividends": 0.00,
-    "foreign_tax_paid": 0.00
-  },
-  "fatca_filing_required": false
-}
-```
-
-**summary_data (Monthly Statement):**
-```json
-{
-  "statement_period": "2024-01",
-  "account_summary": {
-    "beginning_balance": 125000.00,
-    "ending_balance": 127500.00,
-    "net_change": 2500.00
-  },
-  "transaction_counts": {
-    "total_transactions": 15,
-    "dividends": 8,
-    "buy_transactions": 2,
-    "sell_transactions": 1,
-    "fees": 4
-  },
-  "tax_relevant_totals": {
-    "ordinary_dividends": 1234.56,
-    "qualified_dividends": 890.12,
-    "capital_gains": 345.67
-  }
-}
-```
 
 ---
 
@@ -350,12 +227,16 @@ CREATE INDEX idx_document_accounts_acct ON document_accounts(account_id);
 |                           |               |                                                                   | 'municipal_interest', 'management_fee')                   |  |
 | `description` *R          | TEXT          | NOT NULL                                                          | Transaction description from source document              | Fidelity statements (Description column), QuickBooks exports (Memo field) |
 | `amount` *R               | NUMERIC(15,2) | NOT NULL CHECK (amount != 0)                                      | Transaction amount                                        | Fidelity statements (Amount column), 1099s (Box amounts), Trade confirmations (Net Amount) |
-| `source` *R               | TEXT          | NOT NULL CHECK (source IN ('statement','qb_export','ledger'))     | Origin of the transaction data                            |
 | **Security Information**  |               |                                                                   |                                                           |
-| `security_info`           | JSONB         |                                                                   | Security details: {"cusip": "string", "symbol": "string", | Fidelity statements (Security name + (SYMBOL)), Trade confirmations (Symbol/CUSIP), Holdings sections |
-|                           |               |                                                                   | "name": "string", "quantity": number, "price": number}    |  |
+| `security_name`           | TEXT          |                                                                   | Security name/description                                 | Fidelity statements (Security Name column) |
+| `security_identifier`     | TEXT          |                                                                   | Symbol or CUSIP identifier                                | Fidelity statements (Symbol/CUSIP column) |
+| `quantity`                | NUMERIC(15,6) |                                                                   | Number of shares/units in transaction                     | Fidelity statements (Quantity column) |
+| `price_per_unit`          | NUMERIC(12,4) |                                                                   | Price per share/unit                                      | Fidelity statements (Price column) |
+| `cost_basis`              | NUMERIC(15,2) |                                                                   | Total cost basis for this transaction                     | Fidelity statements (Total Cost Basis column) |
+| `fees`                    | NUMERIC(10,2) |                                                                   | Transaction fees/costs                                    | Fidelity statements (Transaction Cost column) |
 | `security_type`           | TEXT          | CHECK (security_type IN ('stock', 'bond', 'mutual_fund', 'etf',   | Type of security involved                                 |
 |                           |               | 'money_market', 'cd', 'option', 'other'))                         |                                                           |
+| `source` *R               | TEXT          | NOT NULL CHECK (source IN ('statement','qb_export','ledger'))     | Origin of the transaction data                            |
 | **Tax Categorization**    |               |                                                                   |                                                           |
 | `tax_category` *R         | TEXT          | NOT NULL CHECK (tax_category IN ('ordinary_dividend',             | Primary tax treatment                                     |
 |                           |               | 'qualified_dividend', 'municipal_interest', 'corporate_interest', |                                                           |
@@ -371,47 +252,20 @@ CREATE INDEX idx_document_accounts_acct ON document_accounts(account_id);
 | **Duplicate Detection**   |               |                                                                   |                                                           |
 | `is_duplicate_of`         | UUID (FK)     | REFERENCES transactions(id) ON DELETE SET NULL                    | References original transaction if this is a duplicate    |
 | `duplicate_reason`        | TEXT          |                                                                   | Explanation of why marked as duplicate                    |
-| **Quality Control**       |               |                                                                   |                                                           |
-| `needs_review`            | BOOLEAN       | DEFAULT FALSE                                                     | Flag for transactions requiring human review              |
-| `review_notes`            | TEXT          |                                                                   | Notes from review process                                 |
-| `confidence_score`        | DECIMAL(3,2)  | CHECK (confidence_score >= 0 AND confidence_score <= 1)           | Extraction confidence (0.0 to 1.0)                        |
 | **Audit Trail**           |               |                                                                   |                                                           |
 | `created_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Record creation timestamp                                 |
 | `updated_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Last modification timestamp                               |
 | `processed_by`            | TEXT          | DEFAULT 'claude'                                                  | Processing agent identifier                               |
-
-**Indexes:**
-```sql
--- Core lookups
-CREATE INDEX idx_transactions_entity ON transactions(entity_id);
-CREATE INDEX idx_transactions_document ON transactions(document_id);
-CREATE INDEX idx_transactions_account ON transactions(account_id);
-
--- Date and amount queries
-CREATE INDEX idx_transactions_date ON transactions(transaction_date);
-CREATE INDEX idx_transactions_date_entity ON transactions(entity_id, transaction_date);
-CREATE INDEX idx_transactions_amount ON transactions(amount) WHERE ABS(amount) > 100; -- Only index significant amounts
-
--- Tax categorization
-CREATE INDEX idx_transactions_tax_category ON transactions(tax_category);
-CREATE INDEX idx_transactions_taxable ON transactions(federal_taxable, state_taxable);
-CREATE INDEX idx_transactions_tax_federal ON transactions(federal_taxable, transaction_date) WHERE federal_taxable = true;
-CREATE INDEX idx_transactions_tax_state ON transactions(state_taxable, transaction_date) WHERE state_taxable = true;
-
--- Security analysis
-CREATE INDEX idx_transactions_security_type ON transactions(security_type) WHERE security_type IS NOT NULL;
-CREATE INDEX idx_transactions_security_info ON transactions USING GIN (security_info);
-
--- Quality control
-CREATE INDEX idx_transactions_review ON transactions(needs_review) WHERE needs_review = true;
-CREATE INDEX idx_transactions_duplicates ON transactions(is_duplicate_of) WHERE is_duplicate_of IS NOT NULL;
-
--- Source tracking
-CREATE INDEX idx_transactions_source ON transactions(source_transaction_id) WHERE source_transaction_id IS NOT NULL;
-
--- JSONB indexes
-CREATE INDEX idx_transactions_tax_details ON transactions USING GIN (tax_details);
-```
+| `Comment`                 |               |                                                                   |                                                           |
+|---------------------------|---------------|-------------------------------------------------------------------|-----------------------------------------------------------|
+| Auto-generated unique identifier | FK to entities table | FK to documents table | FK to accounts table |
+| Fidelity Date MM/DD, Trade Date, Payment Date | Settlement/clearing date | Inferred from description patterns | Fidelity description parsing, 1099 box types |
+| Fidelity Description column, QuickBooks Memo | Fidelity Amount column, 1099 box amounts | Fidelity Security Name column | Fidelity Symbol/CUSIP column |
+| Number of shares/units in transaction | Price per share/unit | Total cost basis for tax purposes | Transaction fees/costs |
+| Type of security involved | Origin of transaction data | Primary tax treatment for fed/state | True if taxable for federal purposes |
+| True if taxable for state purposes (GA-specific) | Additional tax context JSON | Original transaction ID from source | Additional source reference |
+| References original if duplicate | Explanation why marked duplicate | Record creation timestamp | Last modification timestamp |
+| Processing agent identifier |
 
 **Foreign Key Constraints:**
 - `entity_id` → `entities(id)` ON DELETE RESTRICT
@@ -419,31 +273,135 @@ CREATE INDEX idx_transactions_tax_details ON transactions USING GIN (tax_details
 - `account_id` → `accounts(id)` ON DELETE RESTRICT
 - `is_duplicate_of` → `transactions(id)` ON DELETE SET NULL
 
-**Example Security Info JSONB:**
-```json
-{
-  "cusip": "04780MWW5",
-  "symbol": "FSIXX",
-  "name": "Fidelity Government Money Market Fund",
-  "quantity": 1234.567,
-  "price": 1.0000,
-  "security_type": "money_market",
-  "exchange": "N/A"
-}
-```
 
-**Example Tax Details JSONB:**
-```json
-{
-  "issuer_state": "GA",
-  "taxpayer_state": "GA",
-  "is_amt_preference": false,
-  "section_199a_eligible": false,
-  "special_notes": "Georgia municipal bond - double exempt",
-  "tax_equivalent_yield": 4.2,
-  "withholding_rate": 0.0
-}
-```
+---
+
+### Table: positions
+
+**Purpose:** Current holdings/positions extracted from statements. Represents point-in-time snapshots of securities owned.
+
+| Column (*R = Req)           | Data Type     | Constraints                                                          | Purpose/Source                                              |
+|-----------------------------|---------------|----------------------------------------------------------------------|-------------------------------------------------------------|
+| `id`                        | UUID (PK)     | PRIMARY KEY DEFAULT gen_random_uuid()                                | Auto-generated unique identifier                            |
+| `document_id` *R            | UUID (FK)     | NOT NULL REFERENCES documents(id) ON DELETE CASCADE                  | Source document for this position snapshot                  |
+| `account_id` *R             | UUID (FK)     | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT                  | Account holding the position                                |
+| `entity_id` *R              | UUID (FK)     | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT                  | Entity owning the position                                  |
+| **Security Information**    |               |                                                                      |                                                             |
+| `symbol`                    | TEXT          |                                                                      | Security ticker symbol                                      |
+| `cusip`                     | TEXT          |                                                                      | CUSIP identifier                                            |
+| `security_description` *R   | TEXT          | NOT NULL                                                             | Full security name/description                              |
+| `security_type` *R          | TEXT          | NOT NULL CHECK (security_type IN ('stock', 'bond', 'mutual_fund',    | Type of security                                            |
+|                             |               | 'etf', 'money_market', 'cd', 'option', 'other'))                     |                                                             |
+| **Position Data**           |               |                                                                      |                                                             |
+| `position_date` *R          | DATE          | NOT NULL                                                             | Date of this position snapshot                              |
+| `quantity` *R               | NUMERIC(15,6) | NOT NULL                                                             | Number of shares/units held                                 |
+| `price_per_unit`            | NUMERIC(12,4) |                                                                      | Price per share/unit at position date                       |
+| `market_value` *R           | NUMERIC(15,2) | NOT NULL                                                             | Total market value of position                              |
+| `beginning_market_value`    | NUMERIC(15,2) |                                                                      | Market value at period start                                |
+| **Cost Basis**              |               |                                                                      |                                                             |
+| `cost_basis`                | NUMERIC(15,2) |                                                                      | Total cost basis for tax purposes                           |
+| `cost_basis_known`          | BOOLEAN       | DEFAULT TRUE                                                         | False if cost basis is unavailable                          |
+| `unrealized_gain_loss`      | NUMERIC(15,2) |                                                                      | Unrealized gain/loss at position date                       |
+| **Income Information**      |               |                                                                      |                                                             |
+| `estimated_annual_income`   | NUMERIC(15,2) |                                                                      | Estimated annual income (dividends/interest)                |
+| `estimated_yield`           | NUMERIC(5,4)  | CHECK (estimated_yield >= 0)                                         | Estimated yield percentage                                  |
+| `dividend_yield`            | NUMERIC(5,4)  | CHECK (dividend_yield >= 0)                                          | Current dividend yield                                      |
+| **Options Specific**        |               |                                                                      |                                                             |
+| `option_details`            | JSONB         |                                                                      | Option contract details: {"type": "CALL/PUT",               |
+|                             |               |                                                                      | "strike": price, "expiry": date, "underlying": ticker}      |
+| **Bond Specific**           |               |                                                                      |                                                             |
+| `bond_details`              | JSONB         |                                                                      | Bond details: {"maturity": date, "coupon_rate": percent,    |
+|                             |               |                                                                      | "accrued_interest": amount, "rating": "AAA"}                |
+| **Position Flags**          |               |                                                                      |                                                             |
+| `is_margin_position`        | BOOLEAN       | DEFAULT FALSE                                                        | True if held in margin                                      |
+| `is_short_position`         | BOOLEAN       | DEFAULT FALSE                                                        | True if short position                                      |
+| `is_reinvestment`           | BOOLEAN       | DEFAULT FALSE                                                        | True if from dividend reinvestment                          |
+| **Metadata**                |               |                                                                      |                                                             |
+| `percent_of_account`        | NUMERIC(5,2)  | CHECK (percent_of_account >= 0 AND percent_of_account <= 100)        | Percentage of account holdings                              |
+| `notes`                     | TEXT          |                                                                      | Additional notes or observations                            |
+| **Audit Trail**             |               |                                                                      |                                                             |
+| `created_at`                | TIMESTAMPTZ   | DEFAULT NOW()                                                        | Record creation timestamp                                   |
+| `updated_at`                | TIMESTAMPTZ   | DEFAULT NOW()                                                        | Last modification timestamp                                 |
+| `Comment`                   |               |                                                                      |                                                             |
+|-----------------------------|---------------|----------------------------------------------------------------------|--------------------------------------------------------------|
+| Auto-generated unique identifier | FK to documents table | FK to accounts table | FK to entities table |
+| Security ticker symbol | CUSIP identifier | Full security name/description | Type of security |
+| Date of position snapshot | Number of shares/units held | Price per share/unit at position date | Total market value of position |
+| Market value at period start | Total cost basis for tax purposes | False if cost basis unavailable | Unrealized gain/loss at position date |
+| Estimated annual income (dividends/interest) | Estimated yield percentage | Current dividend yield | Option contract details JSON |
+| Bond details JSON | True if held in margin | True if short position | True if from dividend reinvestment |
+| Percentage of account holdings | Additional notes or observations | Record creation timestamp | Last modification timestamp |
+
+**Foreign Key Constraints:**
+- `document_id` → `documents(id)` ON DELETE CASCADE
+- `account_id` → `accounts(id)` ON DELETE RESTRICT
+- `entity_id` → `entities(id)` ON DELETE RESTRICT
+
+---
+
+### Table: income_summaries
+
+**Purpose:** Period and year-to-date income summaries from statements. Aggregated view of income by type and tax treatment.
+
+| Column (*R = Req)              | Data Type     | Constraints                                                        | Purpose/Source                                           |
+|--------------------------------|---------------|---------------------------------------------------------------------|----------------------------------------------------------|
+| `id`                           | UUID (PK)     | PRIMARY KEY DEFAULT gen_random_uuid()                               | Auto-generated unique identifier                         |
+| `document_id` *R               | UUID (FK)     | NOT NULL REFERENCES documents(id) ON DELETE CASCADE                 | Source document                                          |
+| `account_id`                   | UUID (FK)     | REFERENCES accounts(id) ON DELETE RESTRICT                          | Account (null for portfolio-level summaries)             |
+| `entity_id` *R                 | UUID (FK)     | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT                 | Entity receiving income                                   |
+| **Period Information**         |               |                                                                     |                                                          |
+| `period_start` *R              | DATE          | NOT NULL                                                           | Start of income period                                   |
+| `period_end` *R                | DATE          | NOT NULL                                                           | End of income period                                      |
+| `summary_type` *R              | TEXT          | NOT NULL CHECK (summary_type IN ('period', 'ytd', 'annual'))        | Type of summary                                          |
+| `summary_level` *R             | TEXT          | NOT NULL CHECK (summary_level IN ('portfolio', 'account'))          | Portfolio vs account level                               |
+| **Taxable Income**             |               |                                                                     |                                                          |
+| `taxable_dividends_period`    | NUMERIC(15,2) |                                                                     | Ordinary dividends for period                            |
+| `taxable_dividends_ytd`        | NUMERIC(15,2) |                                                                     | Ordinary dividends year-to-date                          |
+| `qualified_dividends_period`   | NUMERIC(15,2) |                                                                     | Qualified dividends for period                           |
+| `qualified_dividends_ytd`      | NUMERIC(15,2) |                                                                     | Qualified dividends year-to-date                         |
+| `taxable_interest_period`      | NUMERIC(15,2) |                                                                     | Taxable interest for period                              |
+| `taxable_interest_ytd`         | NUMERIC(15,2) |                                                                     | Taxable interest year-to-date                            |
+| **Capital Gains**              |               |                                                                     |                                                          |
+| `short_term_gains_period`      | NUMERIC(15,2) |                                                                     | Short-term capital gains for period                      |
+| `short_term_gains_ytd`         | NUMERIC(15,2) |                                                                     | Short-term capital gains year-to-date                    |
+| `long_term_gains_period`       | NUMERIC(15,2) |                                                                     | Long-term capital gains for period                       |
+| `long_term_gains_ytd`          | NUMERIC(15,2) |                                                                     | Long-term capital gains year-to-date                     |
+| **Tax-Exempt Income**          |               |                                                                     |                                                          |
+| `exempt_dividends_period`      | NUMERIC(15,2) |                                                                     | Tax-exempt dividends for period                          |
+| `exempt_dividends_ytd`         | NUMERIC(15,2) |                                                                     | Tax-exempt dividends year-to-date                        |
+| `exempt_interest_period`       | NUMERIC(15,2) |                                                                     | Tax-exempt interest for period                           |
+| `exempt_interest_ytd`          | NUMERIC(15,2) |                                                                     | Tax-exempt interest year-to-date                         |
+| **Other Income**               |               |                                                                     |                                                          |
+| `return_of_capital_period`     | NUMERIC(15,2) |                                                                     | Return of capital for period                             |
+| `return_of_capital_ytd`        | NUMERIC(15,2) |                                                                     | Return of capital year-to-date                           |
+| `foreign_tax_paid_period`      | NUMERIC(15,2) |                                                                     | Foreign taxes paid for period                            |
+| `foreign_tax_paid_ytd`         | NUMERIC(15,2) |                                                                     | Foreign taxes paid year-to-date                          |
+| **Totals**                     |               |                                                                     |                                                          |
+| `total_income_period` *R       | NUMERIC(15,2) | NOT NULL                                                           | Total income for period                                  |
+| `total_income_ytd`             | NUMERIC(15,2) |                                                                     | Total income year-to-date                                |
+| **Realized Gains/Losses**      |               |                                                                     |                                                          |
+| `realized_gains_losses`        | JSONB         |                                                                     | Detailed realized gains/losses breakdown                 |
+| **Metadata**                   |               |                                                                     |                                                          |
+| `notes`                        | TEXT          |                                                                     | Additional notes                                         |
+| **Audit Trail**                |               |                                                                     |                                                          |
+| `created_at`                   | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Record creation timestamp                                |
+| `updated_at`                   | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Last modification timestamp                              |
+| `Comment`                      |               |                                                                   |                                                          |
+|--------------------------------|---------------|---------------------------------------------------------------------|----------------------------------------------------------|
+| Auto-generated unique identifier | FK to documents table | FK to accounts table (null for portfolio-level) | FK to entities table |
+| Start of income period | End of income period | Type of summary (period, ytd, annual) | Portfolio vs account level |
+| Ordinary dividends for period | Ordinary dividends year-to-date | Qualified dividends for period | Qualified dividends year-to-date |
+| Taxable interest for period | Taxable interest year-to-date | Short-term capital gains for period | Short-term capital gains year-to-date |
+| Long-term capital gains for period | Long-term capital gains year-to-date | Tax-exempt dividends for period | Tax-exempt dividends year-to-date |
+| Tax-exempt interest for period | Tax-exempt interest year-to-date | Return of capital for period | Return of capital year-to-date |
+| Foreign taxes paid for period | Foreign taxes paid year-to-date | Total income for period | Total income year-to-date |
+| Detailed realized gains/losses breakdown | Additional notes | Record creation timestamp | Last modification timestamp |
+
+**Foreign Key Constraints:**
+- `document_id` → `documents(id)` ON DELETE CASCADE
+- `account_id` → `accounts(id)` ON DELETE RESTRICT
+- `entity_id` → `entities(id)` ON DELETE RESTRICT
+
 
 ---
 
@@ -479,33 +437,14 @@ CREATE INDEX idx_transactions_tax_details ON transactions USING GIN (tax_details
 | **Audit Trail**           |               |                                                             |                                                 |
 | `created_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                               | Record creation timestamp                       |
 | `updated_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                               | Last modification timestamp                     |
+| `Comment`                 |               |                                                             |                                                 |
+|---------------------------|---------------|-------------------------------------------------------------|-----------------------------------------------------|
+| Auto-generated unique identifier | FK to entities table | FK to accounts table (if tracked) | Tax year payment applies to |
+| Type of tax payment (est_q1, est_q2, etc.) | Which government entity (federal, georgia, other_state) | Date payment was made | Original due date for payment |
+| Payment amount | Calculation details JSON | Estimated income for the year | Estimated total tax liability |
+| Additional context and notes | Record creation timestamp | Last modification timestamp |
 
-**Indexes:**
-```sql
-CREATE INDEX idx_tax_payments_entity ON tax_payments(entity_id);
-CREATE INDEX idx_tax_payments_year ON tax_payments(tax_year);
-CREATE INDEX idx_tax_payments_type ON tax_payments(payment_type);
-CREATE INDEX idx_tax_payments_authority ON tax_payments(tax_authority);
-CREATE INDEX idx_tax_payments_date ON tax_payments(payment_date);
-CREATE INDEX idx_tax_payments_due_date ON tax_payments(due_date) WHERE due_date IS NOT NULL;
-CREATE INDEX idx_tax_payments_entity_year ON tax_payments(entity_id, tax_year, payment_type);
-CREATE INDEX idx_tax_payments_calculation_basis ON tax_payments USING GIN (calculation_basis);
-```
 
-**Example Calculation Basis JSONB:**
-```json
-{
-  "method": "prior_year_safe_harbor",
-  "prior_year_tax": 15000.00,
-  "safe_harbor_percentage": 100,
-  "quarterly_amount": 3750.00,
-  "current_year_estimate": 18000.00,
-  "income_sources": [
-    {"type": "s_corp_distribution", "amount": 60000},
-    {"type": "investment_income", "amount": 8000}
-  ]
-}
-```
 
 ---
 
@@ -534,19 +473,12 @@ CREATE INDEX idx_tax_payments_calculation_basis ON tax_payments USING GIN (calcu
 | **Audit Trail**             |               |                                                               |                                  |
 | `created_at`                | TIMESTAMPTZ   | DEFAULT NOW()                                                 | Record creation timestamp        |
 | `updated_at`                | TIMESTAMPTZ   | DEFAULT NOW()                                                 | Last modification timestamp      |
+| `Comment`                   |               |                                                               |                                  |
+|-----------------------------|---------------|---------------------------------------------------------------|-------------------------------------|
+| Auto-generated unique identifier | FK to entities table (source) | FK to accounts table (source) | FK to entities table (destination) |
+| FK to accounts table (destination) | Date transfer occurred | Transfer amount | Nature of the transfer |
+| Business purpose description | Additional context and details | Record creation timestamp | Last modification timestamp |
 
-**Indexes:**
-```sql
-CREATE INDEX idx_transfers_source_entity ON transfers(source_entity_id);
-CREATE INDEX idx_transfers_dest_entity ON transfers(destination_entity_id);
-CREATE INDEX idx_transfers_date ON transfers(transfer_date);
-CREATE INDEX idx_transfers_type ON transfers(transfer_type);
-CREATE INDEX idx_transfers_loans ON transfers(is_loan) WHERE is_loan = true;
-CREATE INDEX idx_transfers_outstanding ON transfers(outstanding_balance) WHERE outstanding_balance > 0;
-CREATE INDEX idx_transfers_entities ON transfers(source_entity_id, destination_entity_id, transfer_date);
-CREATE INDEX idx_transfers_repayment_schedule ON transfers USING GIN (repayment_schedule);
-CREATE INDEX idx_transfers_related ON transfers USING GIN (related_transactions);
-```
 
 **Foreign Key Constraints:**
 - `source_entity_id` → `entities(id)` ON DELETE RESTRICT
@@ -555,18 +487,6 @@ CREATE INDEX idx_transfers_related ON transfers USING GIN (related_transactions)
 - `destination_account_id` → `accounts(id)` ON DELETE RESTRICT
 - CHECK CONSTRAINT: `source_entity_id != destination_entity_id` (prevent self-transfers)
 
-**Example Repayment Schedule JSONB:**
-```json
-{
-  "frequency": "monthly",
-  "payment_amount": 500.00,
-  "start_date": "2024-01-01",
-  "payment_day": 1,
-  "auto_payment": true,
-  "remaining_payments": 18,
-  "next_payment_date": "2024-11-01"
-}
-```
 
 ---
 
@@ -615,37 +535,17 @@ CREATE INDEX idx_transfers_related ON transfers USING GIN (related_transactions)
 | **Audit Trail**              |               |                                                            |                                                        |
 | `created_at`                 | TIMESTAMPTZ   | DEFAULT NOW()                                              | Record creation timestamp                              |
 | `updated_at`                 | TIMESTAMPTZ   | DEFAULT NOW()                                              | Last modification timestamp                            |
+| `Comment`                    |               |                                                            |                                                        |
+|------------------------------|---------------|------------------------------------------------------------|---------------------------------------------------------|
+| Auto-generated unique identifier | FK to entities table | FK to accounts table | Security ticker symbol (e.g. "AAPL", "VTSAX") |
+| CUSIP identifier | Full security name | Type of security | Purchase price target/limit |
+| Sale price target | Stop loss price | Last known price | When price was last updated |
+| Total cost basis of position | Current number of shares held | Current unrealized gain/loss | Date of last buy/sell transaction |
+| True if price alerts are active | Alert conditions JSON | Current dividend yield | Expected next dividend payment date |
+| Ongoing research and analysis notes | How often to review | Scheduled next review date | Current status |
+| General notes and observations | Record creation timestamp | Last modification timestamp |
 
-**Indexes:**
-```sql
-CREATE INDEX idx_asset_notes_entity ON asset_notes(entity_id);
-CREATE INDEX idx_asset_notes_account ON asset_notes(account_id) WHERE account_id IS NOT NULL;
-CREATE INDEX idx_asset_notes_symbol ON asset_notes(symbol);
-CREATE INDEX idx_asset_notes_status ON asset_notes(status);
-CREATE INDEX idx_asset_notes_review_date ON asset_notes(next_review_date) WHERE next_review_date IS NOT NULL;
-CREATE INDEX idx_asset_notes_alerts ON asset_notes(alert_enabled) WHERE alert_enabled = true;
-CREATE INDEX idx_asset_notes_alert_conditions ON asset_notes USING GIN (alert_conditions);
-CREATE INDEX idx_asset_notes_tags ON asset_notes USING GIN (tags);
-```
 
-**Example Alert Conditions JSONB:**
-```json
-{
-  "price_above": 150.00,
-  "price_below": 120.00,
-  "volume_spike": {
-    "enabled": true,
-    "threshold_multiplier": 2.0
-  },
-  "dividend_announcement": true,
-  "earnings_date": "2024-02-01"
-}
-```
-
-**Example Tags JSONB:**
-```json
-["growth", "large_cap", "tech", "dividend_growth", "core_holding"]
-```
 
 ---
 
@@ -682,13 +582,13 @@ CREATE INDEX idx_asset_notes_tags ON asset_notes USING GIN (tags);
 | **Audit Trail**     |               |                                                      |                                         |
 | `created_at`        | TIMESTAMPTZ   | DEFAULT NOW()                                        | Record creation timestamp               |
 | `updated_at`        | TIMESTAMPTZ   | DEFAULT NOW()                                        | Last modification timestamp             |
+| `Comment`           |               |                                                      |                                         |
+|---------------------|---------------|------------------------------------------------------|------------------------------------------|
+| Auto-generated unique identifier | FK to entities table | Type of real asset | Asset description (e.g. "Address") |
+| Property address if applicable | When asset was acquired | Original purchase price | Current estimated value |
+| Date of current valuation | Source of valuation (e.g. "Appraisal") | Rental income if applicable | Maintenance, HOA, insurance, taxes |
+| Current status | Additional notes | Record creation timestamp | Last modification timestamp |
 
-**Indexes:**
-```sql
-CREATE INDEX idx_real_assets_entity ON real_assets(entity_id);
-CREATE INDEX idx_real_assets_type ON real_assets(asset_type);
-CREATE INDEX idx_real_assets_status ON real_assets(status);
-```
 
 ---
 
@@ -724,283 +624,14 @@ CREATE INDEX idx_real_assets_status ON real_assets(status);
 | **Audit Trail**       |               |                                                          |                                       |
 | `created_at`          | TIMESTAMPTZ   | DEFAULT NOW()                                            | Record creation timestamp             |
 | `updated_at`          | TIMESTAMPTZ   | DEFAULT NOW()                                            | Last modification timestamp           |
+| `Comment`             |               |                                                          |                                       |
+|-----------------------|---------------|----------------------------------------------------------|---------------------------------------|
+| Auto-generated unique identifier | FK to entities table | FK to real_assets table (for mortgages) | Type of liability |
+| Name of lender/bank | Loan account number (masked) | Original loan amount | Current outstanding balance |
+| Annual interest rate (e.g. 4.25%) | When loan originated | When loan will be paid off | Regular monthly payment amount |
+| Next payment due date | Monthly escrow for taxes/insurance | Current status | Additional notes |
+| Record creation timestamp | Last modification timestamp |
 
-**Indexes:**
-```sql
-CREATE INDEX idx_liabilities_entity ON liabilities(entity_id);
-CREATE INDEX idx_liabilities_asset ON liabilities(real_asset_id) WHERE real_asset_id IS NOT NULL;
-CREATE INDEX idx_liabilities_type ON liabilities(liability_type);
-CREATE INDEX idx_liabilities_status ON liabilities(status);
-CREATE INDEX idx_liabilities_maturity ON liabilities(maturity_date) WHERE status = 'active';
-```
-
----
-
-## Database Constraints and Data Integrity
-
-### Table-Level Constraints
-
-**entities table:**
-```sql
--- Ensure tax_year_end format
-ALTER TABLE entities ADD CONSTRAINT chk_tax_year_end_format 
-CHECK (tax_year_end ~ '^\d{2}-\d{2}$');
-
--- Ensure valid entity types
-ALTER TABLE entities ADD CONSTRAINT chk_entity_type_valid 
-CHECK (entity_type IN ('individual', 's_corp', 'llc', 'partnership', 'c_corp', 'trust'));
-```
-
-**accounts table:**
-```sql
--- Prevent conflicting tax attributes
-ALTER TABLE accounts ADD CONSTRAINT chk_tax_attributes_exclusive 
-CHECK (NOT (is_tax_deferred = true AND is_tax_free = true));
-
--- Ensure account number security
-ALTER TABLE accounts ADD CONSTRAINT chk_account_number_masked 
-CHECK (account_number_display ~ '^\*\*\*\*\d{4}$');
-```
-
-**documents table:**
-```sql
--- Ensure period logic
-ALTER TABLE documents ADD CONSTRAINT chk_period_dates 
-CHECK (period_start <= period_end);
-
--- Ensure amendment chain integrity
-ALTER TABLE documents ADD CONSTRAINT chk_amendment_not_self 
-CHECK (id != amends_document_id);
-```
-
-**transactions table:**
-```sql
--- Ensure non-zero amounts
-ALTER TABLE transactions ADD CONSTRAINT chk_amount_nonzero 
-CHECK (amount != 0);
-
--- Prevent self-referential duplicates
-ALTER TABLE transactions ADD CONSTRAINT chk_duplicate_not_self 
-CHECK (id != is_duplicate_of);
-```
-
-**transfers table:**
-```sql
--- Prevent self-transfers
-ALTER TABLE transfers ADD CONSTRAINT chk_no_self_transfer 
-CHECK (source_entity_id != destination_entity_id);
-
--- Ensure loan logic
-ALTER TABLE transfers ADD CONSTRAINT chk_loan_fields 
-CHECK (
-    (is_loan = false) OR 
-    (is_loan = true AND outstanding_balance IS NOT NULL AND outstanding_balance >= 0)
-);
-```
-
-### Referential Integrity Rules
-
-**Cascade Rules:**
-- `documents.id` → `transactions.document_id` ON DELETE CASCADE (transactions belong to documents)
-- All other entity/account references use ON DELETE RESTRICT to prevent data loss
-
-**Data Validation Rules:**
-- All monetary amounts use NUMERIC(15,2) for precision
-- All timestamps use TIMESTAMPTZ for timezone awareness
-- JSONB fields have GIN indexes for efficient querying
-- File hashes use SHA256 for reliable duplicate detection
-
----
-
-## Performance Optimization
-
-### Query Optimization Patterns
-
-**Most Common Queries:**
-
-1. **Entity Portfolio View:**
-```sql
--- Optimized with idx_transactions_entity_date
-SELECT t.*, a.account_name, d.document_type
-FROM transactions t
-JOIN accounts a ON t.account_id = a.id
-JOIN documents d ON t.document_id = d.id
-WHERE t.entity_id = $1 
-AND t.transaction_date >= $2
-ORDER BY t.transaction_date DESC;
-```
-
-2. **Tax Year Summary:**
-```sql
--- Optimized with idx_transactions_tax_federal and idx_transactions_tax_state
-SELECT 
-    tax_category,
-    SUM(amount) as total_amount,
-    COUNT(*) as transaction_count
-FROM transactions t
-JOIN documents d ON t.document_id = d.id
-WHERE t.entity_id = $1 
-AND d.tax_year = $2
-AND t.federal_taxable = true
-GROUP BY tax_category
-ORDER BY total_amount DESC;
-```
-
-3. **Document Processing Queue:**
-```sql
--- Optimized with idx_documents_processing
-SELECT id, file_name, extraction_confidence, needs_human_review
-FROM documents
-WHERE extraction_confidence IN ('needs_review', 'failed')
-OR needs_human_review = true
-ORDER BY imported_at DESC;
-```
-
-### Index Strategy
-
-**Composite Indexes for Common Filters:**
-```sql
--- Multi-column indexes for frequent query patterns
-CREATE INDEX idx_transactions_entity_date_type ON transactions(entity_id, transaction_date, transaction_type);
-CREATE INDEX idx_accounts_entity_status_type ON accounts(entity_id, account_status, account_type);
--- Documents no longer carry entity_id; join via document_accounts → accounts for entity scoping
-```
-
-**Partial Indexes for Efficiency:**
-```sql
--- Index only active/relevant records
-CREATE INDEX idx_accounts_active ON accounts(entity_id, account_type) WHERE account_status = 'active';
-CREATE INDEX idx_transfers_active_loans ON transfers(source_entity_id, destination_entity_id) WHERE is_loan = true AND status = 'active';
-CREATE INDEX idx_asset_notes_monitored ON asset_notes(symbol, entity_id) WHERE status = 'active' AND alert_enabled = true;
-```
-
-### Maintenance Considerations
-
-**Regular Maintenance Tasks:**
-1. **VACUUM ANALYZE** monthly on high-transaction tables
-2. **REINDEX** JSONB GIN indexes quarterly
-3. **Update table statistics** after bulk imports
-4. **Archive old documents** after 7+ years (configurable)
-
-**Monitoring Queries:**
-```sql
--- Check index usage
-SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch
-FROM pg_stat_user_indexes 
-WHERE schemaname = 'public'
-ORDER BY idx_scan DESC;
-
--- Monitor table sizes
-SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(tablename::text)) as size
-FROM pg_tables 
-WHERE schemaname = 'public'
-ORDER BY pg_total_relation_size(tablename::text) DESC;
-```
-
----
-
-## Common Query Examples
-
-### Multi-Entity Financial Summary
-```sql
--- Consolidated income summary across all entities
-WITH entity_income AS (
-    SELECT 
-        e.entity_name,
-        e.entity_type,
-        SUM(CASE WHEN t.federal_taxable THEN t.amount ELSE 0 END) as federal_taxable_income,
-        SUM(CASE WHEN t.state_taxable THEN t.amount ELSE 0 END) as state_taxable_income,
-        SUM(t.amount) as total_income
-    FROM entities e
-    JOIN transactions t ON e.id = t.entity_id
-    JOIN documents d ON t.document_id = d.id
-    WHERE d.tax_year = 2024
-    AND t.transaction_type IN ('dividend', 'interest')
-    AND t.amount > 0
-    GROUP BY e.id, e.entity_name, e.entity_type
-)
-SELECT * FROM entity_income
-ORDER BY federal_taxable_income DESC;
-```
-
-### Inter-Entity Transfer Analysis
-```sql
--- Analyze loan relationships between entities
-SELECT 
-    se.entity_name as lender,
-    de.entity_name as borrower,
-    t.amount,
-    t.transfer_date,
-    t.outstanding_balance,
-    t.interest_rate,
-    CASE 
-        WHEN t.outstanding_balance > 0 THEN 'Outstanding'
-        WHEN t.status = 'paid_off' THEN 'Paid Off'
-        ELSE t.status
-    END as loan_status
-FROM transfers t
-JOIN entities se ON t.source_entity_id = se.id
-JOIN entities de ON t.destination_entity_id = de.id
-WHERE t.is_loan = true
-ORDER BY t.transfer_date DESC;
-```
-
-### Tax Document Processing Status
-```sql
--- Monitor document processing pipeline by entity via account links
-WITH doc_links AS (
-    SELECT d.id as document_id,
-           d.document_type,
-           d.tax_year,
-           d.extraction_confidence,
-           d.needs_human_review,
-           d.processed_at,
-           a.entity_id
-    FROM documents d
-    JOIN document_accounts da ON da.document_id = d.id
-    JOIN accounts a ON da.account_id = a.id
-    WHERE d.tax_year = 2024
-)
-SELECT 
-    e.entity_name,
-    dl.document_type,
-    COUNT(*) as total_docs,
-    COUNT(CASE WHEN dl.extraction_confidence = 'high' THEN 1 END) as high_confidence,
-    COUNT(CASE WHEN dl.needs_human_review THEN 1 END) as needs_review,
-    COUNT(CASE WHEN dl.processed_at IS NOT NULL THEN 1 END) as processed,
-    ROUND(100.0 * COUNT(CASE WHEN dl.extraction_confidence = 'high' THEN 1 END) / COUNT(*), 1) as confidence_pct,
-    ROUND(100.0 * COUNT(CASE WHEN dl.processed_at IS NOT NULL THEN 1 END) / COUNT(*), 1) as processed_pct
-FROM doc_links dl
-JOIN entities e ON dl.entity_id = e.id
-GROUP BY e.entity_name, dl.document_type
-ORDER BY e.entity_name, dl.document_type;
-```
-
-### Investment Performance Dashboard
-```sql
--- Asset performance with strategy notes
-SELECT 
-    e.entity_name,
-    an.symbol,
-    an.security_name,
-    an.current_shares,
-    an.cost_basis,
-    an.current_price * an.current_shares as current_value,
-    an.unrealized_gain_loss,
-    CASE 
-        WHEN an.cost_basis > 0 THEN 
-            ROUND(100.0 * an.unrealized_gain_loss / an.cost_basis, 2)
-        ELSE NULL
-    END as return_pct,
-    an.investment_thesis,
-    an.risk_level,
-    an.next_review_date
-FROM asset_notes an
-JOIN entities e ON an.entity_id = e.id
-WHERE an.status = 'active'
-AND an.current_shares > 0
-ORDER BY an.unrealized_gain_loss DESC;
-```
 
 ---
 
@@ -1014,17 +645,20 @@ ORDER BY an.unrealized_gain_loss DESC;
 
 ### Complete Table Summary
 
-The schema now includes **10 core tables**:
+The schema now includes **12 core tables**:
 1. **entities** - Business entities and individuals
-2. **institutions** - Financial institutions  
+2. **institutions** - Financial institutions
 3. **accounts** - Financial accounts
-4. **documents** - Source documents with extraction metadata
-5. **transactions** - Financial transactions
-6. **tax_payments** - Quarterly tax tracking
-7. **transfers** - Inter-entity money movements
-8. **asset_notes** - Investment strategies
-9. **real_assets** - Properties and physical assets
-10. **liabilities** - Mortgages and long-term debt
+4. **documents** - Source documents with extraction metadata and portfolio summaries
+5. **document_accounts** - Junction table linking documents to multiple accounts
+6. **transactions** - Financial transactions
+7. **positions** - Holdings/positions snapshots from statements
+8. **income_summaries** - Period and YTD income summaries by type
+9. **tax_payments** - Quarterly tax tracking
+10. **transfers** - Inter-entity money movements
+11. **asset_notes** - Investment strategies
+12. **real_assets** - Properties and physical assets
+13. **liabilities** - Mortgages and long-term debt
 
 ### Expected Evolution Path
 1. **Phase 2:** Add QuickBooks integration tables
