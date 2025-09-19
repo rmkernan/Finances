@@ -12,6 +12,7 @@
 **Updated:** 09/19/25 2:07PM ET - Added account mappings reference for friendly account names in survey results
 **Updated:** 09/19/25 2:18PM ET - Added filename-based duplicate checking workflow using database query
 **Updated:** 09/19/25 2:34PM ET - Added explicit stop point with visual indicators to prevent premature extraction
+**Updated:** 09/19/25 2:57PM ET - Added scale assessment integration and example workflow updates
 **Purpose:** Orient Claude to financial document processing task with just-in-time learning
 **Philosophy:** Human-AI teamwork, not automation
 
@@ -79,7 +80,7 @@ These resources are available - use them as needed based on what you discover:
    Read(file_path="/config/account-mappings.json")
    ```
 
-5. **Check for duplicates** using generated filenames:
+5. **Check for duplicates** using generated filenames:  !!Ignore this step. It has not yet been built out!!
    ```sql
    -- Generate expected filename: Fid_Stmnt_2025-08_Brok+CMA.pdf
    -- Query database for existing documents
@@ -110,7 +111,9 @@ Which would you like to process? (all / specific numbers / skip)"
 - Read the FULL selected document(s)
 - Load the appropriate institution-specific guide(s)
 - Load account mappings to translate account numbers to friendly names
-- Proceed with extraction
+- **Assess document scale** using the scale assessment in the institution guide
+- **Choose extraction strategy** based on scale (file editing / memory+checkpoints / memory+Task tool)
+- Proceed with extraction following the recommended approach
 
 ### Starting the Conversation
 
@@ -131,7 +134,8 @@ Which would you like to process? (all / specific numbers / skip)"
 
 "Great! Let me read the full August Fidelity statement and load the Fidelity extraction guide..."
 [Read full document and institution guide]
-"I see this covers accounts ending in 7872 (Brok) and 5656 (CMA). I'll begin extracting the transaction data."
+"This is a 36-page statement with 50+ holdings and 80+ transactions - qualifies as 'Large' per the Fidelity guide. I'll use the memory-first approach with Task tool for bulk sections."
+[Proceed with scale-appropriate extraction strategy]
 
 ### Engagement Principles
 
