@@ -1,0 +1,275 @@
+{
+  "extraction_session": {
+    "timestamp": "2025-01-18T15:30:00Z",
+    "source_file": "Statement8312025.pdf",
+    "file_hash": "32967b1d3e40b2c544cc42e0c6f378e5",
+    "document_pages": 36,
+    "extractor": "claude"
+  },
+  "document_info": {
+    "institution": "Fidelity",
+    "document_type": "statement",
+    "period": {
+      "start": "2025-08-01",
+      "end": "2025-08-31"
+    },
+    "portfolio_total_value": 6925062.03,
+    "portfolio_change_period": 22847.95
+  },
+  "accounts": [
+    {
+      "account_number": "Z24-527872",
+      "account_holder_name": "RICHARD MICHAEL KERNAN - JOINT WROS - TOD",
+      "account_type": "GENERAL INVESTMENTS - FIDELITY ACCOUNT",
+      "net_account_value": 6870462.09,
+      "beginning_value": 6809436.99,
+      "transactions": [
+        {
+          "settlement_date": "2025-08-04",
+          "security_name": "TESLA INC COM",
+          "security_identifier": "88160R101",
+          "transaction_description": "You Bought - ASSIGNED PUTS",
+          "quantity": 500.000,
+          "price_per_unit": 305.00000,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": -152500.00,
+          "transaction_type": "BUY"
+        },
+        {
+          "settlement_date": "2025-08-06",
+          "security_name": "PUT (COIN) COINBASE GLOBAL INC AUG 15 25 $300",
+          "security_identifier": "7378399EA",
+          "transaction_description": "You Sold - OPENING TRANSACTION",
+          "quantity": -10.000,
+          "price_per_unit": 10.70000,
+          "cost_basis": null,
+          "fees": -6.74,
+          "amount": 10693.26,
+          "transaction_type": "SELL"
+        },
+        {
+          "settlement_date": "2025-08-06",
+          "security_name": "PUT (CRWV) COREWEAVE INC COM CL AUG 15 25 $100",
+          "security_identifier": "7894949PJ",
+          "transaction_description": "You Sold - OPENING TRANSACTION",
+          "quantity": -5.000,
+          "price_per_unit": 7.61000,
+          "cost_basis": null,
+          "fees": -3.37,
+          "amount": 3801.63,
+          "transaction_type": "SELL"
+        },
+        {
+          "settlement_date": "2025-08-08",
+          "security_name": "WISCONSIN ST HEALTH & EDL FACS AUTH REV",
+          "security_identifier": "97712DHL3",
+          "transaction_description": "Redeemed - FULL CALL PAYOUT",
+          "quantity": -10000.000,
+          "price_per_unit": null,
+          "cost_basis": 10000.00,
+          "fees": 0.00,
+          "amount": 10000.00,
+          "transaction_type": "REDEMPTION"
+        },
+        {
+          "settlement_date": "2025-08-12",
+          "security_name": "INTEL CORP COM USD0.001",
+          "security_identifier": "458140100",
+          "transaction_description": "You Bought",
+          "quantity": 1000.000,
+          "price_per_unit": 20.90500,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": -20905.00,
+          "transaction_type": "BUY"
+        },
+        {
+          "settlement_date": "2025-08-15",
+          "security_name": "CLIFTON TEX HIGHER ED FIN CORP ED REV",
+          "security_identifier": "187145GB7",
+          "transaction_description": "Redeemed - REDEMPTION PAYOUT",
+          "quantity": -50000.000,
+          "price_per_unit": null,
+          "cost_basis": 50000.00,
+          "fees": 0.00,
+          "amount": 50000.00,
+          "transaction_type": "REDEMPTION"
+        },
+        {
+          "settlement_date": "2025-08-18",
+          "security_name": "COREWEAVE INC COM CL A",
+          "security_identifier": "21873S108",
+          "transaction_description": "You Bought - ASSIGNED PUTS",
+          "quantity": 500.000,
+          "price_per_unit": 135.00000,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": -67500.00,
+          "transaction_type": "BUY"
+        },
+        {
+          "settlement_date": "2025-08-18",
+          "security_name": "COREWEAVE INC COM CL A",
+          "security_identifier": "21873S108",
+          "transaction_description": "You Bought - ASSIGNED PUTS",
+          "quantity": 500.000,
+          "price_per_unit": 155.00000,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": -77500.00,
+          "transaction_type": "BUY"
+        },
+        {
+          "settlement_date": "2025-08-18",
+          "security_name": "STRATEGY INC COMMON STOCK CLASS A",
+          "security_identifier": "594972408",
+          "transaction_description": "You Bought - ASSIGNED PUTS",
+          "quantity": 500.000,
+          "price_per_unit": 370.00000,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": -185000.00,
+          "transaction_type": "BUY"
+        },
+        {
+          "settlement_date": "2025-08-25",
+          "security_name": "ANTERO RESOURCES CORP COM",
+          "security_identifier": "03674X106",
+          "transaction_description": "You Bought - ASSIGNED PUTS",
+          "quantity": 1000.000,
+          "price_per_unit": 33.00000,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": -33000.00,
+          "transaction_type": "BUY"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "security_name": "ADVANCED MICRO DEVICES INC",
+          "security_identifier": "007903107",
+          "transaction_description": "You Bought - ASSIGNED PUTS",
+          "quantity": 2000.000,
+          "price_per_unit": 180.00000,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": -360000.00,
+          "transaction_type": "BUY"
+        }
+      ],
+      "positions": [
+        {
+          "security_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I",
+          "security_identifier": "FTCXX",
+          "quantity": 2315122.290,
+          "price_per_unit": 1.0000,
+          "market_value": 2315122.29,
+          "cost_basis": null,
+          "unrealized_gain_loss": null
+        },
+        {
+          "security_description": "FIDELITY TAX-FREE BOND",
+          "security_identifier": "FTABX",
+          "quantity": 94201.940,
+          "price_per_unit": 10.7300,
+          "market_value": 1010786.82,
+          "cost_basis": 1013337.57,
+          "unrealized_gain_loss": -2550.75
+        },
+        {
+          "security_description": "ALPHABET INC CAP STK CL C",
+          "security_identifier": "GOOG",
+          "quantity": 2500.000,
+          "price_per_unit": 213.5300,
+          "market_value": 533825.00,
+          "cost_basis": 389063.56,
+          "unrealized_gain_loss": 144761.44
+        },
+        {
+          "security_description": "TESLA INC COM",
+          "security_identifier": "TSLA",
+          "quantity": 1200.000,
+          "price_per_unit": 333.8700,
+          "market_value": 400644.00,
+          "cost_basis": 342226.72,
+          "unrealized_gain_loss": 58417.28
+        },
+        {
+          "security_description": "ADVANCED MICRO DEVICES INC",
+          "security_identifier": "AMD",
+          "quantity": 2000.000,
+          "price_per_unit": 162.6300,
+          "market_value": 325260.00,
+          "cost_basis": 348513.49,
+          "unrealized_gain_loss": -23253.49
+        }
+      ],
+      "income_summary": {
+        "taxable_income_period": 1904.88,
+        "taxable_income_ytd": 35310.17,
+        "tax_exempt_income_period": 14882.56,
+        "tax_exempt_income_ytd": 119668.90
+      }
+    },
+    {
+      "account_number": "Z27-375656",
+      "account_holder_name": "RICHARD MICHAEL KERNAN - JOINT WROS - TOD",
+      "account_type": "FIDELITY CASH MANAGEMENT ACCOUNT",
+      "net_account_value": 54599.94,
+      "beginning_value": 92777.09,
+      "transactions": [
+        {
+          "settlement_date": "2025-08-20",
+          "security_name": "FIMM MONEY MARKET PORTFOLIO: CL I",
+          "security_identifier": "316175207",
+          "transaction_description": "You Sold - REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
+          "quantity": -3907.060,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 3907.06,
+          "transaction_type": "SELL"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "security_name": "FIMM MONEY MARKET PORTFOLIO: CL I",
+          "security_identifier": "316175207",
+          "transaction_description": "You Sold - REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
+          "quantity": -13180.480,
+          "price_per_unit": null,
+          "cost_basis": null,
+          "fees": 0.00,
+          "amount": 13180.48,
+          "transaction_type": "SELL"
+        }
+      ],
+      "positions": [
+        {
+          "security_description": "FIMM MONEY MARKET PORTFOLIO: CL I",
+          "security_identifier": "FMPXX",
+          "quantity": 29607.190,
+          "price_per_unit": 1.0000,
+          "market_value": 29607.19,
+          "cost_basis": null,
+          "unrealized_gain_loss": null
+        },
+        {
+          "security_description": "IOWA FIN AUTH SINGLE FAMILY MTG REV BDS",
+          "security_identifier": "4624677J4",
+          "quantity": 25000.000,
+          "price_per_unit": 99.9710,
+          "market_value": 24992.75,
+          "cost_basis": 25000.00,
+          "unrealized_gain_loss": -7.25
+        }
+      ],
+      "income_summary": {
+        "taxable_income_period": 185.75,
+        "taxable_income_ytd": 3291.86,
+        "tax_exempt_income_period": 0.00,
+        "tax_exempt_income_ytd": 1300.00
+      }
+    }
+  ],
+  "extraction_notes": "Statement successfully extracted. Key observations: 1) This is a combined statement for August 2025 with two accounts. 2) Major transactions include option assignments resulting in stock purchases (Tesla, CoreWeave, Strategy Inc, Antero Resources, AMD). 3) Bond redemptions occurred for Wisconsin and Clifton bonds. 4) Large tax-exempt income from municipal securities. 5) Significant options activity with puts and calls. 6) Complex portfolio with stocks, bonds, mutual funds, ETFs, and options positions."
+}

@@ -1,6 +1,7 @@
 # Process Inbox Command
 
 **Created:** 09/18/25 11:15AM ET
+**Updated:** 09/19/25 12:35PM ET - Added intuitive filename format with account mappings and source file renaming
 **Purpose:** Guide Claude through intelligent document processing from inbox to structured JSON
 **Usage:** User runs this command when new documents are ready for processing
 
@@ -152,14 +153,30 @@ I will **PROCEED AUTOMATICALLY** when:
 
 ### Step 7: File Management
 
-After successful extraction:
-```bash
-# Save extraction to timestamped JSON
-/documents/extractions/extraction_YYYYMMDD_HHMMSS_[filename].json
+After successful extraction, I will:
 
-# Move original to processing folder (not processed yet - awaiting load confirmation)
-mv /documents/inbox/[file] /documents/processing/[file]
+1. **Load account mappings** from `/config/account-mappings.json`
+2. **Generate intuitive filenames** based on:
+   - Institution (Fid, BoA, etc.)
+   - Document type (Stmnt, 1099, etc.)
+   - Statement period (YYYY-MM format)
+   - Account labels from mapping (Brok, CMA, or last 4 digits if unmapped)
+   - Extraction timestamp (YYYY.MM.DD_HH.MMET)
+
+3. **Save files with meaningful names:**
+```bash
+# Example extraction filename for August 2025 Fidelity statement with accounts 7872 & 5656:
+# Fid_Stmnt_2025-08_Brok&CMA_2025.09.18_15.48ET.json
+/documents/extractions/[Institution]_[Type]_[Period]_[Accounts]_[YYYY.MM.DD]_[HH.MM]ET.json
+
+# Rename and move source document with matching convention (without timestamp):
+# Fid_Stmnt_2025-08_Brok&CMA.pdf
+mv /documents/inbox/[genericname].pdf /documents/processed/[Institution]_[Type]_[Period]_[Accounts].pdf
 ```
+
+4. **Update account mappings** if new accounts discovered:
+   - Prompt user: "Found new account ending in 1234. What label should I use? (e.g., 'Checking', 'IRA', 'Brok')"
+   - Add to `/config/account-mappings.json` for future use
 
 ## Institution-Specific Guides Referenced
 

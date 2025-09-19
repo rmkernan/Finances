@@ -1,0 +1,22 @@
+{
+  "fidelity": {
+    "7872": "Brok",
+    "5656": "CMA",
+    "_comment": "Add new accounts as discovered. Use last 4 digits of account number as key."
+  },
+  "bank_of_america": {
+    "_comment": "BoA accounts will be added here as we process them"
+  },
+  "suntrust": {
+    "_comment": "SunTrust accounts will be added here as we process them"
+  },
+  "_instructions": {
+    "usage": "Maps account number endings to human-readable labels for filename generation",
+    "format": "Institution name (lowercase) -> last 4 digits -> short label",
+    "examples": {
+      "single_account": "Fid_Stmnt_2025-08_Brok.pdf",
+      "multiple_accounts": "Fid_Stmnt_2025-08_Brok&CMA.pdf",
+      "unknown_account": "Falls back to Fid_Stmnt_2025-08_9999.pdf and prompts to update mapping"
+    }
+  }
+}

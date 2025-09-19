@@ -1,1 +1,0 @@
-/Users/richkernan/Projects/ProjectToolkit/.claude/hooks/universal-header-reminder.py

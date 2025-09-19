@@ -1,1 +1,31 @@
-/Users/richkernan/Projects/ProjectToolkit/.claude/settings.json
+{
+  "permissions": {
+    "allow": [
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Read",
+      "WebSearch",
+      "WebFetch",
+      "Read(//Users/richkernan/**)",
+      "mcp__perplexity__perplexity_ask",
+      "Bash(md5sum:*)",
+      "Bash(psql:*)",
+      "Bash(rm:*)",
+      "Bash(python3:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/richkernan/Projects/Finances/.claude/hooks/header-reminder.py"
+          }
+        ]
+      }
+    ]
+  }
+}

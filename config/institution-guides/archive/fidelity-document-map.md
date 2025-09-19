@@ -91,6 +91,33 @@ This document defines WHERE data should go (the field mappings). For HOW to extr
 - Show negative quantities and values
 - This is normal - record as shown
 
+## Common Transaction Patterns
+
+| What You See | transaction_type | Notes |
+|--------------|-----------------|--------|
+| "You Bought" | BUY | Regular purchase |
+| "You Sold" | SELL | Regular sale |
+| "DIVIDEND RECEIVED" | DIVIDEND | Income payment |
+| "ASSIGNED PUTS/CALLS" | BUY/SELL | Options exercised |
+| "Redeemed" | REDEMPTION | Bond matured/called |
+| "Reinvestment" | REINVEST | Dividend reinvested |
+
+## Handling Complex Items
+
+### For Options Assignments
+"TESLA INC COM ASSIGNED PUTS" → This is a BUY transaction (you were assigned stock)
+
+### For Income Already Categorized
+The statement shows "Taxable" and "Tax-exempt" - capture these AS SHOWN. Don't recategorize.
+
+### For Security Identifiers
+- Use CUSIP when available (bonds always have them)
+- Use ticker symbol for stocks
+- Include the full description regardless
+
+### For Dates in Activity Section
+Add the year from the statement period (August 2025 → dates are in 2025)
+
 ## When in Doubt
 
 If you can't find a mapped field or aren't sure about categorization:
@@ -98,4 +125,4 @@ If you can't find a mapped field or aren't sure about categorization:
 2. Ask the user for clarification
 3. Record the raw data rather than skipping it
 
-Remember: The goal is accurate data capture. The user knows their finances better than any document.
+Remember: This should feel like reading a paper statement. The goal is accurate data capture. The user knows their finances better than any document.

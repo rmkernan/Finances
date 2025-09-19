@@ -222,7 +222,8 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 | `settlement_date`         | DATE          |                                                                   | Settlement/clearing date                                  | Trade confirmations (Settlement Date) |
 | `transaction_type` *R     | TEXT          | NOT NULL CHECK (transaction_type IN ('dividend', 'interest',      | Transaction classification                                | Inferred from description patterns |
 |                           |               | 'buy', 'sell', 'transfer_in', 'transfer_out', 'fee',              |                                                           |  |
-|                           |               | 'return_of_capital', 'assignment',other'))                        |                                                           |  |
+|                           |               | 'return_of_capital', 'assignment', 'redemption', 'reinvest',      |                                                           |  |
+|                           |               | 'option_buy', 'option_sell', 'other'))                        |                                                           |  |
 | `transaction_subtype`     | TEXT          |                                                                   | Detailed subtype (e.g., 'qualified_dividend',             | Fidelity statements (description parsing), 1099s (box types) |
 |                           |               |                                                                   | 'municipal_interest', 'management_fee')                   |  |
 | `description` *R          | TEXT          | NOT NULL                                                          | Transaction description from source document              | Fidelity statements (Description column), QuickBooks exports (Memo field) |
@@ -236,6 +237,10 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 | `fees`                    | NUMERIC(10,2) |                                                                   | Transaction fees/costs                                    | Fidelity statements (Transaction Cost column) |
 | `security_type`           | TEXT          | CHECK (security_type IN ('stock', 'bond', 'mutual_fund', 'etf',   | Type of security involved                                 |
 |                           |               | 'money_market', 'cd', 'option', 'other'))                         |                                                           |
+| `option_details`          | JSONB         |                                                                   | Options data: {"type": "PUT/CALL", "strike": 150,         |
+|                           |               |                                                                   | "expiry": "2025-09-15", "underlying": "AAPL"}             |
+| `bond_details`            | JSONB         |                                                                   | Bond data: {"accrued_interest": 200, "coupon_rate": 5.0,  |
+|                           |               |                                                                   | "maturity": "2030-01-01", "call_date": "2025-09-30"}      |
 | `source` *R               | TEXT          | NOT NULL CHECK (source IN ('statement','qb_export','ledger'))     | Origin of the transaction data                            |
 | **Tax Categorization**    |               |                                                                   |                                                           |
 | `tax_category` *R         | TEXT          | NOT NULL CHECK (tax_category IN ('ordinary_dividend',             | Primary tax treatment                                     |
