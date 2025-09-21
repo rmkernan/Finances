@@ -1,6 +1,7 @@
 # Lessons Learned: Fidelity Sub-Agent Extraction Implementation
 
 **Created:** 01/09/25 3:45PM ET
+**Updated:** 09/21/25 9:28AM - Added exact sub-agent prompt details and architecture analysis
 **Purpose:** Document methodologies, lessons learned, and process improvements from implementing specialized sub-agents for financial document extraction
 
 ## Project Overview
@@ -122,26 +123,94 @@ Then return confirmation with extraction summary."
 
 ## Technical Implementation Details
 
-### Sub-Agent Invocation Pattern
+### Actual Sub-Agent Implementation Gap
+
+**Design vs Reality:**
+- **Planned:** Named specialized agents (`fidelity-holdings-extractor`, `fidelity-transactions-extractor`)
+- **Actual:** Generic `sonnet-task` agent with specialized prompt
+- **Result:** Both approaches worked, but reveals architecture decision point
+
+### Complete Sub-Agent Invocation Used
+
+**Exact Task Tool Call:**
 ```python
-# Successful pattern used:
-holdings_extraction = Task(
+Task(
     subagent_type="sonnet-task",
     description="Extract Fidelity holdings from pages 5-16",
-    prompt=f"""You are a specialized Fidelity holdings extractor.
-    Extract ALL investment positions from pages 5-16 of {pdf_path}.
+    prompt="""You are a specialized Fidelity holdings extractor. Extract ALL investment positions from the provided Fidelity PDF statement pages 5-16 in /Users/richkernan/Projects/Finances/documents/inbox/Statement8312025.pdf.
 
-    CRITICAL RULES:
-    1. Extract EVERY position - miss nothing
-    2. Preserve exact values including "unavailable"
-    3. Short positions have NEGATIVE quantities and market values
+CRITICAL RULES:
+1. Extract EVERY position - miss nothing (stocks, bonds, mutual funds, ETFs, options, other)
+2. Preserve exact values including "unavailable"
+3. Short positions have NEGATIVE quantities and market values
+4. For bonds, the italic number below market value is accrued interest
+5. Extract additional details for complex securities
 
-    Account Info: {account_number}, {statement_period}
+Account Info:
+- Account Number: Z24-527872
+- Account Label: Brok (Brokerage)
+- Statement Period: August 2025
 
-    OUTPUT: Return ONLY valid JSON with exact schema...
-    [COMPLETE SCHEMA DEFINITION]
-    """
+OUTPUT: Return ONLY valid JSON with this exact structure:
+{
+  "positions": [{
+    "security_name": "string",
+    "security_identifier": "string (ticker or CUSIP)",
+    "security_type": "STOCK|BOND|MUTUAL_FUND|ETF|OPTION|OTHER",
+    "quantity": "number",
+    "price": "number",
+    "market_value": "number",
+    "cost_basis": "number or null if unavailable",
+    "unrealized_gain_loss": "number or null",
+    "account_number": "Z24-527872"
+  }],
+  "extraction_metadata": {
+    "total_positions": "number",
+    "total_market_value": "number",
+    "pages_analyzed": "5-16",
+    "extraction_timestamp": "ISO date string"
+  }
+}
+
+Focus on the Holdings section starting on page 5. Extract all Mutual Funds, Exchange Traded Products, Stocks (common and preferred), Bonds (corporate and municipal), Options, and Other holdings."""
 )
+```
+
+**Key Implementation Insights:**
+
+1. **Generic vs Named Agents:** Used `sonnet-task` (generic) rather than creating `fidelity-holdings-extractor` (named)
+   - **Pros:** Immediate availability, no setup required
+   - **Cons:** Less reusable, prompt must be reconstructed each time
+
+2. **Specialization Through Prompting:** Made generic agent specialized via detailed instructions
+   - Domain expertise embedded in prompt
+   - Financial rules explicitly stated
+   - Exact output schema enforced
+
+3. **Missing File Output:** Prompt focused on data extraction but not file writing
+   - Agent returned complete JSON in response
+   - Required manual file writing afterward
+   - **Fix:** Add file output instructions to prompt
+
+### Two Viable Architecture Paths
+
+**Path A: Named Specialized Agents (Original Plan)**
+```python
+# Create reusable agents
+fidelity_holdings_extractor = create_agent("fidelity-holdings-extractor")
+fidelity_transactions_extractor = create_agent("fidelity-transactions-extractor")
+
+# Use with minimal prompts
+result = fidelity_holdings_extractor.extract(pdf_path, pages="5-16")
+```
+
+**Path B: Generic Agent + Specialized Prompts (What We Did)**
+```python
+# Use generic agent with detailed prompt each time
+result = Task(subagent_type="sonnet-task", prompt=DETAILED_PROMPT)
+```
+
+**Recommendation:** Path A for production (reusability), Path B for prototyping (speed)
 ```
 
 ### Validation Functions Applied
