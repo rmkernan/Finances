@@ -5,6 +5,9 @@
 **Updated:** 09/17/25 3:15PM ET - Added source document mapping columns to transactions table
 **Updated:** 09/18/25 1:45PM ET - Added positions and income_summaries tables, enhanced portfolio fields per Fidelity document map
 **Updated:** 09/18/25 2:30PM ET - Added Comment column to all tables with practical metadata for PostgreSQL COMMENT ON COLUMN feature
+**Updated:** 09/22/25 12:53PM ET - Added data processing workflow, enhanced foreign key documentation, aligned with Fidelity document map
+**Updated:** 09/22/25 1:18PM ET - Added beginning_value and ending_value fields to doc_level_data table
+**Updated:** 09/22/25 1:25PM ET - Removed redundant income_summaries table, marked Phase 2 tables (not yet implemented)
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -26,31 +29,70 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 ---
 
+## Data Processing Workflow
+
+### Document Processing Pipeline
+
+The system follows a standardized workflow for converting financial documents into structured data:
+
+```
+1. Document Ingestion
+   PDF/Image → /documents/inbox/ → File hash generated for duplicate detection
+
+2. Data Extraction (Claude-assisted)
+   Institution Guide (e.g., fidelity-document-map.md) → JSON extraction
+   Source Labels → JSON Fields → Database Columns
+
+3. Data Validation
+   - Account number matching to existing accounts
+   - Entity association through account ownership
+   - Duplicate detection via file_hash and transaction patterns
+
+4. Database Insert
+   - Documents table: Metadata and audit trail
+   - Document_accounts: Link to relevant accounts
+   - Positions: Point-in-time holdings snapshots
+   - Doc_level_data: Aggregated income and gains/losses
+   - Transactions: Individual transaction records
+
+5. Post-Processing
+   Move to /documents/processed/ with extraction JSON saved
+```
+
+### Multi-Institution Support
+
+While currently focused on Fidelity, the schema supports any institution through:
+- Institution-specific extraction guides mapping to standard JSON fields
+- Common database structure with institution-agnostic columns
+- JSONB fields for institution-specific data that doesn't fit standard schema
+
+---
+
 ## Core Entity Tables
 
 ### Table: entities
 
 **Purpose:** Master table for all business entities and individual taxpayers. Central hub for organizational structure and tax identity management.
 
-| Column (*R = Req)  | Data Type   | Constraints                                                                     | Purpose/Source                                       |
-|--------------------|-------------|---------------------------------------------------------------------------------|------------------------------------------------------|
-| `id`               | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid()                                          | Auto-generated unique identifier                    |
-| `entity_name` *R   | TEXT        | NOT NULL                                                                        | Legal entity name                                   |
-| `entity_type` *R   | TEXT        | NOT NULL CHECK (entity_type IN ('individual', 's_corp', 'llc', 'other'))      | IRS entity classification                           |
-| `tax_id` *R        | TEXT        | NOT NULL UNIQUE                                                                | EIN for entities, SSN for individuals               |
-|                    |             |                                                                                 | (encrypted/hashed)                                  |
-| `tax_id_display`   | TEXT        |                                                                                 | Last 4 digits for display purposes                  |
-|                    |             |                                                                                 | (e.g., "***-**-1234")                               |
-| `primary_taxpayer` | TEXT        |                                                                                 | Primary responsible party name                      |
-| `tax_year_end`     | TEXT        | DEFAULT '12-31'                                                                | Tax year end (MM-DD format, e.g., "12-31", "09-30") |
-| `georgia_resident` | BOOLEAN     | DEFAULT TRUE                                                                    | Georgia state tax residency status                  |
-| `entity_status`    | TEXT        | DEFAULT 'active' CHECK (entity_status IN ('active', 'inactive', 'dissolved')) | Current operational status                          |
-| `formation_date`   | DATE        |                                                                                 | Entity formation/birth date                         |
-| `notes`            | TEXT        |                                                                                 | Claude context notes                                 |
-| `created_at`       | TIMESTAMPTZ | DEFAULT NOW()                                                                   | Record creation timestamp                           |
-| `updated_at`       | TIMESTAMPTZ | DEFAULT NOW()                                                                   | Last modification timestamp                         |
-| `Comment`          |             |                                                                                 |                                                     |
-|--------------------|-------------|---------------------------------------------------------------------------------|-----------------------------------------------------|
+| Column (*R = Req)  | Data Type   | Constraints                                                              | Purpose/Source                                      |
+|--------------------|-------------|--------------------------------------------------------------------------|-----------------------------------------------------|
+| `id`               | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid()                                    | Auto-generated unique identifier                    |
+| `entity_name` *R   | TEXT        | NOT NULL                                                                 | Legal entity name                                   |
+| `entity_type` *R   | TEXT        | NOT NULL CHECK (entity_type IN ('individual', 's_corp', 'llc', 'other')) | IRS entity classification                           |
+| `tax_id` *R        | TEXT        | NOT NULL UNIQUE                                                          | EIN for entities, SSN for individuals               |
+|                    |             |                                                                          | (encrypted/hashed)                                  |
+| `tax_id_display`   | TEXT        |                                                                          | Last 4 digits for display purposes                  |
+|                    |             |                                                                          | (e.g., "***-**-1234")                               |
+| `primary_taxpayer` | TEXT        |                                                                          | Primary responsible party name                      |
+| `tax_year_end`     | TEXT        | DEFAULT '12-31'                                                          | Tax year end (MM-DD format, e.g., "12-31", "09-30") |
+| `georgia_resident` | BOOLEAN     | DEFAULT TRUE                                                             | Georgia state tax residency status                  |
+| `entity_status`    | TEXT        | DEFAULT 'active' CHECK (entity_status IN ('active', 'inactive'))         | Current operational status                          |
+| `formation_date`   | DATE        |                                                                          | Entity formation/birth date                         |
+| `notes`            | TEXT        |                                                                          | Claude context notes                                |
+| `created_at`       | TIMESTAMPTZ | DEFAULT NOW()                                                            | Record creation timestamp                           |
+| `updated_at`       | TIMESTAMPTZ | DEFAULT NOW()                                                            | Last modification timestamp                         |
+| `Comment`          |             |                                                                          |                                                     |
+|--------------------|-------------|--------------------------------------------------------------------------|-----------------------------------------------------|
 | Auto-generated unique identifier | Legal entity name from tax documents | IRS entity type classification | EIN for entities, SSN for individuals (encrypted/hashed) |
 | Last 4 digits for display (e.g. "***-**-1234") | Primary responsible party name | Tax year end (MM-DD format, e.g. "12-31", "09-30") | Georgia state tax residency status |
 | Current operational status | Entity formation/birth date | Claude context notes | Record creation timestamp |
@@ -65,20 +107,20 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 **Purpose:** Financial institutions that hold accounts for entities. Supports multiple institutions per entity for diversified financial management.
 
-| Column (*R = Req)     | Data Type   | Constraints                                               | Purpose/Source                                                   |
-|-----------------------|-------------|-----------------------------------------------------------|------------------------------------------------------------------|
-| `id`                  | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid()                     | Auto-generated unique identifier                                 |
-| `entity_id` *R        | UUID (FK)   | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT       | Entity that manages this institution relationship                |
-| `institution_name` *R | TEXT        | NOT NULL                                                  | Institution name (e.g., "Fidelity Investments", "SunTrust Bank") |
-| `institution_type`    | TEXT        | CHECK (institution_type IN ('brokerage', 'bank',          | Type of financial institution                                    |
-|                       |             | 'credit_union', 'insurance', 'retirement_plan', 'other')) |
-| `status`              | TEXT        | DEFAULT 'active' CHECK (status IN ('active',              | Current relationship status                                      |
-|                       |             | 'inactive', 'closed'))                                    |                                                                  |
-| `notes`               | TEXT        |                                                           | Claude context notes for institution-specific handling           |
-| `created_at`          | TIMESTAMPTZ | DEFAULT NOW()                                             | Record creation timestamp                                        |
-| `updated_at`          | TIMESTAMPTZ | DEFAULT NOW()                                             | Last modification timestamp                                      |
-| `Comment`             |             |                                                           |                                                                  |
-|-----------------------|-------------|-----------------------------------------------------------|------------------------------------------------------------------|
+| Column (*R = Req)     | Data Type   | Constraints                                               | Purpose/Source                                           |
+|-----------------------|-------------|-----------------------------------------------------------|----------------------------------------------------------|
+| `id`                  | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid()                     |                                                          |
+| `entity_id` *R        | UUID (FK)   | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT       |                                                          |
+| `institution_name` *R | TEXT        | NOT NULL                                                  | Institution name                                         |
+| `institution_type`    | TEXT        | CHECK (institution_type IN ('brokerage', 'bank',          | Type of financial institution                            |
+|                       |             | 'credit_union', 'insurance', 'retirement_plan', 'other')) |                                                          |
+| `status`              | TEXT        | DEFAULT 'active' CHECK (status IN ('active',              | Current relationship status                              |
+|                       |             | 'inactive', 'closed'))                                    |                                                          |
+| `notes`               | TEXT        |                                                           | Claude context notes for institution-specific handling   |
+| `created_at`          | TIMESTAMPTZ | DEFAULT NOW()                                             | Record creation timestamp                                |
+| `updated_at`          | TIMESTAMPTZ | DEFAULT NOW()                                             | Last modification timestamp                              |
+| `Comment`             |             |                                                           |                                                          |
+|-----------------------|-------------|-----------------------------------------------------------|----------------------------------------------------------|
 | Auto-generated unique identifier | FK to entities table | Institution name (e.g. "Fidelity Investments", "SunTrust Bank") | Type of financial institution |
 | Current relationship status | Claude context notes for institution-specific handling | Record creation timestamp | Last modification timestamp |
 
@@ -115,7 +157,7 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 | `created_at`             | TIMESTAMPTZ | DEFAULT NOW()                                           | Record creation timestamp                               |
 | `updated_at`             | TIMESTAMPTZ | DEFAULT NOW()                                           | Last modification timestamp                             |
 | `Comment`                |             |                                                         |                                                         |
-|--------------------------|-------------|------------------------------------------------------------|---------------------------------------------------------|
+|--------------------------|-------------|---------------------------------------------------------|---------------------------------------------------------|
 | Auto-generated unique identifier | FK to entities table | FK to institutions table | Fidelity "Account #" field, JSON: account_number |
 | Last 4 digits for display (e.g. "****1234") | Name on account | Account nickname/description | Account classification |
 | Specific subtype (e.g. "traditional_ira", "roth_401k") | When account opened | Current account status | True for IRAs, 401ks, tax-deferred accounts |
@@ -188,6 +230,11 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 ### Table: document_accounts
 
 **Purpose:** Many-to-many association between documents and accounts. Supports consolidated statements/1099s that list multiple accounts (and thus, multiple entities via accounts).
+
+**Key Relationships:**
+- One document can contain data for multiple accounts (consolidated statements)
+- Each account links to exactly one entity (the owner)
+- Therefore, one document can span multiple entities through their accounts
 
 | Column (*R = Req)   | Data Type   | Constraints                                                     | Purpose/Source                                 |
 |---------------------|-------------|-----------------------------------------------------------------|------------------------------------------------|
@@ -281,138 +328,71 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 ---
 
-### Table: positions
+ ### Table: positions
 
-**Purpose:** Current holdings/positions extracted from statements. Represents point-in-time snapshots of securities owned.
+  **Purpose:** Point-in-time snapshots of holdings/positions extracted from statements. Each row represents one security position at a specific date.
 
-| Column (*R = Req)           | Data Type     | Constraints                                                          | Purpose/Source                                              |
-|-----------------------------|---------------|----------------------------------------------------------------------|-------------------------------------------------------------|
-| `id`                        | UUID (PK)     | PRIMARY KEY DEFAULT gen_random_uuid()                                | Auto-generated unique identifier                            |
-| `document_id` *R            | UUID (FK)     | NOT NULL REFERENCES documents(id) ON DELETE CASCADE                  | Source document for this position snapshot                  |
-| `account_id` *R             | UUID (FK)     | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT                  | Account holding the position                                |
-| `entity_id` *R              | UUID (FK)     | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT                  | Entity owning the position                                  |
-| **Security Information**    |               |                                                                      |                                                             |
-| `symbol`                    | TEXT          |                                                                      | Security ticker symbol                                      |
-| `cusip`                     | TEXT          |                                                                      | CUSIP identifier                                            |
-| `security_description` *R   | TEXT          | NOT NULL                                                             | Full security name/description                              |
-| `security_type` *R          | TEXT          | NOT NULL CHECK (security_type IN ('stock', 'bond', 'mutual_fund',    | Type of security                                            |
-|                             |               | 'etf', 'money_market', 'cd', 'option', 'other'))                     |                                                             |
-| **Position Data**           |               |                                                                      |                                                             |
-| `position_date` *R          | DATE          | NOT NULL                                                             | Date of this position snapshot                              |
-| `quantity` *R               | NUMERIC(15,6) | NOT NULL                                                             | Number of shares/units held                                 |
-| `price_per_unit`            | NUMERIC(12,4) |                                                                      | Price per share/unit at position date                       |
-| `market_value` *R           | NUMERIC(15,2) | NOT NULL                                                             | Total market value of position                              |
-| `beginning_market_value`    | NUMERIC(15,2) |                                                                      | Market value at period start                                |
-| **Cost Basis**              |               |                                                                      |                                                             |
-| `cost_basis`                | NUMERIC(15,2) |                                                                      | Total cost basis for tax purposes                           |
-| `cost_basis_known`          | BOOLEAN       | DEFAULT TRUE                                                         | False if cost basis is unavailable                          |
-| `unrealized_gain_loss`      | NUMERIC(15,2) |                                                                      | Unrealized gain/loss at position date                       |
-| **Income Information**      |               |                                                                      |                                                             |
-| `estimated_annual_income`   | NUMERIC(15,2) |                                                                      | Estimated annual income (dividends/interest)                |
-| `estimated_yield`           | NUMERIC(5,4)  | CHECK (estimated_yield >= 0)                                         | Estimated yield percentage                                  |
-| `dividend_yield`            | NUMERIC(5,4)  | CHECK (dividend_yield >= 0)                                          | Current dividend yield                                      |
-| **Options Specific**        |               |                                                                      |                                                             |
-| `option_details`            | JSONB         |                                                                      | Option contract details: {"type": "CALL/PUT",               |
-|                             |               |                                                                      | "strike": price, "expiry": date, "underlying": ticker}      |
-| **Bond Specific**           |               |                                                                      |                                                             |
-| `bond_details`              | JSONB         |                                                                      | Bond details: {"maturity": date, "coupon_rate": percent,    |
-|                             |               |                                                                      | "accrued_interest": amount, "rating": "AAA"}                |
-| **Position Flags**          |               |                                                                      |                                                             |
-| `is_margin_position`        | BOOLEAN       | DEFAULT FALSE                                                        | True if held in margin                                      |
-| `is_short_position`         | BOOLEAN       | DEFAULT FALSE                                                        | True if short position                                      |
-| `is_reinvestment`           | BOOLEAN       | DEFAULT FALSE                                                        | True if from dividend reinvestment                          |
-| **Metadata**                |               |                                                                      |                                                             |
-| `percent_of_account`        | NUMERIC(5,2)  | CHECK (percent_of_account >= 0 AND percent_of_account <= 100)        | Percentage of account holdings                              |
-| `notes`                     | TEXT          |                                                                      | Additional notes or observations                            |
-| **Audit Trail**             |               |                                                                      |                                                             |
-| `created_at`                | TIMESTAMPTZ   | DEFAULT NOW()                                                        | Record creation timestamp                                   |
-| `updated_at`                | TIMESTAMPTZ   | DEFAULT NOW()                                                        | Last modification timestamp                                 |
-| `Comment`                   |               |                                                                      |                                                             |
-|-----------------------------|---------------|----------------------------------------------------------------------|--------------------------------------------------------------|
-| Auto-generated unique identifier | FK to documents table | FK to accounts table | FK to entities table |
-| Security ticker symbol | CUSIP identifier | Full security name/description | Type of security |
-| Date of position snapshot | Number of shares/units held | Price per share/unit at position date | Total market value of position |
-| Market value at period start | Total cost basis for tax purposes | False if cost basis unavailable | Unrealized gain/loss at position date |
-| Estimated annual income (dividends/interest) | Estimated yield percentage | Current dividend yield | Option contract details JSON |
-| Bond details JSON | True if held in margin | True if short position | True if from dividend reinvestment |
-| Percentage of account holdings | Additional notes or observations | Record creation timestamp | Last modification timestamp |
+| DB Column                         | JSON Field           | Source Label            | Data Type     | Constraints                                         |
+|-----------------------------------|----------------------|-------------------------|---------------|-----------------------------------------------------|
+| **-- Metadata & Keys --**         |
+| id                                | -                    | -                       | UUID          | PRIMARY KEY DEFAULT gen_random_uuid()               |
+| document_id                       | -                    | -                       | UUID          | NOT NULL REFERENCES documents(id) ON DELETE CASCADE |
+| account_id                        | -                    | -                       | UUID          | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT |
+| entity_id                         | -                    | -                       | UUID          | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT |
+| position_date                     | -                    | Statement Date          | DATE          | NOT NULL                                            |
+| account_number                    | account_number       | Account Number          | TEXT          | NOT NULL                                            |
+| **-- Security Identification --** |
+| sec_ticker                        | sec_symbol           | Symbol/Ticker           | TEXT          |                                                     |
+| cusip                             | cusip                | CUSIP                   | TEXT          |                                                     |
+| sec_name                          | sec_description      | Description             | TEXT          | NOT NULL                                            |
+| sec_type                          | sec_type             | Security Type           | TEXT          | NOT NULL                                            |
+| sec_subtype                       | sec_subtype          | Security Subtype        | TEXT          |                                                     |
+| **-- Position Values --**         |
+| beg_market_value                  | beg_market_value     | Beginning Market Value  | NUMERIC(15,2) |                                                     |
+| quantity                          | quantity             | Quantity                | NUMERIC(15,6) | NOT NULL                                            |
+| price                             | price_per_unit       | Price Per Unit          | NUMERIC(12,4) | NOT NULL                                            |
+| end_market_value                  | end_market_value     | Ending Market Value     | NUMERIC(15,2) | NOT NULL                                            |
+| **-- Cost Basis & P&L --**        |
+| cost_basis                        | cost_basis           | Total Cost Basis        | NUMERIC(15,2) |                                                     |
+| unrealized_gain_loss              | unrealized_gain_loss | Unrealized Gain/Loss    | NUMERIC(15,2) |                                                     |
+| **-- Income Estimates --**        |
+| estimated_ann_inc                 | estimated_ann_inc    | Est Annual Income (EAI) | NUMERIC(15,2) |                                                     |
+| est_yield                         | est_yield            | Estimated Yield (EY)    | NUMERIC(5,4)  | CHECK (>= 0)                                        |
+| **-- Option-Specific --**         |
+| underlying_symbol                 | underlying_symbol    | Underlying Symbol       | TEXT          |                                                     |
+| strike_price                      | strike_price         | Strike Price            | NUMERIC(12,4) |                                                     |
+| exp_date                          | expiration_date      | Expiration Date         | DATE          |                                                     |
+| option_type                       | -                    | CALL/PUT                | TEXT          | CHECK (IN ('CALL','PUT'))                           |
+| **-- Bond-Specific --**           |
+| maturity_date                     | maturity_date        | Maturity Date           | DATE          |                                                     |
+| coupon_rate                       | coupon_rate          | Coupon Rate             | NUMERIC(5,3)  |                                                     |
+| accrued_int                       | accrued_int          | Accrued Interest        | NUMERIC(15,2) |                                                     |
+| agency_rating                     | agency_ratings       | Ratings                 | TEXT          |                                                     |
+| next_call                         | next_call_date       | Next Call Date          | DATE          |                                                     |
+| call_price                        | call_price           | Call Price              | NUMERIC(12,4) |                                                     |
+| payment_freq                      | payment_freq         | Payment Frequency       | TEXT          |                                                     |
+| bond_features                     | bond_features        | Bond Features           | TEXT          |                                                     |
+| **-- Position Flags --**          |
+| is_margin                         | -                    | -                       | BOOLEAN       | DEFAULT FALSE                                       |
+| is_short                          | -                    | -                       | BOOLEAN       | DEFAULT FALSE                                       |
+| **-- Audit Trail --**             |
+| created_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                                       |
+| updated_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                                       |
 
 **Foreign Key Constraints:**
 - `document_id` → `documents(id)` ON DELETE CASCADE
 - `account_id` → `accounts(id)` ON DELETE RESTRICT
 - `entity_id` → `entities(id)` ON DELETE RESTRICT
-
----
-
-### Table: income_summaries
-
-**Purpose:** Period and year-to-date income summaries from statements. Aggregated view of income by type and tax treatment.
-
-| Column (*R = Req)              | Data Type     | Constraints                                                        | Purpose/Source                                           |
-|--------------------------------|---------------|---------------------------------------------------------------------|----------------------------------------------------------|
-| `id`                           | UUID (PK)     | PRIMARY KEY DEFAULT gen_random_uuid()                               | Auto-generated unique identifier                         |
-| `document_id` *R               | UUID (FK)     | NOT NULL REFERENCES documents(id) ON DELETE CASCADE                 | Source document                                          |
-| `account_id`                   | UUID (FK)     | REFERENCES accounts(id) ON DELETE RESTRICT                          | Account (null for portfolio-level summaries)             |
-| `entity_id` *R                 | UUID (FK)     | NOT NULL REFERENCES entities(id) ON DELETE RESTRICT                 | Entity receiving income                                   |
-| **Period Information**         |               |                                                                     |                                                          |
-| `period_start` *R              | DATE          | NOT NULL                                                           | Start of income period                                   |
-| `period_end` *R                | DATE          | NOT NULL                                                           | End of income period                                      |
-| `summary_type` *R              | TEXT          | NOT NULL CHECK (summary_type IN ('period', 'ytd', 'annual'))        | Type of summary                                          |
-| `summary_level` *R             | TEXT          | NOT NULL CHECK (summary_level IN ('portfolio', 'account'))          | Portfolio vs account level                               |
-| **Taxable Income**             |               |                                                                     |                                                          |
-| `taxable_dividends_period`    | NUMERIC(15,2) |                                                                     | Ordinary dividends for period                            |
-| `taxable_dividends_ytd`        | NUMERIC(15,2) |                                                                     | Ordinary dividends year-to-date                          |
-| `qualified_dividends_period`   | NUMERIC(15,2) |                                                                     | Qualified dividends for period                           |
-| `qualified_dividends_ytd`      | NUMERIC(15,2) |                                                                     | Qualified dividends year-to-date                         |
-| `taxable_interest_period`      | NUMERIC(15,2) |                                                                     | Taxable interest for period                              |
-| `taxable_interest_ytd`         | NUMERIC(15,2) |                                                                     | Taxable interest year-to-date                            |
-| **Capital Gains**              |               |                                                                     |                                                          |
-| `short_term_gains_period`      | NUMERIC(15,2) |                                                                     | Short-term capital gains for period                      |
-| `short_term_gains_ytd`         | NUMERIC(15,2) |                                                                     | Short-term capital gains year-to-date                    |
-| `long_term_gains_period`       | NUMERIC(15,2) |                                                                     | Long-term capital gains for period                       |
-| `long_term_gains_ytd`          | NUMERIC(15,2) |                                                                     | Long-term capital gains year-to-date                     |
-| **Tax-Exempt Income**          |               |                                                                     |                                                          |
-| `exempt_dividends_period`      | NUMERIC(15,2) |                                                                     | Tax-exempt dividends for period                          |
-| `exempt_dividends_ytd`         | NUMERIC(15,2) |                                                                     | Tax-exempt dividends year-to-date                        |
-| `exempt_interest_period`       | NUMERIC(15,2) |                                                                     | Tax-exempt interest for period                           |
-| `exempt_interest_ytd`          | NUMERIC(15,2) |                                                                     | Tax-exempt interest year-to-date                         |
-| **Other Income**               |               |                                                                     |                                                          |
-| `return_of_capital_period`     | NUMERIC(15,2) |                                                                     | Return of capital for period                             |
-| `return_of_capital_ytd`        | NUMERIC(15,2) |                                                                     | Return of capital year-to-date                           |
-| `foreign_tax_paid_period`      | NUMERIC(15,2) |                                                                     | Foreign taxes paid for period                            |
-| `foreign_tax_paid_ytd`         | NUMERIC(15,2) |                                                                     | Foreign taxes paid year-to-date                          |
-| **Totals**                     |               |                                                                     |                                                          |
-| `total_income_period` *R       | NUMERIC(15,2) | NOT NULL                                                           | Total income for period                                  |
-| `total_income_ytd`             | NUMERIC(15,2) |                                                                     | Total income year-to-date                                |
-| **Realized Gains/Losses**      |               |                                                                     |                                                          |
-| `realized_gains_losses`        | JSONB         |                                                                     | Detailed realized gains/losses breakdown                 |
-| **Metadata**                   |               |                                                                     |                                                          |
-| `notes`                        | TEXT          |                                                                     | Additional notes                                         |
-| **Audit Trail**                |               |                                                                     |                                                          |
-| `created_at`                   | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Record creation timestamp                                |
-| `updated_at`                   | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Last modification timestamp                              |
-| `Comment`                      |               |                                                                   |                                                          |
-|--------------------------------|---------------|---------------------------------------------------------------------|----------------------------------------------------------|
-| Auto-generated unique identifier | FK to documents table | FK to accounts table (null for portfolio-level) | FK to entities table |
-| Start of income period | End of income period | Type of summary (period, ytd, annual) | Portfolio vs account level |
-| Ordinary dividends for period | Ordinary dividends year-to-date | Qualified dividends for period | Qualified dividends year-to-date |
-| Taxable interest for period | Taxable interest year-to-date | Short-term capital gains for period | Short-term capital gains year-to-date |
-| Long-term capital gains for period | Long-term capital gains year-to-date | Tax-exempt dividends for period | Tax-exempt dividends year-to-date |
-| Tax-exempt interest for period | Tax-exempt interest year-to-date | Return of capital for period | Return of capital year-to-date |
-| Foreign taxes paid for period | Foreign taxes paid year-to-date | Total income for period | Total income year-to-date |
-| Detailed realized gains/losses breakdown | Additional notes | Record creation timestamp | Last modification timestamp |
-
-**Foreign Key Constraints:**
-- `document_id` → `documents(id)` ON DELETE CASCADE
-- `account_id` → `accounts(id)` ON DELETE RESTRICT
-- `entity_id` → `entities(id)` ON DELETE RESTRICT
-
 
 ---
 
 ## Tax and Transfer Management Tables
 
-### Table: tax_payments
+> **Phase 2 - Not Yet Implemented**
+> The following tables are designed for future functionality and will not be created in the initial database build.
+> They support manual entry and QuickBooks integration planned for Phase 2.
+
+### Table: tax_payments (Phase 2)
 
 **Purpose:** Tracks quarterly estimated tax payments and annual tax liabilities for each entity. Essential for cash flow management and tax compliance.
 
@@ -443,7 +423,7 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 | `created_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                               | Record creation timestamp                       |
 | `updated_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                               | Last modification timestamp                     |
 | `Comment`                 |               |                                                             |                                                 |
-|---------------------------|---------------|-------------------------------------------------------------|-----------------------------------------------------|
+|---------------------------|---------------|-------------------------------------------------------------|-------------------------------------------------|
 | Auto-generated unique identifier | FK to entities table | FK to accounts table (if tracked) | Tax year payment applies to |
 | Type of tax payment (est_q1, est_q2, etc.) | Which government entity (federal, georgia, other_state) | Date payment was made | Original due date for payment |
 | Payment amount | Calculation details JSON | Estimated income for the year | Estimated total tax liability |
@@ -453,7 +433,7 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 ---
 
-### Table: transfers
+### Table: transfers (Phase 2)
 
 **Purpose:** Tracks money movements between entities and accounts. Critical for inter-entity loan tracking and tax compliance.
 
@@ -497,7 +477,11 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 ## Asset Management Tables
 
-### Table: asset_notes
+> **Phase 2 - Not Yet Implemented**
+> The following tables support investment strategy tracking and net worth calculation through manual data entry.
+> They will be implemented in Phase 2 after core document processing is operational.
+
+### Table: asset_notes (Phase 2)
 
 **Purpose:** Investment strategy notes and price targets for securities. Supports investment decision-making and performance tracking.
 
@@ -556,7 +540,7 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 ## Net Worth Tracking Tables
 
-### Table: real_assets
+### Table: real_assets (Phase 2)
 
 **Purpose:** Track physical properties and other non-financial assets for net worth calculation.
 
@@ -597,7 +581,7 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 ---
 
-### Table: liabilities
+### Table: liabilities (Phase 2)
 
 **Purpose:** Track mortgages and long-term loans for net worth calculation. NOT for credit cards or inter-entity loans.
 
@@ -639,40 +623,51 @@ The schema maintains Claude-optimized design principles with JSONB flexibility w
 
 
 ---
+### Table: doc_level_data
 
-## Data Migration and Evolution
+  **Purpose:** Document-level aggregated data from Income Summary and Realized Gains/Losses tables in statements.
 
-### Version Control Strategy
-- All schema changes tracked in `/supabase/migrations/`
-- Each migration includes rollback instructions
-- Test migrations on development database first
-- Document breaking changes in migration comments
-
-### Complete Table Summary
-
-The schema now includes **12 core tables**:
-1. **entities** - Business entities and individuals
-2. **institutions** - Financial institutions
-3. **accounts** - Financial accounts
-4. **documents** - Source documents with extraction metadata and portfolio summaries
-5. **document_accounts** - Junction table linking documents to multiple accounts
-6. **transactions** - Financial transactions
-7. **positions** - Holdings/positions snapshots from statements
-8. **income_summaries** - Period and YTD income summaries by type
-9. **tax_payments** - Quarterly tax tracking
-10. **transfers** - Inter-entity money movements
-11. **asset_notes** - Investment strategies
-12. **real_assets** - Properties and physical assets
-13. **liabilities** - Mortgages and long-term debt
-
-### Expected Evolution Path
-1. **Phase 2:** Add QuickBooks integration tables
-2. **Phase 3:** Add budget tracking and forecasting
-3. **Phase 4:** Add advanced tax optimization features
-4. **Phase 5:** Add multi-year trend analysis
-
-This enhanced schema provides a robust foundation for Claude-assisted financial data management with complete net worth tracking while maintaining flexibility for future enhancements.
-
----
-
-*This enhanced schema documentation provides comprehensive column-level details, relationships, constraints, and optimization strategies for the Financial Data Management System. It serves as both a technical reference and implementation guide for Claude instances working with this database.|
+| DB Column                            | JSON Field              | Source Label                      | Data Type     | Constraints                                                        |
+|--------------------------------------|-------------------------|-----------------------------------|---------------|--------------------------------------------------------------------|
+| **-- Metadata & Keys --**            |
+| id                                   | -                       | -                                 | UUID          | PRIMARY KEY DEFAULT gen_random_uuid()                              |
+| document_id                          | -                       | -                                 | UUID          | NOT NULL REFERENCES documents(id) ON DELETE CASCADE                |
+| account_id                           | -                       | -                                 | UUID          | REFERENCES accounts(id) ON DELETE RESTRICT                         |
+| account_number                       | account_number          | Account Number                    | TEXT          | NOT NULL                                                           |
+| doc_section                          | -                       | -                                 | TEXT          | NOT NULL                                                           |
+| as_of_date                           | -                       | Statement Date                    | DATE          | NOT NULL                                                           |
+| **-- Account Summary --**            |
+| net_acct_value                       | net_acct_value          | Net Account Value                 | NUMERIC(15,2) |                                                                    |
+| beg_value                            | beginning_value         | Beginning Value                   | NUMERIC(15,2) |                                                                    |
+| end_value                            | ending_value            | Ending Value                      | NUMERIC(15,2) |                                                                    |
+| **-- Income Summary: Taxable --**    |
+| taxable_total_period                 | taxable_total_period    | Taxable Total (period)            | NUMERIC(15,2) |                                                                    |
+| taxable_total_ytd                    | taxable_total_ytd       | Taxable Total (YTD)               | NUMERIC(15,2) |                                                                    |
+| divs_taxable_period                  | divs_taxable_period     | Taxable Dividends (period)        | NUMERIC(15,2) |                                                                    |
+| divs_taxable_ytd                     | divs_taxable_ytd        | Taxable Dividends (YTD)           | NUMERIC(15,2) |                                                                    |
+| stcg_taxable_period                  | stcg_taxable_period     | Short-term Capital Gains (period) | NUMERIC(15,2) |                                                                    |
+| stcg_taxable_ytd                     | stcg_taxable_ytd        | Short-term Capital Gains (YTD)    | NUMERIC(15,2) |                                                                    |
+| int_taxable_period                   | int_taxable_period      | Taxable Interest (period)         | NUMERIC(15,2) |                                                                    |
+| int_taxable_ytd                      | int_taxable_ytd         | Taxable Interest (YTD)            | NUMERIC(15,2) |                                                                    |
+| ltcg_taxable_period                  | ltcg_taxable_period     | Long-term Capital Gains (period)  | NUMERIC(15,2) |                                                                    |
+| ltcg_taxable_ytd                     | ltcg_taxable_ytd        | Long-term Capital Gains (YTD)     | NUMERIC(15,2) |                                                                    |
+| **-- Income Summary: Tax Exempt --** |
+| tax_exempt_total_period              | tax_exempt_total_period | Tax-exempt Total (period)         | NUMERIC(15,2) |                                                                    |
+| tax_exempt_total_ytd                 | tax_exempt_total_ytd    | Tax-exempt Total (YTD)            | NUMERIC(15,2) |                                                                    |
+| divs_tax_exempt_period               | divs_tax_exempt_period  | Tax-exempt Dividends (period)     | NUMERIC(15,2) |                                                                    |
+| divs_tax_exempt_ytd                  | divs_tax_exempt_ytd     | Tax-exempt Dividends (YTD)        | NUMERIC(15,2) |                                                                    |
+| int_tax_exempt_period                | int_tax_exempt_period   | Tax-exempt Interest (period)      | NUMERIC(15,2) |                                                                    |
+| int_tax_exempt_ytd                   | int_tax_exempt_ytd      | Tax-exempt Interest (YTD)         | NUMERIC(15,2) |                                                                    |
+| **-- Income Summary: Other --**      |
+| roc_period                           | roc_period              | Return of Capital (period)        | NUMERIC(15,2) |                                                                    |
+| roc_ytd                              | roc_ytd                 | Return of Capital (YTD)           | NUMERIC(15,2) |                                                                    |
+| grand_total_period                   | grand_total_period      | Grand Total (period)              | NUMERIC(15,2) |                                                                    |
+| grand_total_ytd                      | grand_total_ytd         | Grand Total (YTD)                 | NUMERIC(15,2) |                                                                    |
+| **-- Realized Gains/Losses --**      |
+| st_gain_period                       | st_gain_period          | Short-term Gain (period)          | NUMERIC(15,2) |                                                                    |
+| st_loss_period                       | st_loss_period          | Short-term Loss (period)          | NUMERIC(15,2) |                                                                    |
+| lt_gain_ytd                          | lt_gain_ytd             | Long-term Gain (YTD)              | NUMERIC(15,2) |                                                                    |
+| lt_loss_ytd                          | lt_loss_ytd             | Long-term Loss (YTD)              | NUMERIC(15,2) |                                                                    |
+| **-- Audit Trail --**                |
+| created_at                           | -                       | -                                 | TIMESTAMPTZ   | DEFAULT NOW()                                                      |
+| updated_at                           | -                       | -                                 | TIMESTAMPTZ   | DEFAULT NOW()                                                      |
