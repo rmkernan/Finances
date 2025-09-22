@@ -126,51 +126,7 @@ Process transaction sections **in document order:**
 - **Direct file editing** is faster than Task tool delegation
 - **Follow document order** rather than trying to optimize sequence
 
-## Field Mappings
 
-### Portfolio Level
-| Source Label | JSON Field | Database Column | Type | Notes |
-|--------------|------------|-----------------|------|--------|
-| Ending Net Portfolio Value | portfolio_total_value | documents.portfolio_value | CURRENCY | Main portfolio total |
-| Portfolio Change from Last Period | portfolio_change_period | null | CURRENCY | Context only |
-| Period dates | period_start, period_end | documents.period_start/end | DATE | From statement header |
-
-### Account Level
-| Source Label | JSON Field | Database Column | Type | Notes |
-|--------------|------------|-----------------|------|--------|
-| Account Number | account_number | accounts.account_number | TEXT | Exact as shown |
-| Account holder name | account_holder_name | accounts.account_holder_name | TEXT | From account header |
-| Net Account Value | net_account_value | null | CURRENCY | Account total |
-| Beginning Net Account Value | beginning_value | null | CURRENCY | Period start value |
-
-### Holdings/Positions
-| Source Label | JSON Field | Database Column | Type | Notes |
-|--------------|------------|-----------------|------|--------|
-| Description | security_description | positions.security_name | TEXT | Full security name |
-| Symbol/CUSIP | security_identifier | positions.security_identifier | TEXT | From description or details |
-| Quantity | quantity | positions.quantity | NUMBER | Can be negative |
-| Price Per Unit | price_per_unit | positions.price | CURRENCY | Current price |
-| Market Value | market_value | positions.market_value | CURRENCY | Current value |
-| Cost Basis | cost_basis | positions.cost_basis | CURRENCY | Original cost |
-| Unrealized Gain/Loss | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY | Calculated field |
-
-### Transactions
-| Source Label | JSON Field | Database Column | Type | Notes |
-|--------------|------------|-----------------|------|--------|
-| Settlement Date | settlement_date | transactions.settlement_date | DATE | Add year from period |
-| Security Name | security_name | transactions.security_name | TEXT | From description |
-| Description | transaction_description | transactions.description | TEXT | "You Bought", "You Sold", etc. |
-| Quantity | quantity | transactions.quantity | NUMBER | Shares/units |
-| Price | price_per_unit | transactions.price_per_unit | CURRENCY | Execution price |
-| Amount | amount | transactions.amount | CURRENCY | Total with sign |
-| Transaction Type | transaction_type | transactions.transaction_type | TEXT | BUY/SELL/DIVIDEND/etc. |
-
-### Income Summary
-| Source Label | JSON Field | Database Column | Type | Notes |
-|--------------|------------|-----------------|------|--------|
-| Taxable (period) | taxable_income_period | income_summaries.taxable_income | CURRENCY | This period's taxable |
-| Taxable (YTD) | taxable_income_ytd | null | CURRENCY | Year to date |
-| Tax-exempt (period) | tax_exempt_income_period | income_summaries.tax_exempt_income | CURRENCY | This period's exempt |
 
 ## Fidelity Statement Navigation Map
 

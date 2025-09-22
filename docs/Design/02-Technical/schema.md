@@ -8,6 +8,7 @@
 **Updated:** 09/22/25 12:53PM ET - Added data processing workflow, enhanced foreign key documentation, aligned with Fidelity document map
 **Updated:** 09/22/25 1:18PM ET - Added beginning_value and ending_value fields to doc_level_data table
 **Updated:** 09/22/25 1:25PM ET - Removed redundant income_summaries table, marked Phase 2 tables (not yet implemented)
+**Updated:** 09/22/25 3:11PM ET - Added sec_cusip, option fields, activity columns, bond_state, dividend_qualified to transactions table
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -277,18 +278,32 @@ While currently focused on Fidelity, the schema supports any institution through
 | `amount` *R               | NUMERIC(15,2) | NOT NULL CHECK (amount != 0)                                      | Transaction amount                                        | Fidelity statements (Amount column), 1099s (Box amounts), Trade confirmations (Net Amount) |
 | **Security Information**  |               |                                                                   |                                                           |
 | `security_name`           | TEXT          |                                                                   | Security name/description                                 | Fidelity statements (Security Name column) |
-| `security_identifier`     | TEXT          |                                                                   | Symbol or CUSIP identifier                                | Fidelity statements (Symbol/CUSIP column) |
+| `security_identifier`     | TEXT          |                                                                   | Symbol/ticker identifier                                  | Fidelity statements (Symbol column) |
+| `sec_cusip`               | TEXT          |                                                                   | CUSIP identifier for bonds                                | Fidelity statements (CUSIP column) |
 | `quantity`                | NUMERIC(15,6) |                                                                   | Number of shares/units in transaction                     | Fidelity statements (Quantity column) |
 | `price_per_unit`          | NUMERIC(12,4) |                                                                   | Price per share/unit                                      | Fidelity statements (Price column) |
 | `cost_basis`              | NUMERIC(15,2) |                                                                   | Total cost basis for this transaction                     | Fidelity statements (Total Cost Basis column) |
 | `fees`                    | NUMERIC(10,2) |                                                                   | Transaction fees/costs                                    | Fidelity statements (Transaction Cost column) |
 | `security_type`           | TEXT          | CHECK (security_type IN ('stock', 'bond', 'mutual_fund', 'etf',   | Type of security involved                                 |
 |                           |               | 'money_market', 'cd', 'option', 'other'))                         |                                                           |
+| `option_type`             | TEXT          | CHECK (option_type IN ('CALL', 'PUT'))                            | Type of option contract                                   |
+| `strike_price`            | DECIMAL(15,2) |                                                                   | Option strike price                                       |
+| `expiration_date`         | DATE          |                                                                   | Option expiration date                                    |
+| `underlying_symbol`       | TEXT          |                                                                   | Underlying symbol for options                             |
 | `option_details`          | JSONB         |                                                                   | Options data: {"type": "PUT/CALL", "strike": 150,         |
 |                           |               |                                                                   | "expiry": "2025-09-15", "underlying": "AAPL"}             |
+| `bond_state`              | TEXT          |                                                                   | State for municipal bonds (e.g., 'GA', 'NY')             |
+| `dividend_qualified`      | BOOLEAN       |                                                                   | True if qualified dividend, false if ordinary             |
 | `bond_details`            | JSONB         |                                                                   | Bond data: {"accrued_interest": 200, "coupon_rate": 5.0,  |
 |                           |               |                                                                   | "maturity": "2030-01-01", "call_date": "2025-09-30"}      |
 | `source` *R               | TEXT          | NOT NULL CHECK (source IN ('statement','qb_export','ledger'))     | Origin of the transaction data                            |
+| **Additional Activity Fields** |          |                                                                   |                                                           |
+| `reference_number`        | TEXT          |                                                                   | Wire reference or transaction ID                          | Fidelity statements (Reference column) |
+| `payee`                   | TEXT          |                                                                   | Bill payment recipient                                    | Fidelity statements (Payee column) |
+| `payee_account`           | TEXT          |                                                                   | Payee account number (masked)                             | Fidelity statements (Payee Account column) |
+| `ytd_amount`              | NUMERIC(15,2) |                                                                   | Year-to-date amount for recurring payments                | Fidelity statements (YTD Payments column) |
+| `balance`                 | NUMERIC(15,2) |                                                                   | Running balance after transaction                         | Fidelity statements (Balance column) |
+| `account_type`            | TEXT          |                                                                   | Account type for transaction (e.g., 'CASH', 'MARGIN')     | Fidelity statements (Account Type column) |
 | **Tax Categorization**    |               |                                                                   |                                                           |
 | `tax_category` *R         | TEXT          | NOT NULL CHECK (tax_category IN ('ordinary_dividend',             | Primary tax treatment                                     |
 |                           |               | 'qualified_dividend', 'municipal_interest', 'corporate_interest', |                                                           |
@@ -343,7 +358,7 @@ While currently focused on Fidelity, the schema supports any institution through
 | account_number                    | account_number       | Account Number          | TEXT          | NOT NULL                                            |
 | **-- Security Identification --** |
 | sec_ticker                        | sec_symbol           | Symbol/Ticker           | TEXT          |                                                     |
-| cusip                             | cusip                | CUSIP                   | TEXT          |                                                     |
+| cusip                             | sec_cusip            | CUSIP                   | TEXT          |                                                     |
 | sec_name                          | sec_description      | Description             | TEXT          | NOT NULL                                            |
 | sec_type                          | sec_type             | Security Type           | TEXT          | NOT NULL                                            |
 | sec_subtype                       | sec_subtype          | Security Subtype        | TEXT          |                                                     |

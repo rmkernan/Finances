@@ -2,6 +2,7 @@
 
 **Created:** 09/22/25 3:45PM ET
 **Updated:** 09/22/25 2:08PM ET - Aligned database column names with actual schema (security_identifier, price_per_unit)
+**Updated:** 09/22/25 2:17PM ET - Aligned with positions map: separated ticker/CUSIP, added sec_ prefix to JSON fields, standardized naming conventions
 **Purpose:** Navigation guide for locating and extracting account activity data from Fidelity statements
 
 ## Claude's Role as Financial Activity Transcriber
@@ -37,11 +38,12 @@ The Activity section appears after the Holdings section for each account and con
 | Source Label     | JSON Field       | Database Column              | Type     | Notes                      |
 |------------------|------------------|------------------------------|----------|----------------------------|
 | Settlement Date  | settlement_date  | transactions.settlement_date | DATE     | MM/DD format               |
-| Security Name    | security_name    | transactions.security_name   | TEXT     | Full security description  |
-| Symbol/CUSIP     | symbol_cusip     | transactions.security_identifier | TEXT     | Trading symbol or CUSIP    |
+| Security Name    | sec_description  | transactions.security_name   | TEXT     | Full security description  |
+| Symbol           | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol (stocks/ETFs/funds) |
+| CUSIP            | cusip            | transactions.cusip           | TEXT     | CUSIP (bonds)              |
 | Description      | description      | transactions.description     | TEXT     | "You Bought" or "You Sold" |
 | Quantity         | quantity         | transactions.quantity        | NUMBER   | Shares/units traded        |
-| Price            | price            | transactions.price_per_unit  | CURRENCY | Per share price            |
+| Price            | price_per_unit   | transactions.price_per_unit  | CURRENCY | Per share price            |
 | Total Cost Basis | cost_basis       | transactions.cost_basis      | CURRENCY | For sales only             |
 | Transaction Cost | transaction_cost | transactions.fees            | CURRENCY | Commission/fees            |
 | Amount           | amount           | transactions.amount          | CURRENCY | Total transaction amount   |
@@ -57,15 +59,16 @@ The Activity section appears after the Holdings section for each account and con
 **Target Table:** `transactions` with `transaction_type = 'INCOME'`
 **Location:** After Securities Bought & Sold
 
-| Source Label    | JSON Field      | Database Column              | Type     | Notes               |
-|-----------------|-----------------|------------------------------|----------|---------------------|
-| Settlement Date | settlement_date | transactions.settlement_date | DATE     | MM/DD format        |
-| Security Name   | security_name   | transactions.security_name   | TEXT     | Full security name  |
-| Symbol/CUSIP    | symbol_cusip    | transactions.security_identifier | TEXT     | Security identifier |
-| Description     | description     | transactions.description     | TEXT     | Type of income      |
-| Quantity        | quantity        | transactions.quantity        | NUMBER   | For reinvestments   |
-| Price           | price           | transactions.price_per_unit  | CURRENCY | For reinvestments   |
-| Amount          | amount          | transactions.amount          | CURRENCY | Income amount       |
+| Source Label    | JSON Field       | Database Column              | Type     | Notes               |
+|-----------------|------------------|------------------------------|----------|---------------------|
+| Settlement Date | settlement_date  | transactions.settlement_date | DATE     | MM/DD format        |
+| Security Name   | sec_description  | transactions.security_name   | TEXT     | Full security name  |
+| Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol      |
+| CUSIP           | cusip            | transactions.cusip           | TEXT     | CUSIP if bond       |
+| Description     | description      | transactions.description     | TEXT     | Type of income      |
+| Quantity        | quantity         | transactions.quantity        | NUMBER   | For reinvestments   |
+| Price           | price_per_unit   | transactions.price_per_unit  | CURRENCY | For reinvestments   |
+| Amount          | amount           | transactions.amount          | CURRENCY | Income amount       |
 
 **Income Types:**
 - "Dividend Received" - Regular dividend
@@ -84,24 +87,26 @@ OUT OF SCOPE
 **Location:** Separate sections for options/assignments
 
 ### Other Activity In
-| Source Label    | JSON Field      | Database Column              | Type     | Notes                          |
-|-----------------|-----------------|------------------------------|----------|--------------------------------|
-| Settlement Date | settlement_date | transactions.settlement_date | DATE     | MM/DD format                   |
-| Security Name   | security_name   | transactions.security_name   | TEXT     | Option/security description    |
-| Symbol/CUSIP    | symbol_cusip    | transactions.security_identifier | TEXT     | Security identifier            |
-| Description     | description     | transactions.description     | TEXT     | "Expired", "Return Of Capital" |
-| Quantity        | quantity        | transactions.quantity        | NUMBER   | Contract quantity              |
-| Cost Basis      | cost_basis      | transactions.cost_basis      | CURRENCY | Original cost                  |
-| Amount          | amount          | transactions.amount          | CURRENCY | Transaction amount             |
+| Source Label    | JSON Field       | Database Column              | Type     | Notes                          |
+|-----------------|------------------|------------------------------|----------|--------------------------------|
+| Settlement Date | settlement_date  | transactions.settlement_date | DATE     | MM/DD format                   |
+| Security Name   | sec_description  | transactions.security_name   | TEXT     | Option/security description    |
+| Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol                 |
+| CUSIP           | cusip            | transactions.cusip           | TEXT     | CUSIP if applicable            |
+| Description     | description      | transactions.description     | TEXT     | "Expired", "Return Of Capital" |
+| Quantity        | quantity         | transactions.quantity        | NUMBER   | Contract quantity              |
+| Cost Basis      | cost_basis       | transactions.cost_basis      | CURRENCY | Original cost                  |
+| Amount          | amount           | transactions.amount          | CURRENCY | Transaction amount             |
 
 ### Other Activity Out
-| Source Label    | JSON Field      | Database Column              | Type   | Notes              |
-|-----------------|-----------------|------------------------------|--------|--------------------|
-| Settlement Date | settlement_date | transactions.settlement_date | DATE   | MM/DD format       |
-| Security Name   | security_name   | transactions.security_name   | TEXT   | Option description |
-| Symbol/CUSIP    | symbol_cusip    | transactions.security_identifier | TEXT   | Option symbol      |
-| Description     | description     | transactions.description     | TEXT   | "Assigned"         |
-| Quantity        | quantity        | transactions.quantity        | NUMBER | Contracts assigned |
+| Source Label    | JSON Field       | Database Column              | Type   | Notes              |
+|-----------------|------------------|------------------------------|--------|--------------------|
+| Settlement Date | settlement_date  | transactions.settlement_date | DATE   | MM/DD format       |
+| Security Name   | sec_description  | transactions.security_name   | TEXT   | Option description |
+| Symbol          | sec_symbol       | transactions.security_identifier | TEXT   | Option symbol      |
+| CUSIP           | cusip            | transactions.cusip           | TEXT   | CUSIP if applicable|
+| Description     | description      | transactions.description     | TEXT   | "Assigned"         |
+| Quantity        | quantity         | transactions.quantity        | NUMBER | Contracts assigned |
 
 ## 5. Deposits
 
@@ -136,13 +141,14 @@ OUT OF SCOPE
 **Target Table:** `transactions` with `transaction_type = 'TRANSFER'`
 **Location:** Separate sections
 
-| Source Label  | JSON Field    | Database Column              | Type     | Notes                 |
-|---------------|---------------|------------------------------|----------|-----------------------|
-| Date          | date          | transactions.settlement_date | DATE     | MM/DD format          |
-| Security Name | security_name | transactions.security_name   | TEXT     | Account identifier    |
-| Symbol/CUSIP  | symbol_cusip  | transactions.security_identifier | TEXT     | Usually blank         |
-| Description   | description   | transactions.description     | TEXT     | "Transferred From/To" |
-| Amount        | amount        | transactions.amount          | CURRENCY | Transfer amount       |
+| Source Label  | JSON Field       | Database Column              | Type     | Notes                 |
+|---------------|------------------|------------------------------|----------|-----------------------|
+| Date          | date             | transactions.settlement_date | DATE     | MM/DD format          |
+| Security Name | sec_description  | transactions.security_name   | TEXT     | Account identifier    |
+| Symbol        | sec_symbol       | transactions.security_identifier | TEXT     | Usually blank         |
+| CUSIP         | cusip            | transactions.cusip           | TEXT     | Usually blank         |
+| Description   | description      | transactions.description     | TEXT     | "Transferred From/To" |
+| Amount        | amount           | transactions.amount          | CURRENCY | Transfer amount       |
 
 ## 8. Fees and Charges
 
@@ -173,16 +179,17 @@ OUT OF SCOPE
 **Target Table:** `transactions` with `transaction_type = 'CORE_FUND'`
 **Location:** Detailed money market fund transactions
 
-| Source Label    | JSON Field      | Database Column              | Type     | Notes                      |
-|-----------------|-----------------|------------------------------|----------|----------------------------|
-| Settlement Date | settlement_date | transactions.settlement_date | DATE     | MM/DD format               |
-| Account Type    | account_type    | transactions.account_type    | TEXT     | "CASH"                     |
-| Transaction     | transaction     | transactions.description     | TEXT     | "You Bought" or "You Sold" |
-| Description     | description     | transactions.security_name   | TEXT     | Core fund name             |
-| Quantity        | quantity        | transactions.quantity        | NUMBER   | Shares                     |
-| Price           | price           | transactions.price_per_unit  | CURRENCY | Usually $1.0000            |
-| Amount          | amount          | transactions.amount          | CURRENCY | Transaction amount         |
-| Balance         | balance         | transactions.balance         | CURRENCY | Running balance            |
+| Source Label    | JSON Field       | Database Column              | Type     | Notes                      |
+|-----------------|------------------|------------------------------|----------|----------------------------|
+| Settlement Date | settlement_date  | transactions.settlement_date | DATE     | MM/DD format               |
+| Account Type    | account_type     | transactions.account_type    | TEXT     | "CASH"                     |
+| Transaction     | transaction      | transactions.description     | TEXT     | "You Bought" or "You Sold" |
+| Description     | sec_description  | transactions.security_name   | TEXT     | Core fund name             |
+| Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Fund ticker if available   |
+| Quantity        | quantity         | transactions.quantity        | NUMBER   | Shares                     |
+| Price           | price_per_unit   | transactions.price_per_unit  | CURRENCY | Usually $1.0000            |
+| Amount          | amount           | transactions.amount          | CURRENCY | Transaction amount         |
+| Balance         | balance          | transactions.balance         | CURRENCY | Running balance            |
 
 
 ## Special Parsing Considerations
