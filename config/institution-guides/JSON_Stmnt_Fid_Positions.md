@@ -1,6 +1,7 @@
 # Fidelity JSON Output Specification
 
 **Created:** 09/22/25 1:35PM ET
+**Updated:** 09/22/25 6:04PM ET - Corrected est_yield format to percentage (e.g., 4.880) not decimal (0.0488)
 **Purpose:** Formal specification for JSON output from Fidelity statement extraction
 **Related:** [Map_Stmnt_Fid_Positions.md](./Map_Stmnt_Fid_Positions.md)
 
@@ -106,7 +107,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
           "cost_basis": "15000.00",
           "unrealized_gain_loss": "2525.00",
           "estimated_ann_inc": "88.00",
-          "est_yield": "0.0050"
+          "est_yield": "0.500"
         },
         {
           "sec_type": "Bonds",
@@ -162,7 +163,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
           "cost_basis": "48000.00",
           "unrealized_gain_loss": "4516.20",
           "estimated_ann_inc": "800.00",
-          "est_yield": "0.0152"
+          "est_yield": "1.520"
         },
         {
           "sec_type": "Exchange Traded Products",
@@ -177,7 +178,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
           "cost_basis": "18000.00",
           "unrealized_gain_loss": "2283.75",
           "estimated_ann_inc": "270.00",
-          "est_yield": "0.0133"
+          "est_yield": "1.330"
         },
         {
           "sec_type": "Other",
@@ -192,7 +193,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
           "cost_basis": "11000.00",
           "unrealized_gain_loss": "-1075.00",
           "estimated_ann_inc": "1300.00",
-          "est_yield": "0.1310"
+          "est_yield": "13.100"
         }
       ]
     }
@@ -257,6 +258,11 @@ JSON output: `"-1250.00"`
 
 ### Percentages
 Statement shows: "5.25%"
+JSON output: `"5.250"` (as percentage to 3 decimal places, not as decimal)
+
+### Estimated Yield Format
+Statement shows: "4.88%"
+JSON output: `"4.880"` (NOT `"0.0488"`)
 JSON output: `"0.0525"`
 
 ### Options Description Parsing

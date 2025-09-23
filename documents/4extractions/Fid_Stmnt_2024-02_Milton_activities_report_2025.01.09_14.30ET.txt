@@ -1,0 +1,68 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-02_Milton.pdf
+Extraction Mode: Activities
+Statement Period: February 1-29, 2024
+Extraction Timestamp: 2025-01-09 14:30 ET
+
+ACCOUNTS PROCESSED:
+- Z40-394067 (Milton Preschool Inc - Corporation)
+
+SUMMARY COUNTS:
+Securities Bought/Sold: 0 transactions
+Dividends/Interest: 3 transactions (1 money market dividend, 1 treasury fund reinvestment, 1 treasury fund dividend)
+Deposits: 1 transaction ($657.53 from Reliantincom Payments)
+Core Fund Activity: 2 transactions (money market purchases and reinvestment)
+Other Activity: 0 transactions
+Withdrawals: 0 transactions
+Transfers: 0 transactions
+Fees: 0 transactions
+Bill Payments: 0 transactions
+
+EXTRACTION STATUS: SUCCESS
+
+EXTRACTION FEEDBACK:
+
+What went smoothly:
+- Clean, straightforward corporate account with minimal activity
+- Statement confirmed zero trades during period ("Total Account Trades Mar 2023 - Feb 2024: 0")
+- All activity sections clearly labeled and easy to parse
+- Dividend reinvestment entries matched expected dual-entry pattern (negative reinvestment, positive dividend)
+- Core fund activity section provided detailed transaction breakdown
+
+Sections that were absent (normal for this account):
+- Securities Bought & Sold: No trades during period (confirmed by statement)
+- Other Activity In/Out: No options or special transactions
+- Withdrawals: No cash withdrawals
+- Exchanges In/Out: No transfers between accounts
+- Fees and Charges: No fees assessed
+- Cards, Checking & Bill Payments: Not applicable for this account type
+
+Areas where guidance was clear:
+- Activity section structure matched mapping document exactly
+- CUSIP extraction for mutual funds worked well
+- Dividend reinvestment dual-entry pattern was clearly documented
+- Core fund activity format matched schema specifications
+
+Challenges encountered:
+- None - this was a simple statement with standard activity patterns
+
+Data quality notes:
+- All amounts reconciled correctly
+- Settlement dates consistent (all 02/29)
+- Security identifiers properly extracted (CUSIP for funds, symbols where available)
+- Quantity and price formatting preserved with proper decimal places
+
+EXTRACTION CONFIDENCE: HIGH (95%)
+- Simple account structure with standard activity types
+- Clear section delineation in PDF
+- All extracted values cross-validated against statement totals
+
+Output Files:
+- JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-02_Milton_activities_2025.01.09_14.30ET.json
+- Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-02_Milton_activities_report_2025.01.09_14.30ET.txt
+
+NEXT STEPS:
+- Source PDF remains in /documents/2staged/ for orchestrator to move after validation
+- JSON ready for database loading
+- No manual review required - standard activity patterns processed successfully

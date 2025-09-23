@@ -1,0 +1,145 @@
+{
+  "extraction_metadata": {
+    "document_id": "fid_stmnt_2024_12_milton_z40_394067",
+    "file_path": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf",
+    "file_hash": "sha256_placeholder_for_file_hash",
+    "extraction_type": "holdings",
+    "extraction_timestamp": "2024-09-22T14:30:00Z",
+    "extractor_version": "1.0",
+    "pages_processed": 10,
+    "extraction_notes": [
+      "Single account statement for Milton Preschool Inc",
+      "Account mapped using 4067 -> Milton from account-mappings.json",
+      "All holdings successfully extracted from pages 3-4",
+      "Income summary and realized gains data extracted from page 2"
+    ]
+  },
+
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2024-12-31",
+    "period_start": "2024-12-01",
+    "period_end": "2024-12-31"
+  },
+
+  "accounts": [
+    {
+      "account_number": "Z40-394067",
+      "account_name": "MILTON PRESCHOOL INC - CORPORATION",
+      "account_holder_name": "MILTON PRESCHOOL INC",
+
+      "portfolio_summary": {
+        "beginning_value": "479446.49",
+        "ending_value": "477071.17",
+        "net_account_value": "477071.17"
+      },
+
+      "income_summary": {
+        "taxable_total_period": "1470.72",
+        "taxable_total_ytd": "29515.27",
+        "divs_taxable_period": "1470.72",
+        "divs_taxable_ytd": "29515.27",
+        "stcg_taxable_period": null,
+        "stcg_taxable_ytd": null,
+        "int_taxable_period": null,
+        "int_taxable_ytd": null,
+        "ltcg_taxable_period": null,
+        "ltcg_taxable_ytd": null,
+        "tax_exempt_total_period": "1250.00",
+        "tax_exempt_total_ytd": "8900.00",
+        "divs_tax_exempt_period": null,
+        "divs_tax_exempt_ytd": null,
+        "int_tax_exempt_period": "1250.00",
+        "int_tax_exempt_ytd": "8900.00",
+        "roc_period": null,
+        "roc_ytd": null,
+        "grand_total_period": "2720.72",
+        "grand_total_ytd": "38415.27"
+      },
+
+      "realized_gains": {
+        "st_gain_period": null,
+        "st_loss_period": null,
+        "lt_gain_ytd": null,
+        "lt_loss_ytd": null
+      },
+
+      "holdings": [
+        {
+          "sec_type": "Core Account",
+          "sec_subtype": "Money Market",
+          "sec_symbol": "SPAXX",
+          "cusip": null,
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET (SPAXX)",
+          "beg_market_value": "2042.25",
+          "quantity": "58542.440000",
+          "price_per_unit": "1.0000",
+          "end_market_value": "58542.44",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "2855.26",
+          "est_yield": "4.880"
+        },
+        {
+          "sec_type": "Mutual Funds",
+          "sec_subtype": "Short-Term Funds",
+          "sec_symbol": "FSIXX",
+          "cusip": null,
+          "sec_description": "FIMM TREASURY ONLY PORTFOLIO: CL I (FSIXX)",
+          "beg_market_value": "336611.44",
+          "quantity": "337870.330000",
+          "price_per_unit": "1.0000",
+          "end_market_value": "337870.33",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "17238.64",
+          "est_yield": "5.100"
+        },
+        {
+          "sec_type": "Bonds",
+          "sec_subtype": "Municipal Bonds",
+          "sec_symbol": null,
+          "cusip": "792905CZ2",
+          "sec_description": "ST PAUL MINN HSG &REDEV B AUTH HEALTH",
+          "maturity_date": "2025-07-01",
+          "coupon_rate": "5.000",
+          "beg_market_value": "40289.60",
+          "quantity": "40000.000000",
+          "price_per_unit": "100.5880",
+          "end_market_value": "40235.20",
+          "accrued_int": "1000.00",
+          "cost_basis": "40268.43",
+          "unrealized_gain_loss": "-33.23",
+          "estimated_ann_inc": "2000.00",
+          "agency_ratings": "MOODYS A2 S&P A",
+          "next_call_date": null,
+          "call_price": null,
+          "payment_freq": "SEMIANNUALLY",
+          "bond_features": "EXTRAORDINARY CALL"
+        },
+        {
+          "sec_type": "Bonds",
+          "sec_subtype": "Municipal Bonds",
+          "sec_symbol": null,
+          "cusip": "83755VM35",
+          "sec_description": "SOUTH DAKOTA ST HEALTH B & EDL FACS",
+          "maturity_date": "2025-09-01",
+          "coupon_rate": "5.000",
+          "beg_market_value": "40503.20",
+          "quantity": "40000.000000",
+          "price_per_unit": "101.0580",
+          "end_market_value": "40423.20",
+          "accrued_int": "666.67",
+          "cost_basis": "40357.51",
+          "unrealized_gain_loss": "65.69",
+          "estimated_ann_inc": "2000.00",
+          "agency_ratings": "MOODYS A1",
+          "next_call_date": null,
+          "call_price": null,
+          "payment_freq": "SEMIANNUALLY",
+          "bond_features": "EXTRAORDINARY CALL"
+        }
+      ]
+    }
+  ]
+}

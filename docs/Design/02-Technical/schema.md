@@ -9,6 +9,7 @@
 **Updated:** 09/22/25 1:18PM ET - Added beginning_value and ending_value fields to doc_level_data table
 **Updated:** 09/22/25 1:25PM ET - Removed redundant income_summaries table, marked Phase 2 tables (not yet implemented)
 **Updated:** 09/22/25 3:11PM ET - Added sec_cusip, option fields, activity columns, bond_state, dividend_qualified to transactions table
+**Updated:** 09/22/25 5:32PM ET - Made tax fields optional, transaction_date optional, clarified settlement_date vs transaction_date separation
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -266,8 +267,8 @@ While currently focused on Fidelity, the schema supports any institution through
 | `document_id` *R          | UUID (FK)     | NOT NULL REFERENCES documents(id) ON DELETE CASCADE               | Source document for audit trail                           |
 | `account_id` *R           | UUID (FK)     | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT               | Account where transaction occurred                        |
 | **Transaction Core Data** |               |                                                                   |                                                           |
-| `transaction_date` *R     | DATE          | NOT NULL                                                          | Date transaction occurred                                 | Fidelity statements (Date MM/DD), Trade confirmations (Trade Date), 1099s (Payment Date) |
-| `settlement_date`         | DATE          |                                                                   | Settlement/clearing date                                  | Trade confirmations (Settlement Date) |
+| `transaction_date`        | DATE          |                                                                   | Date transaction occurred (trade date)                    | Fidelity statements (Date MM/DD), Trade confirmations (Trade Date), 1099s (Payment Date) |
+| `settlement_date`         | DATE          |                                                                   | Settlement/clearing date                                  | Fidelity statements (Settlement Date column), Trade confirmations (Settlement Date) |
 | `transaction_type` *R     | TEXT          | NOT NULL CHECK (transaction_type IN ('dividend', 'interest',      | Transaction classification                                | Inferred from description patterns |
 |                           |               | 'buy', 'sell', 'transfer_in', 'transfer_out', 'fee',              |                                                           |  |
 |                           |               | 'return_of_capital', 'assignment', 'redemption', 'reinvest',      |                                                           |  |
@@ -305,12 +306,12 @@ While currently focused on Fidelity, the schema supports any institution through
 | `balance`                 | NUMERIC(15,2) |                                                                   | Running balance after transaction                         | Fidelity statements (Balance column) |
 | `account_type`            | TEXT          |                                                                   | Account type for transaction (e.g., 'CASH', 'MARGIN')     | Fidelity statements (Account Type column) |
 | **Tax Categorization**    |               |                                                                   |                                                           |
-| `tax_category` *R         | TEXT          | NOT NULL CHECK (tax_category IN ('ordinary_dividend',             | Primary tax treatment                                     |
+| `tax_category`            | TEXT          | CHECK (tax_category IN ('ordinary_dividend',                      | Primary tax treatment                                     |
 |                           |               | 'qualified_dividend', 'municipal_interest', 'corporate_interest', |                                                           |
 |                           |               | 'capital_gain_short', 'capital_gain_long', 'return_of_capital',   |                                                           |
 |                           |               | 'tax_exempt', 'fee_expense', 'other'))                            |                                                           |
-| `federal_taxable` *R      | BOOLEAN       | NOT NULL                                                          | True if taxable for federal purposes                      |
-| `state_taxable` *R        | BOOLEAN       | NOT NULL                                                          | True if taxable for state purposes (GA-specific)          |
+| `federal_taxable`         | BOOLEAN       |                                                                   | True if taxable for federal purposes                      |
+| `state_taxable`           | BOOLEAN       |                                                                   | True if taxable for state purposes (GA-specific)          |
 | `tax_details`             | JSONB         |                                                                   | Additional tax context: {"issuer_state": "GA",            |
 |                           |               |                                                                   | "amt_preference": false, "section_199a": true}            |
 | **Source Tracking**       |               |                                                                   |                                                           |

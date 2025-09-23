@@ -2,6 +2,7 @@
   "fidelity": {
     "7872": "Brok",
     "5656": "CMA",
+    "4067": "Milton",
     "_comment": "Add new accounts as discovered. Use last 4 digits of account number as key."
   },
   "bank_of_america": {

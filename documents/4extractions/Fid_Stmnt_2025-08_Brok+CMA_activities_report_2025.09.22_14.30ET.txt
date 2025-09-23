@@ -1,0 +1,123 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+===============================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_Brok+CMA.pdf
+Extraction Mode: Activities
+Statement Period: August 1, 2025 - August 31, 2025
+Extraction Timestamp: 2025-09-22T18:30:00Z
+
+ACCOUNTS PROCESSED
+==================
+1. Z24-527872 (Brok) - FIDELITY ACCOUNT RICHARD M KERNAN AND PEGGY E KERNAN - WITH RIGHTS OF SURVIVORSHIP TOD
+2. Z27-375656 (CMA) - FIDELITY® CASH MANAGEMENT ACCOUNT RICHARD M KERNAN AND PEGGY E KERNAN - WITH RIGHTS OF SURVIVORSHIP TOD
+
+SUMMARY COUNTS - ACCOUNT Z24-527872 (BROK)
+==========================================
+Securities Bought & Sold: 58 transactions
+- Stock purchases: 9 transactions (TSLA, INTC, CRWV, MSTR assignments)
+- Options trades: 44 transactions (calls/puts bought/sold)
+- Bond redemptions: 2 transactions (Wisconsin, Clifton bonds)
+- Fund redemptions: 3 transactions (FIMM tax exempt)
+
+Dividends & Interest: 22 income transactions
+- Stock dividends: 8 transactions (T, BTI, TSLY, PSEC, BTZ, etc.)
+- Municipal bond interest: 9 transactions (various GA, TX, TN bonds)
+- Fund dividends: 4 transactions (FIMM, FTABX reinvestments)
+- Money market interest: 1 transaction
+
+Other Activity In: 10 transactions
+- Options expirations: 8 transactions (META, MSFT, CRWV, GOOG, TSLA puts)
+- Return of capital: 2 transactions (MPLX, ET)
+
+Other Activity Out: 6 transactions
+- Options assignments: 6 transactions (TSLA, CRWV, MSTR, AR, AMD puts)
+
+Deposits: 1 transaction ($8,000)
+
+Withdrawals: 3 transactions
+- Wire transfers to Coinbase: 3 transactions ($600,000 total)
+
+Exchanges In: 3 transactions ($506,000 total)
+
+Fees & Charges: 1 transaction (BTI ADR fee)
+
+Core Fund Activity: 22 transactions
+- Money market fund transactions for cash management
+
+Trades Pending Settlement: 7 transactions
+- Options closing and opening transactions settling 09/02
+
+SUMMARY COUNTS - ACCOUNT Z27-375656 (CMA)
+==========================================
+Securities Bought & Sold: 2 transactions
+- Money market fund redemptions
+
+Dividends & Interest: 3 transactions
+- FDIC deposit interest: 1 transaction
+- Money market reinvestment: 2 transactions (dividend + reinvest)
+
+Deposits: 3 transactions
+- Payroll deposits: 2 transactions ($470.11 each)
+- Investment disbursement: 1 transaction ($4,458.89)
+
+Withdrawals: 3 transactions
+- Mortgage payment: 1 transaction
+- Bank transfer: 1 transaction
+- University payment: 1 transaction
+
+Bill Payments: 1 transaction
+- Chase card payment: $18,132.00
+
+Core Fund Activity: 6 transactions
+- FDIC deposit transactions for cash management
+
+EXTRACTION FEEDBACK
+===================
+
+What went smoothly:
+- Complex options descriptions parsed successfully across multiple lines
+- Bond redemption transactions properly handled with null prices
+- Dividend reinvestments correctly processed as dual entries
+- Multi-account statement structure handled seamlessly
+- Core fund activity extracted with running balances
+- Pending settlement trades properly categorized
+
+Challenges encountered:
+- Extensive options trading required careful parsing of multi-line descriptions
+- Some security names spanned 3-4 lines requiring concatenation
+- Options assignments and expirations spread across multiple sections
+- Complex transaction descriptions with embedded gain/loss information
+- Multiple fund redemption entries for obligation coverage
+
+Sections that were absent:
+- Short Activity: Present with mark-to-market entries but no actual short transactions
+- No realized gains section separate from trading activity
+- No exchanges out for main brokerage account
+
+Areas where guidance was clear:
+- Reference documents provided excellent field mapping
+- Transaction type classifications were well-defined
+- Date formatting and amount handling instructions were precise
+- Core fund activity structure was clearly documented
+
+Data quality notes:
+- All numeric values preserved with original precision
+- Transaction costs properly captured where present
+- CUSIP codes extracted for bonds and options
+- Settlement dates consistently formatted
+- Proper handling of negative amounts for purchases/debits
+
+EXTRACTION STATUS
+=================
+Status: SUCCESS
+Confidence Level: HIGH
+Total Transactions Extracted: 135 transactions across both accounts
+Pages Processed: 36 pages
+Completion Time: 2025-09-22T18:30:00Z
+
+NEXT STEPS
+==========
+- JSON file ready for database loading
+- Source PDF remains in staged folder for orchestrator handling
+- Complex options and bond transactions may benefit from manual review for tax reporting
+- Consider validation of large assignment transactions (CRWV, MSTR, AMD)

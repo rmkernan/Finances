@@ -1,0 +1,63 @@
+FIDELITY STATEMENT EXTRACTION REPORT
+===============================================
+
+EXTRACTION DETAILS:
+- Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-02_Milton.pdf
+- Extraction Mode: Holdings
+- Extraction Time: 2024-09-22 14:30 ET
+- Pages Processed: 8 of 8
+
+ACCOUNT PROCESSED:
+- Account Number: Z40-394067
+- Account Name: MILTON PRESCHOOL INC - CORPORATION
+- Account Type: Corporate account
+- Statement Period: February 1-29, 2024
+
+PORTFOLIO SUMMARY:
+- Beginning Value: $788,415.05
+- Ending Value: $792,331.14
+- Net Change: $3,916.09
+
+SUMMARY COUNTS:
+- Total Holdings: 2 positions
+- Core Account: 1 position (Fidelity Government Money Market)
+- Mutual Funds: 1 position (Short-Term Funds)
+
+INCOME SUMMARY EXTRACTED:
+- Taxable dividends (period): $3,258.56
+- Taxable dividends (YTD): $7,588.24
+- No other income categories present
+
+HOLDINGS BREAKDOWN:
+1. Core Account (0% of portfolio):
+   - FIDELITY GOVERNMENT MONEY MARKET (SPAXX): $659.57
+
+2. Mutual Funds (100% of portfolio):
+   - FIMM TREASURY ONLY PORTFOLIO: CL I (FSIXX): $791,671.57
+
+EXTRACTION STATUS: SUCCESS
+
+EXTRACTION FEEDBACK:
+What went smoothly:
+- Simple statement structure with only 2 holdings made extraction straightforward
+- Clear section organization with distinct Core Account and Mutual Funds sections
+- All required data fields were present and clearly visible
+- Income Summary table was well-structured and complete
+
+Areas noted:
+- No Realized Gains section present - normal as no securities were sold this period
+- Cost basis and unrealized gain/loss not shown for money market positions - normal for these security types
+- Statement contains only basic holdings (money market funds) - no complex securities
+
+Sections that were absent (normal):
+- Realized Gains and Losses: No sales occurred this period
+- Stocks, Bonds, ETPs, Options: Account holds only money market funds
+- Tax-exempt income: No municipal securities held
+
+EXTRACTION CONFIDENCE: High (100%)
+- All data clearly visible and unambiguous
+- Standard Fidelity statement format
+- Simple portfolio structure
+- No data quality concerns
+
+COMPLETED: 2024-09-22 14:30 ET

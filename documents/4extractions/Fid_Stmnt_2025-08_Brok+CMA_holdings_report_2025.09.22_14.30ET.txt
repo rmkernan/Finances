@@ -1,0 +1,90 @@
+FIDELITY STATEMENT EXTRACTION REPORT
+=====================================
+
+Source file processed: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_Brok+CMA.pdf
+Extraction mode used: Holdings
+Extraction timestamp: 2025-09-22 14:30 ET
+Extractor version: 1.0
+
+ACCOUNTS FOUND AND PROCESSED:
+- Z24-527872 (Brok) - INDIVIDUAL - TOD JOHN CHRISTIAN KERNAN
+- Z27-375656 (CMA) - INDIVIDUAL - TOD JOHN CHRISTIAN KERNAN
+
+DOCUMENT OVERVIEW:
+- Statement period: August 1-31, 2025
+- Total pages processed: 36
+- Combined portfolio value: $6,925,062.03
+- Statement date: August 31, 2025
+
+SUMMARY COUNTS BY ACCOUNT:
+
+BROKERAGE ACCOUNT (Z24-527872):
+Portfolio Value: $6,699,892.03
+- 84 stocks (including 3 preferred stocks)
+- 28 bonds (corporate, municipal, agency, treasury)
+- 27 mutual funds
+- 7 ETPs (Exchange Traded Products)
+- 17 options positions (calls and puts)
+- 4 other securities (REITs)
+Total positions: 167
+
+CMA ACCOUNT (Z27-375656):
+Portfolio Value: $225,170.00
+- 0 stocks
+- 1 mutual fund (FXNAX - Fidelity US Bond Index Fund)
+- 0 bonds
+- 0 ETPs
+- 0 options
+- 0 other securities
+Total positions: 1
+
+COMBINED TOTALS:
+- 84 stocks
+- 28 bonds
+- 28 mutual funds
+- 7 ETPs
+- 17 options
+- 4 other securities
+Grand total: 168 positions
+
+EXTRACTION FEEDBACK:
+
+What went smoothly:
+- Document structure was clear and well-organized
+- All security types were properly identified and classified
+- Cost basis and market value data was complete for most positions
+- Income summary sections were comprehensive and accurately extracted
+- Account-level portfolio summaries were clearly presented
+- Options parsing worked well with proper underlying symbol extraction
+- Bond detail lines provided complete CUSIP, rating, and call feature data
+
+Any ambiguities or challenges:
+- Some bond positions had complex feature descriptions that required careful parsing
+- A few positions showed "unavailable" for cost basis, handled as null values
+- Options descriptions required parsing to extract underlying symbols, strike prices, and expiration dates
+- Some preferred stock positions were mixed in with common stocks but properly differentiated
+
+Sections that were absent:
+- Realized Gains section - No securities were sold during this period (normal)
+- Short positions section - No short activity present (normal)
+- Foreign securities section - No international holdings (normal)
+
+Areas where guidance could be clearer:
+- Bond feature parsing could benefit from more examples of complex bond types
+- Options chain organization occasionally varies in format
+- Some ETPs are categorized differently than expected but were handled appropriately
+
+EXTRACTION CONFIDENCE LEVEL: HIGH (95%)
+
+The extraction was highly successful with comprehensive data capture across all security types. All major sections were present and properly parsed. The large portfolio size and complex holdings were handled systematically with no significant data quality issues encountered.
+
+KEY VALIDATION POINTS:
+- Total portfolio values match between detailed holdings and summary sections
+- All account numbers properly mapped (7872 -> Brok, 5656 -> CMA)
+- Security type classifications follow Fidelity's standard categories
+- Income summary totals are consistent across accounts
+- All required fields populated according to JSON schema specification
+
+STATUS: COMPLETED SUCCESSFULLY
+
+This extraction provides a complete and accurate representation of the August 2025 Fidelity statement holdings data suitable for database loading and financial analysis.

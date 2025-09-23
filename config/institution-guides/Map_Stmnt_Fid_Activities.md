@@ -3,6 +3,9 @@
 **Created:** 09/22/25 3:45PM ET
 **Updated:** 09/22/25 2:08PM ET - Aligned database column names with actual schema (security_identifier, price_per_unit)
 **Updated:** 09/22/25 2:17PM ET - Aligned with positions map: separated ticker/CUSIP, added sec_ prefix to JSON fields, standardized naming conventions
+**Updated:** 09/22/25 5:21PM ET - Added multi-line description parsing guidance and Bill Payments section details
+**Updated:** 09/22/25 6:13PM ET - Clarified bond redemption pricing, dividend reinvestment dual-entry, and null handling based on agent feedback
+**Updated:** 09/22/25 8:02PM ET - Enhanced bond redemption section with specific examples and clarified normal null price behavior
 **Purpose:** Navigation guide for locating and extracting account activity data from Fidelity statements
 
 ## Claude's Role as Financial Activity Transcriber
@@ -74,7 +77,9 @@ The Activity section appears after the Holdings section for each account and con
 - "Dividend Received" - Regular dividend
 - "Muni Exempt Int" - Tax-exempt municipal interest
 - "Interest Earned" - Taxable interest
-- "Reinvestment" - Dividend reinvestment
+- "Reinvestment" - Dividend reinvestment (appears as dual entry:
+  1. Negative amount for the reinvestment purchase
+  2. Positive amount for the dividend received)
 - "Return Of Capital" - ROC distribution
 
 ## 3. Short Activity
@@ -145,8 +150,8 @@ OUT OF SCOPE
 |---------------|------------------|------------------------------|----------|-----------------------|
 | Date          | date             | transactions.settlement_date | DATE     | MM/DD format          |
 | Security Name | sec_description  | transactions.security_name   | TEXT     | Account identifier    |
-| Symbol        | sec_symbol       | transactions.security_identifier | TEXT     | Usually blank         |
-| CUSIP         | cusip            | transactions.cusip           | TEXT     | Usually blank         |
+| Symbol        | sec_symbol       | transactions.security_identifier | TEXT     | Usually blank → null  |
+| CUSIP         | cusip            | transactions.cusip           | TEXT     | Usually blank → null  |
 | Description   | description      | transactions.description     | TEXT     | "Transferred From/To" |
 | Amount        | amount           | transactions.amount          | CURRENCY | Transfer amount       |
 
@@ -174,6 +179,12 @@ OUT OF SCOPE
 | Amount        | amount        | transactions.amount          | CURRENCY | Payment amount (negative) |
 | YTD Payments  | ytd_payments  | transactions.ytd_amount      | CURRENCY | Year-to-date total        |
 
+**Example from statement:**
+```
+Post Date  Payee                   Payee Account      Amount        YTD Payments
+08/29      CHASE CARD SERVICES     ************5793   -$18,132.00   $61,534.00
+```
+
 ## 10. Core Fund Activity
 
 **Target Table:** `transactions` with `transaction_type = 'CORE_FUND'`
@@ -194,6 +205,32 @@ OUT OF SCOPE
 
 ## Special Parsing Considerations
 
+### Multi-line Security Descriptions
+Securities (especially bonds and complex options) often span multiple lines in the PDF. Concatenate all lines that are part of the same transaction into a single description field.
+
+**Bond Example:**
+```
+PDF shows:
+WISCONSIN ST HEALTH & EDL FACS
+AUTH REV
+05.00000% 11/15/2027 FULL CALL PAYOUT
+#REOR R6006628610000
+
+Extract as single description:
+"WISCONSIN ST HEALTH & EDL FACS AUTH REV 05.00000% 11/15/2027 FULL CALL PAYOUT #REOR R6006628610000"
+```
+
+**Option Example:**
+```
+PDF shows:
+PUT (COIN) COINBASE GLOBAL INC
+AUG 15 25 $300 (100 SHS) OPENING
+TRANSACTION
+
+Extract as single description:
+"PUT (COIN) COINBASE GLOBAL INC AUG 15 25 $300 (100 SHS) OPENING TRANSACTION"
+```
+
 ### Option Transactions
 Options show additional details in the security name:
 - Contract type: CALL or PUT
@@ -204,10 +241,25 @@ Options show additional details in the security name:
 
 Example: "PUT (COIN) COINBASE GLOBAL INC AUG 15 25 $300 (100 SHS) OPENING TRANSACTION"
 
-### Redemptions and Maturities
-Bonds being called or maturing show:
-- "REDEMPTION PAYOUT" or "FULL CALL PAYOUT"
-- Reference number format: "#REOR R[number]"
+### Bond Redemption Transactions
+Bonds being called or maturing show complex descriptions with embedded data:
+
+**Typical Redemption Description Pattern:**
+`[ISSUER] REV [RATE]% [MATURITY] [REDEMPTION_TYPE] PAYOUT #[REFERENCE_ID]`
+
+**Examples:**
+- `WISCONSIN ST HEALTH & EDL FACS AUTH REV 05.00000% 11/15/2027 FULL CALL PAYOUT #REOR R6006628610000`
+- `CLIFTON TEX HIGHER ED FIN CORP ED REV 05.00000% 08/15/2025 REDEMPTION PAYOUT #REOR R6006569090000`
+
+**Redemption Transaction Rules:**
+- Copy full description exactly as shown (don't truncate reference numbers)
+- **Price handling**: When price shows "-" for redemptions, use null (this is normal)
+- **Cost basis**: Usually null for redemptions (this is normal)
+- **Transaction cost**: Use null for blank/missing costs (not "0.00")
+- Amount reflects redemption proceeds
+- Reference numbers (#REOR, etc.) are part of the description
+
+**This is normal bond redemption behavior - not a parsing challenge**
 
 ### Transaction Signs
 - **Purchases/Debits:** Negative amounts

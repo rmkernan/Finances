@@ -1,0 +1,117 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+Generated: 2024-09-22 17:15 ET
+Source: Fid_Stmnt_2024-12_Milton.pdf
+Account: Z40-394067 (Milton Preschool Inc - Corporation)
+Period: December 1-31, 2024
+
+=== EXTRACTION SUMMARY ===
+
+ACCOUNT PROCESSED:
+✓ Z40-394067 - MILTON PRESCHOOL INC - CORPORATION
+
+ACTIVITY SECTIONS EXTRACTED:
+✓ Securities Bought & Sold: 2 transactions (bond redemptions)
+✓ Dividends, Interest & Other Income: 5 transactions
+✓ Deposits: 1 transaction
+✓ Withdrawals: 1 transaction
+✓ Core Fund Activity: 4 transactions
+✗ Other Activity In/Out: None found
+✗ Exchanges In/Out: None found
+✗ Fees and Charges: None found
+✗ Bill Payments: None found
+✗ Trades Pending Settlement: None found
+
+TOTAL TRANSACTIONS: 13
+
+=== DETAILED FINDINGS ===
+
+SECURITIES BOUGHT & SOLD:
+- 2 bond redemptions totaling $60,000
+- Both with REOR reference numbers (R6004694690000, R6004752810000)
+- California Municipal Finance Authority: $50,000
+- West Clermont Ohio Local School District: $10,000
+
+DIVIDENDS & INTEREST:
+- Municipal bond interest payments: $1,250 (tax-exempt)
+- Money market dividend: $211.83 (taxable)
+- Treasury portfolio dividend reinvestment: $1,258.89
+
+DEPOSITS:
+- Single deposit from "Reliantincom Distribute": $2,038.36
+
+WITHDRAWALS:
+- EFT transfer to First Citizens Bank: $7,000
+
+CORE FUND ACTIVITY:
+- Active money market fund trading
+- Large deposit of $61,250 (likely from bond redemptions)
+- Withdrawal of $7,000 for external transfer
+- Dividend reinvestment activity
+- Ending balance: $58,542.44
+
+=== EXTRACTION QUALITY ASSESSMENT ===
+
+ASPECTS THAT WENT SMOOTHLY:
+✓ Clear document structure with well-defined activity sections
+✓ Bond redemption transactions clearly formatted with REOR references
+✓ Core fund activity section provided detailed running balances
+✓ Municipal bond interest easily identifiable as tax-exempt
+✓ All numeric values and dates extracted accurately
+✓ CUSIP codes properly captured for bonds
+✓ Account mapping successful (4067 → Milton)
+
+CHALLENGES ENCOUNTERED:
+⚠ Bond redemption pricing shows "-" rather than actual redemption price
+⚠ Some transaction costs are blank/null rather than zero
+⚠ Dividend reinvestment shows negative amount (normal but requires careful handling)
+
+AREAS WHERE GUIDANCE DOCUMENTS COULD BE CLEARER:
+1. Bond redemption transactions: Guidance could clarify how to handle redemptions where price shows "-" - should this be null or calculated from amount/quantity?
+
+2. Transaction cost handling: Document could specify when to use null vs "0.00" for missing transaction costs
+
+3. Dividend reinvestment transactions: Could provide more explicit guidance on the dual-entry nature (negative reinvestment + positive dividend)
+
+SPECIFIC SECTIONS REQUIRING INTERPRETATION:
+1. Core fund activity balance reconciliation - ensured running balances follow transaction sequence
+2. Multi-line bond descriptions - concatenated full redemption details including REOR references
+3. Dividend reinvestment pairs - correctly linked the negative reinvestment with positive dividend
+
+=== DATA QUALITY VALIDATION ===
+
+RECONCILIATION CHECKS:
+✓ Core fund ending balance matches statement: $58,542.44
+✓ All settlement dates fall within statement period (Dec 1-31, 2024)
+✓ Bond redemption amounts match cost basis values
+✓ Municipal interest matches tax-exempt income in summary
+
+COMPLETENESS VERIFICATION:
+✓ All 10 pages reviewed for activity sections
+✓ No activity sections missed based on document structure
+✓ All transaction types present in document captured
+
+=== RECOMMENDATIONS ===
+
+FOR FUTURE EXTRACTIONS:
+1. Consider adding validation rules for bond redemption transactions
+2. Standardize null vs zero handling for missing transaction costs
+3. Add cross-reference validation between core fund activity and cash movements
+
+FOR DATABASE LOADING:
+- Municipal bond interest should be flagged as tax-exempt
+- Bond redemptions require special handling for matured securities
+- Core fund balances can be used for cash reconciliation
+
+=== SUCCESS CRITERIA CHECKLIST ===
+
+□ All pages reviewed: ✓ (10 pages)
+□ All accounts identified: ✓ (Z40-394067 mapped to Milton)
+□ All activities extracted: ✓ (13 transactions across 5 activity types)
+□ JSON schema compliance: ✓ (follows JSON_Stmnt_Fid_Activity.md)
+□ Output file saved: ✓ (/documents/4extractions/)
+□ Numeric precision preserved: ✓ (6 decimal places for quantities, proper currency format)
+□ Date format standardized: ✓ (YYYY-MM-DD format)
+
+EXTRACTION STATUS: ✅ SUCCESSFUL
+
+The extraction captured all available activity data from the statement with high fidelity. The document was well-structured and followed standard Fidelity formatting, making extraction straightforward with only minor ambiguities around bond redemption pricing display.

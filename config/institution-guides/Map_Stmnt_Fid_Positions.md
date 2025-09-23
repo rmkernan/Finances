@@ -8,6 +8,10 @@
 **Updated:** 09/22/25 11:20AM - Simplified to pure data location guide: removed redundant notes, interpretive content, and explanations
 **Updated:** 09/22/25 12:30PM - Added Document Structure Overview section for navigation context
 **Updated:** 09/22/25 1:52PM - Clarified multi-account structure and extraction requirements for ALL accounts
+**Updated:** 09/22/25 6:04PM - Added Core Account section, standardized est_yield to percentage format (not decimal)
+**Updated:** 09/22/25 6:17PM - Clarified that Realized Gains section only appears when sales occurred (use null when absent)
+**Updated:** 09/22/25 7:58PM - Enhanced data transcription guidance to clarify faithful copying of all values including "unavailable"
+**Updated:** 09/22/25 8:02PM - Added ETP classification guidance to trust Fidelity's categorization rather than second-guessing
 **Purpose:** Navigation guide for locating and extracting positions/holdings data from Fidelity statements
 
 ## Claude's Role as Financial Data Scribe
@@ -26,8 +30,15 @@ You are acting as a highly efficient data entry clerk who can read financial sta
 **Your Approach:** Like a human data entry clerk, you'll:
 1. Navigate to each section mentioned in this map
 2. Find the attributes listed in the tables
-3. Copy the values exactly as shown (including "unavailable", negatives, prefixes)
+3. **Copy the values exactly as shown** - transcribe faithfully:
+   - "unavailable" → `"cost_basis": "unavailable"`
+   - "--" → `"cost_basis": "--"`
+   - "n/a" → `"cost_basis": "n/a"`
+   - Blank field → `"cost_basis": null`
+   - ANY text value is valid - just transcribe it
 4. Structure them into the specified JSON format
+
+**Data Quality Rule:** Only report issues when fields are missing from PDF structure or illegible - NOT when they contain values like "unavailable"
 
 ## Document Structure Overview
 
@@ -39,7 +50,7 @@ You are acting as a highly efficient data entry clerk who can read financial sta
 3. **For EACH Account in the statement:**
    - Account Summary with Net Account Value
    - Income Summary Table (for this account)
-   - Realized Gains and Losses Table (for this account)
+   - Realized Gains and Losses Table (for this account) - only present if sales occurred
    - Holdings Section (for this account)
      - Stocks subsection
      - Bonds subsection
@@ -103,6 +114,7 @@ This is a table labeled Income Summary under each Account Summary section. It ma
 
 ### Realized Gains and Losses from Sales Table
 **Target Table:** `doc_level_data` with `doc_section = 'real_gain_loss_table'` with account_number from the Account Summary Header
+**Important:** This section only appears when securities were sold during the period. If not present in the statement, set all realized_gains fields to null in the JSON. This is normal and expected.
 | Source Label             | JSON Field     | Database Column               | Type     | Notes  |
 |--------------------------|----------------|-------------------------------|----------|--------|
 | Short-term Gain (period) | st_gain_period | doc_level_data.st_gain_period | CURRENCY |        |
@@ -131,7 +143,7 @@ There is one holding section per account listed in the document. This section co
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                    |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                    |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                    |
-| Estimated Yield (EY)    | est_yield            | positions.est_yield            | NUMBER   |                                    |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
 
 **Subtype Determination:**
 - "Preferred Stock" if contains: PFD, PREFERRED, or dividend rate (e.g., "6.68304%")
@@ -207,7 +219,7 @@ Bonds have a detail line immediately below the description containing structured
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                    |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                    |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                    |
-| Estimated Yield (EY)    | est_yield            | positions.eai_percentage       | NUMBER   |                                    |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
 
 #### Exchange Traded Products Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
@@ -226,8 +238,26 @@ Bonds have a detail line immediately below the description containing structured
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                             |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                             |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                             |
-| Estimated Yield (EY)    | est_yield            | positions.eai_percentage       | NUMBER   |                                             |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
 
+##### ETP Classification Guidance
+Fidelity groups various traded products under "Exchange Traded Products":
+- Traditional ETFs (Exchange Traded Funds)
+- ETNs (Exchange Traded Notes)
+- Closed-end funds that trade like stocks
+- Some specialty funds that trade on exchanges
+
+**Classification Rule:**
+- If Fidelity lists it under "Exchange Traded Products" → use `"sec_type": "ETPs"`
+- Don't try to reclassify based on ticker or underlying type
+- Copy Fidelity's categorization exactly as shown
+
+**Examples:**
+- VTI (Vanguard ETF) → "ETPs" (if that's where Fidelity puts it)
+- ARKK (Innovation ETF) → "ETPs"
+- Some bond funds → May appear as "ETPs" instead of "Mutual Funds"
+
+**This is normal Fidelity categorization - trust the source document classification.**
 
 #### Options
 **Target Table:** `positions` with `account_number` from Account Summary Header
@@ -261,6 +291,30 @@ Bonds have a detail line immediately below the description containing structured
 `[SYMBOL][YYMMDD][C/P][STRIKE]`
 Example: `GOOG250912C215` → GOOG, 250912, C, 215
 
+
+#### Core Account
+**Target Table:** `positions` with `account_number` from Account Summary Header
+**Security Type:** "Core Account" | **Security Subtype:** "Money Market" (typically)
+
+| Source Label            | JSON Field           | Database Column                | Type     | Notes                                  |
+|-------------------------|----------------------|--------------------------------|----------|----------------------------------------|
+| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Core Account"        |
+| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - Usually "Money Market"       |
+| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                                |
+| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses             |
+| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                        |
+| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                                |
+| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ** - Usually 1.0000               |
+| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                                |
+| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY | Usually "not applicable"               |
+| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY | Usually "not applicable"               |
+| Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                        |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 4.880 not 0.0488)|
+
+**Common Core Account Types:**
+- FIDELITY GOVERNMENT MONEY MARKET (SPAXX)
+- FIDELITY TREASURY MONEY MARKET (FZFXX)
+- Other Fidelity money market funds
 
 #### Other Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
