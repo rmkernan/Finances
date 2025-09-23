@@ -1,0 +1,22 @@
+{
+  "database": {
+    "host": "127.0.0.1",
+    "port": 54322,
+    "database": "postgres",
+    "user": "postgres",
+    "password": "postgres"
+  },
+  "mappings": {
+    "account_mappings_path": "../../config/database-account-mappings.json"
+  },
+  "defaults": {
+    "tax_year": 2024,
+    "institution": "Fidelity Investments",
+    "georgia_resident": true
+  },
+  "processing": {
+    "batch_size": 500,
+    "fail_on_duplicate": true,
+    "create_missing_accounts": true
+  }
+}

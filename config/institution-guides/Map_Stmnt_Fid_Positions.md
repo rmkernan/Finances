@@ -12,7 +12,23 @@
 **Updated:** 09/22/25 6:17PM - Clarified that Realized Gains section only appears when sales occurred (use null when absent)
 **Updated:** 09/22/25 7:58PM - Enhanced data transcription guidance to clarify faithful copying of all values including "unavailable"
 **Updated:** 09/22/25 8:02PM - Added ETP classification guidance to trust Fidelity's categorization rather than second-guessing
+**Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Purpose:** Navigation guide for locating and extracting positions/holdings data from Fidelity statements
+
+## ⚙️ Extraction vs Classification Philosophy
+
+**IMPORTANT:** This guide focuses on **pure transcription** from PDF statements. The extractor should capture data exactly as shown without interpretation or classification.
+
+**Transaction Classification:** Happens automatically in the loader using the configuration-driven mapping system (`/config/data-mappings.json`):
+- **Transaction types:** dividend vs interest vs trade categorization
+- **Security classification:** call vs put options identification
+- **Lifecycle tracking:** opening/closing transactions and assignments
+- **Tax categories:** municipal bonds vs regular interest separation
+
+**Extractor Responsibility:** Accurate data capture from PDF
+**Loader Responsibility:** Data classification and categorization
+
+**New Patterns:** When encountering new transaction types, add patterns to `/config/data-mappings.json` rather than modifying extraction logic.
 
 ## Claude's Role as Financial Data Scribe
 

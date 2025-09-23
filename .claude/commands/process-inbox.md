@@ -11,6 +11,10 @@
 **Updated:** 09/22/25 6:51PM ET - Added note to ignore institution-generated filenames
 **Updated:** 09/22/25 6:59PM ET - Simplified filename handling, merged staging steps, clarified mapping usage
 **Updated:** 09/22/25 7:03PM ET - Changed user prompting to open-ended "What do you want to do next?" with flexible response handling
+**Updated:** 09/22/25 8:55PM ET - Added MD5 hash generation for duplicate prevention and document tracking
+**Updated:** 09/23/25 3:08PM - Added critical Step 2: Account Resolution & Database Setup to ensure complete account metadata before extraction
+**Updated:** 09/23/25 3:33PM - Updated account resolution to use account-mappings.json as definitive source of truth with anti-overwrite protections
+**Updated:** 09/23/25 7:29PM - Added automatic transaction classification section and updated workflow documentation for configuration-driven mapping system
 **Purpose:** Guide Claude through orchestrating document processing from inbox using specialized extraction agents
 **Usage:** User invokes this when ready to process financial documents
 
@@ -73,33 +77,135 @@ with open('documents/1inbox/[filename].pdf', 'rb') as file:
 - **Sub-Agent:** Read PDF, extract specific data type, produce JSON, report outcome
 - **Key:** Sub-agents can't ask questions mid-task - they either complete or report what blocked them
 
+## 🗺️ Automatic Transaction Classification
+
+The enhanced loader now automatically classifies transactions using the configuration-driven mapping system:
+
+### What Happens Automatically
+- **Transaction Types:** Dividends vs interest vs trades properly categorized
+- **Security Classification:** Options identified as calls/puts with lifecycle tracking
+- **Tax Categories:** Municipal bonds separated from regular dividends for tax reporting
+- **Options Lifecycle:** Opening, closing, and assignment transactions properly tagged
+
+### Key Benefits for Document Processing
+- **No Manual Intervention:** Known patterns are classified automatically
+- **Consistent Results:** Same transaction types always get same classification
+- **Tax Accuracy:** Municipal interest properly separated from dividend income
+- **Options Tracking:** Foundation for matching opening/closing pairs
+
+### When Manual Review Needed
+- **New Transaction Types:** Descriptions not in mapping configuration
+- **Unusual Securities:** Complex instruments not covered by existing patterns
+- **Data Quality Issues:** Malformed or incomplete transaction data
+
+### Adding New Patterns
+If you encounter new transaction types during processing:
+1. Note the exact description and security name patterns
+2. Add to `/config/data-mappings.json` following existing examples
+3. Run `python3 scripts/load_data_mappings.py` to reload mappings
+4. Re-process the document to apply new classifications
+
 ### Step 1: Stage & Rename Documents
 
 For each document:
-1. **Extract account information** from PDF content
-2. **Look up accounts in mappings** at /Users/richkernan/Projects/Finances/config/account-mappings.json
-3. **Use mapped names** for filename generation
+1. **Generate MD5 hash** for early duplicate detection:
+   ```bash
+   md5 /Users/richkernan/Projects/Finances/documents/1inbox/[filename].pdf
+   ```
+2. **Check for existing documents** with same hash in processed folder:
+   ```bash
+   # Search for hash in processed JSON extraction files
+   grep -r "[hash_value]" /Users/richkernan/Projects/Finances/documents/4extractions/*.json
+   ```
+3. **Extract account information** from PDF content
+4. **Look up accounts in mappings** at /Users/richkernan/Projects/Finances/config/account-mappings.json
+5. **Match accounts against source of truth** - The mappings file contains complete metadata for all known accounts
+6. **Use mapped names** for filename generation
 
-If accounts are already mapped, proceed with staging. If unmapped accounts found:
-1. Ask: "Found [Institution] statement with unmapped account XXXX. What short name should I use?"
-2. Update the mapping file
-3. Stage with mapped names:
+**Account Matching Rules:**
+- **Exact match:** Account number found in mappings → Use existing metadata, proceed with staging
+- **Minor discrepancies:** Account matches but holder names slightly different → Do NOT overwrite mappings, proceed with existing data
+- **Unknown account:** Account not in mappings → Stop and ask user for complete metadata
+
+If unknown accounts found:
+1. Ask: "Found [Institution] statement with unknown account XXXX for [Holder Name]. This account is not in the mappings file. Should I add it?"
+2. If yes, ask for complete metadata (entity, account type, etc.)
+3. Update the mapping file with full metadata
+4. Stage with mapped names
 
 ```bash
 # Use mapped account names for clarity
 mv /Users/richkernan/Projects/Finances/documents/1inbox/Statement12312024.pdf /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
 ```
 
-### Step 2: Duplicate Check & Present Findings
+### Step 2: Account Resolution & Database Setup
 
-Now with properly named files, check for duplicates:
+**CRITICAL STEP:** Use account-mappings.json as source of truth to ensure all accounts exist in database.
+
+For each account found in the document:
+
+1. **Load account mappings file:**
+   ```bash
+   # Load the comprehensive mappings file
+   cat /Users/richkernan/Projects/Finances/config/account-mappings.json
+   ```
+
+2. **Match accounts against mappings:**
+   - **Exact match:** Account number found in mappings → Use existing metadata
+   - **Minor discrepancies:** Account matches but names differ slightly → Use mappings data (do NOT overwrite)
+   - **Unknown account:** Account not in mappings → Stop and ask user
+
+3. **For matched accounts, check if they exist in database:**
+   ```bash
+   # Check if account already exists in database
+   psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "
+   SELECT a.account_number, a.account_type, a.account_holder_name, i.institution_name
+   FROM accounts a
+   JOIN institutions i ON a.institution_id = i.id
+   WHERE a.account_number = 'Z40-394067';"
+   ```
+
+4. **Create missing database records using mappings data:**
+   ```bash
+   # Create entity first (if needed)
+   # Create institution (if needed)
+   # Create account using mappings metadata
+   psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "
+   INSERT INTO accounts (entity_id, institution_id, account_number, account_type, account_holder_name, account_name, is_tax_deferred, is_tax_free)
+   VALUES ('[entity_uuid]', '[institution_uuid]', 'Z40-394067', 'brokerage', 'MILTON PRESCHOOL INC', 'Brokerage Account', false, false);"
+   ```
+
+5. **For unknown accounts, ask user:**
+   ```
+   Found Fidelity statement with unknown account Z99-888777 for "NEW COMPANY INC".
+   This account is not in the account-mappings.json file.
+
+   To add this account, I need:
+   - Entity information (if new): name, type, tax_id
+   - Account details: account_type, account_name, tax treatment
+
+   Should I add this account to the mappings file?
+   ```
+
+**Key Principles:**
+- **Mappings file is source of truth** - Never overwrite existing mappings data
+- **Database follows mappings** - Create database records using mappings metadata
+- **Ask when uncertain** - If account not in mappings or data conflicts, ask user
+- **Preserve user edits** - Minor discrepancies in PDF vs mappings favor mappings
+
+### Step 3: Duplicate Check & Present Findings
+
+With accounts verified in database and properly named files, check for duplicates:
 ```bash
-# Check if similar file exists in processed folder
+# Primary duplicate check: Search for MD5 hash in extraction JSONs
+grep -r "doc_md5_hash.*[hash_value]" /Users/richkernan/Projects/Finances/documents/4extractions/*.json
+
+# Secondary check: Look for similar filenames in processed folder
 ls -la /Users/richkernan/Projects/Finances/documents/3processed/Fid_Stmnt_2024-08*.pdf
 
-# If exact match found: It's likely a duplicate
-# If close match (different accounts): May be a different statement
-# If no match: Safe to process
+# Hash match found: Definite duplicate
+# Filename match but different hash: Likely amended document
+# No matches: Safe to process
 ```
 
 For amended documents:
@@ -147,7 +253,7 @@ Some options:
 What would you like me to do?
 ```
 
-### Step 3: Delegate to Sub-Agents
+### Step 4: Delegate to Sub-Agents
 
 **Prerequisites before invoking any sub-agent:**
 1. **Verify the PDF is readable and supported** (Fidelity statements currently)
@@ -183,11 +289,13 @@ Task(
     subagent_type="fidelity-statement-extractor",
     prompt="""
 EXTRACTION MODE: Holdings
+DOC_MD5_HASH: [insert_md5_hash_here]
 
 Please extract HOLDINGS data from the following Fidelity statement:
 /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
 
 Note: This file has been staged for processing (not in inbox).
+The doc_md5_hash above must be included in the extraction_metadata section of your JSON output.
 
 Expected output:
 - JSON extraction file in /documents/4extractions/
@@ -204,11 +312,13 @@ Task(
     subagent_type="fidelity-statement-extractor",
     prompt="""
 EXTRACTION MODE: Activities
+DOC_MD5_HASH: [insert_md5_hash_here]
 
 Please extract ACTIVITIES data from the following Fidelity statement:
 /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-08_Brok+CMA.pdf
 
 Note: This file has been staged for processing (not in inbox).
+The doc_md5_hash above must be included in the extraction_metadata section of your JSON output.
 
 Expected output:
 - JSON extraction file in /documents/4extractions/
@@ -228,7 +338,7 @@ Expected output:
 
 **Important:** The agent is stateless and cannot ask follow-up questions. If it encounters an issue it can't resolve, it will document it in the report and exit.
 
-### Step 4: Handle Agent Reports
+### Step 5: Handle Agent Reports
 
 After the agent completes, review its report and determine next steps:
 
@@ -263,7 +373,7 @@ The partial extraction has been saved. Would you like to:
 3. Keep in inbox for manual review later?
 ```
 
-### Step 5: Clean Up (When Appropriate)
+### Step 6: Clean Up (When Appropriate)
 
 Only after successful processing:
 ```bash
@@ -285,12 +395,12 @@ If the user wants both holdings and activities, run them in parallel:
 Task(
     description="Extract holdings",
     subagent_type="fidelity-statement-extractor",
-    prompt="EXTRACTION MODE: Holdings\n\nExtract HOLDINGS data from: /Users/richkernan/Projects/Finances/documents/2staged/[filename].pdf"
+    prompt="EXTRACTION MODE: Holdings\nDOC_MD5_HASH: [insert_md5_hash_here]\n\nExtract HOLDINGS data from: /Users/richkernan/Projects/Finances/documents/2staged/[filename].pdf\n\nInclude the doc_md5_hash in extraction_metadata."
 )
 Task(
     description="Extract activities",
     subagent_type="fidelity-statement-extractor",
-    prompt="EXTRACTION MODE: Activities\n\nExtract ACTIVITIES data from: /Users/richkernan/Projects/Finances/documents/2staged/[filename].pdf"
+    prompt="EXTRACTION MODE: Activities\nDOC_MD5_HASH: [insert_md5_hash_here]\n\nExtract ACTIVITIES data from: /Users/richkernan/Projects/Finances/documents/2staged/[filename].pdf\n\nInclude the doc_md5_hash in extraction_metadata."
 )
 
 # Both agents will run simultaneously and return their reports
@@ -312,6 +422,16 @@ You'll need to:
 1. Look at the specific issue
 2. Consult with the user
 3. Either retry with additional context or handle manually
+4. Consider adding new patterns to `/config/data-mappings.json` for future automation
+
+**When transaction classification fails:**
+If the automatic mapping system encounters unknown patterns:
+```
+"Transaction description 'SPECIAL DIVIDEND - RARE CASE' not found in mappings.
+Classified as 'unknown' - manual review recommended."
+```
+
+Check the mapping system logs and consider updating the configuration for better future classification.
 
 **When no agent exists:**
 ```
@@ -338,9 +458,10 @@ After presenting findings, always ask: **"I found [X] file(s). What do you want 
 You'll know processing went well when:
 - [ ] Each document has been addressed (processed or intentionally skipped)
 - [ ] JSON extraction files are created with proper naming
-- [ ] Agent reports show successful completion
+- [ ] Agent reports show successful completion with automatic transaction classification
 - [ ] Processed PDFs are moved to `/documents/3processed/`
 - [ ] Any issues are clearly documented for follow-up
+- [ ] Transaction types are automatically classified using the mapping system
 
 ### Remember
 

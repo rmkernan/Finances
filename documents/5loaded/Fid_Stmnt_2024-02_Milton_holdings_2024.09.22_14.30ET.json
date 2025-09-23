@@ -1,0 +1,88 @@
+{
+  "extraction_metadata": {
+    "document_id": "fid_stmnt_2024_02_milton_394067",
+    "file_path": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-02_Milton.pdf",
+    "file_hash": "extracted_from_staged_folder",
+    "doc_md5_hash": "242fe88002e168563016e9ea81ee649f",
+    "extraction_type": "holdings",
+    "extraction_timestamp": "2024-09-22T18:30:00Z",
+    "extractor_version": "1.0",
+    "pages_processed": 8,
+    "extraction_status": "success",
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2024-02-29",
+    "period_start": "2024-02-01",
+    "period_end": "2024-02-29"
+  },
+  "accounts": [
+    {
+      "account_number": "Z40-394067",
+      "account_name": "Brokerage Account",
+      "account_holder_name": "Milton Preschool Inc",
+      "portfolio_summary": {
+        "beginning_value": "788415.05",
+        "ending_value": "792331.14",
+        "net_account_value": "792331.14"
+      },
+      "income_summary": {
+        "taxable_total_period": "3258.56",
+        "taxable_total_ytd": "7588.24",
+        "divs_taxable_period": "3258.56",
+        "divs_taxable_ytd": "7588.24",
+        "stcg_taxable_period": null,
+        "stcg_taxable_ytd": null,
+        "int_taxable_period": null,
+        "int_taxable_ytd": null,
+        "ltcg_taxable_period": null,
+        "ltcg_taxable_ytd": null,
+        "tax_exempt_total_period": null,
+        "tax_exempt_total_ytd": null,
+        "divs_tax_exempt_period": null,
+        "divs_tax_exempt_ytd": null,
+        "int_tax_exempt_period": null,
+        "int_tax_exempt_ytd": null,
+        "roc_period": null,
+        "roc_ytd": null,
+        "grand_total_period": "3258.56",
+        "grand_total_ytd": "7588.24"
+      },
+      "realized_gains": null,
+      "holdings": [
+        {
+          "sec_type": "Core Account",
+          "sec_subtype": "Money Market",
+          "sec_symbol": "SPAXX",
+          "cusip": null,
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "beg_market_value": "2.03",
+          "quantity": "659.570000",
+          "price_per_unit": "1.0000",
+          "end_market_value": "659.57",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "31.43",
+          "est_yield": "4.770"
+        },
+        {
+          "sec_type": "Mutual Funds",
+          "sec_subtype": "Short-Term Funds",
+          "sec_symbol": "FSIXX",
+          "cusip": null,
+          "sec_description": "FIMM TREASURY ONLY PORTFOLIO: CL I",
+          "beg_market_value": "788413.02",
+          "quantity": "791671.570000",
+          "price_per_unit": "1.0000",
+          "end_market_value": "791671.57",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "38598.33",
+          "est_yield": "4.880"
+        }
+      ],
+      "account_type": "brokerage"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "transaction_descriptions": {
+    "Dividend Received": {
+      "type": "dividend",
+      "subtype": "received",
+      "notes": "Standard dividend payment"
+    },
+    "Reinvestment": {
+      "type": "dividend",
+      "subtype": "reinvestment",
+      "notes": "Dividend automatically reinvested into more shares"
+    },
+    "Interest Earned": {
+      "type": "interest",
+      "subtype": "deposit",
+      "notes": "Interest from FDIC insured bank deposits"
+    },
+    "Muni Exempt Int": {
+      "type": "interest",
+      "subtype": "muni_exempt",
+      "notes": "Tax-exempt municipal bond interest"
+    }
+  },
+  "security_types": {
+    "PUT": {
+      "type": "option",
+      "subtype": "put",
+      "notes": "Put option contract"
+    },
+    "CALL": {
+      "type": "option",
+      "subtype": "call",
+      "notes": "Call option contract"
+    }
+  },
+  "security_patterns": {
+    "CLOSING TRANSACTION": {
+      "type": "override_subtype",
+      "subtype": "closing_transaction",
+      "notes": "Options closing transaction - override subtype regardless of other mappings"
+    },
+    "OPENING TRANSACTION": {
+      "type": "override_subtype",
+      "subtype": "opening_transaction",
+      "notes": "Options opening transaction - override subtype regardless of other mappings"
+    },
+    "ASSIGNED PUTS": {
+      "type": "override_subtype",
+      "subtype": "assignment",
+      "notes": "Put option assignment - override subtype"
+    },
+    "ASSIGNED CALLS": {
+      "type": "override_subtype",
+      "subtype": "assignment",
+      "notes": "Call option assignment - override subtype"
+    }
+  },
+  "security_classification": {
+    "CALL (": {
+      "type": "sec_class",
+      "subtype": "call",
+      "notes": "Call options - security name starts with CALL ("
+    },
+    "PUT (": {
+      "type": "sec_class",
+      "subtype": "put",
+      "notes": "Put options - security name starts with PUT ("
+    },
+    "ASSIGNED PUTS": {
+      "type": "sec_class",
+      "subtype": "put",
+      "notes": "Assigned put options"
+    },
+    "ASSIGNED CALLS": {
+      "type": "sec_class",
+      "subtype": "call",
+      "notes": "Assigned call options"
+    }
+  },
+  "activity_sections": {
+    "securities_bought_sold": {
+      "type": "trade",
+      "subtype": "security",
+      "notes": "Stock, bond, and option trading transactions"
+    },
+    "dividends_interest_income": {
+      "type": "income",
+      "subtype": "investment",
+      "notes": "Dividend and interest income - requires description lookup"
+    },
+    "deposits": {
+      "type": "transfer",
+      "subtype": "deposit",
+      "notes": "Cash deposits into account"
+    },
+    "withdrawals": {
+      "type": "transfer",
+      "subtype": "withdrawal",
+      "notes": "Cash withdrawals from account"
+    }
+  }
+}

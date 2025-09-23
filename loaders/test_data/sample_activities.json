@@ -1,0 +1,43 @@
+{
+  "extraction_metadata": {
+    "file_path": "/test/sample_activities.pdf",
+    "file_hash": "def456ghi789abc",
+    "file_name": "sample_activities.pdf",
+    "extraction_date": "2024-09-23",
+    "institution": "Fidelity",
+    "statement_date": "2024-08-31",
+    "period_start": "2024-08-01",
+    "period_end": "2024-08-31"
+  },
+  "activities": [
+    {
+      "account_number": "X12345678",
+      "account_holder": "John Doe",
+      "account_type": "Individual Brokerage",
+      "transactions": [
+        {
+          "transaction_date": "2024-08-15",
+          "settlement_date": "2024-08-17",
+          "description": "ORDINARY DIVIDEND - APPLE INC",
+          "symbol": "AAPL",
+          "security_name": "APPLE INC",
+          "amount": "24.00",
+          "quantity": "100",
+          "price": "0.24",
+          "fees": "0.00"
+        },
+        {
+          "transaction_date": "2024-08-20",
+          "settlement_date": "2024-08-22",
+          "description": "YOU BOUGHT 50 SHARES OF MICROSOFT CORP",
+          "symbol": "MSFT",
+          "security_name": "MICROSOFT CORP",
+          "amount": "-21250.00",
+          "quantity": "50",
+          "price": "425.00",
+          "fees": "0.00"
+        }
+      ]
+    }
+  ]
+}

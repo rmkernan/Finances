@@ -1,0 +1,32 @@
+{
+  "extraction_metadata": {
+    "file_path": "/test/sample_statement.pdf",
+    "file_hash": "abc123def456789",
+    "file_name": "sample_statement.pdf",
+    "extraction_date": "2024-09-23",
+    "institution": "Fidelity",
+    "statement_date": "2024-08-31",
+    "period_start": "2024-08-01",
+    "period_end": "2024-08-31"
+  },
+  "holdings": [
+    {
+      "account_number": "X12345678",
+      "account_holder": "John Doe",
+      "account_type": "Individual Brokerage",
+      "positions": [
+        {
+          "symbol": "AAPL",
+          "cusip": "037833100",
+          "description": "APPLE INC",
+          "security_type": "stock",
+          "quantity": "100",
+          "price": "175.50",
+          "market_value": "17550.00",
+          "cost_basis": "15000.00",
+          "unrealized_gain_loss": "2550.00"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 # CLAUDE.md - Financial Data Management System
 
 **Created:** 09/19/25 2:53PM ET
+**Updated:** 09/23/25 - Added configuration-driven mapping system documentation
 **Purpose:** Streamlined context document focusing on project understanding and navigation
 
 ## 🎯 What This System Does
@@ -15,28 +16,71 @@
 
 This is collaborative intelligence - you and the user working together. The user knows their finances better than any document.
 
+## 🗺️ Configuration-Driven Mapping System
+
+**Overview:** Replaced hardcoded transaction classification with flexible, database-driven mapping rules stored in `/config/data-mappings.json`.
+
+### Key Benefits
+- **Maintainable:** Update mappings without code changes
+- **Scalable:** Easy to add new transaction types, security patterns, options subtypes
+- **Consistent:** Single source of truth for all classification rules
+- **Auditable:** Track mapping changes over time
+
+### Mapping Configuration Location
+- **Primary config:** `/config/data-mappings.json` - All classification rules
+- **Reference data:** `/config/account-mappings.json` - Entity/institution/account mappings
+- **Reload script:** `/scripts/load_data_mappings.py` - Push config changes to database
+
+### Classification Priority (Highest to Lowest)
+1. **Security Patterns:** CLOSING TRANSACTION, OPENING TRANSACTION, ASSIGNED PUTS/CALLS
+2. **Description Mapping:** "Muni Exempt Int" → interest/muni_exempt
+3. **Section Mapping:** dividends_interest_income → income/investment
+4. **Fallback:** Raw section name
+
+### Mapping Categories
+- **`transaction_descriptions`:** Precise transaction categorization (dividends vs interest)
+- **`security_patterns`:** Options lifecycle tracking (opening, closing, assignment)
+- **`security_classification`:** sec_class assignment (call, put) for options matching
+- **`activity_sections`:** Fallback section-based classification
+
+### Options Tracking Support
+- **sec_class column:** Identifies calls vs puts for transaction matching
+- **Enhanced subtypes:** opening_transaction, closing_transaction, assignment
+- **Future capability:** Match opening/closing pairs for P&L analysis
+
+### Adding New Mappings
+1. Update `/config/data-mappings.json` with new patterns
+2. Run `python3 scripts/load_data_mappings.py` to reload database
+3. Run `python3 scripts/fix_transaction_types.py` to update existing data
+4. Test with sample transaction data
+
+### Key Fixes Delivered
+- **CUSIP 380037FU0:** Now correctly classified as interest/muni_exempt (was dividend)
+- **Options tracking:** All calls/puts properly classified with lifecycle stages
+- **Tax accuracy:** Municipal interest separated from dividend income
+
 ## 📂 Essential Navigation
 
 ### For Document Processing
-- **Start here:** `/process` command - Primary workflow for processing financial documents
-- **Institution guides:** `/config/institution-guides/` - Extraction patterns by institution (Fidelity, etc.)
+- **Start here:** `/.claude/commands/process-inbox.md` - Streamlined workflow for processing financial documents with parallel extraction
+- **Institution guides:** `/config/institution-guides/` - Enhanced extraction patterns (Fidelity holdings/activities)
 - **Account mappings:** `/config/account-mappings.json` - Translate account numbers to friendly names
 
 ### For Development Work
 - **Requirements:** `/docs/Design/01-Requirements/PRD-overview.md` - Core vision and architecture
-- **Database schema:** `/docs/Design/02-Technical/database-schema-enhanced.md` - Current 11-table structure
+- **Database schema:** `/docs/Design/02-Technical/schema.md` - Enhanced 11-table structure (ready for migration)
 - **Technical design:** `/docs/Design/02-Technical/technical-design.md` - Implementation details
 
 ### For System Operations
-- **Commands:** `/commands/` - Specific workflows (backup, validation, etc.)
+- **Commands:** `/.claude/commands/` - Specific workflows (process-inbox, etc.)
 - **Configuration:** `/config/` - Tax rules, mappings, institution settings
+- **Agents:** `/.claude/agents/` - Specialized extraction agents (fidelity-statement-extractor)
 
 ## 🏢 Business Context
 
 ### Entities You'll Encounter
 - **4-5 S-Corps/LLCs** - Various business entities with different tax treatments
 - **Personal accounts** - Individual retirement and investment accounts
-- **Complex tax considerations** - Georgia municipal bonds (double exempt), federal vs state treatment
 
 ### Document Types
 - **Fidelity statements** - Primary investment account statements (complex with options/bonds)
@@ -47,14 +91,14 @@ This is collaborative intelligence - you and the user working together. The user
 ## 🚀 Current Status
 
 ### Environment
-- **Database:** PostgreSQL via LOCAL Supabase at localhost:54322 (✅ Production ready)
-- **Documents:** Process through `/documents/inbox/` → `/documents/extractions/` → `/documents/processed/`
+- **Database:** PostgreSQL via LOCAL Supabase at localhost:54322 (🆕 Fresh clean slate - ready for baseline migration)
+- **Documents:** Process through `/documents/1inbox/` → `/documents/2staged/` → `/documents/4extractions/` → `/documents/3processed/`
 - **Platform:** MacBook Air development environment
 
 ### Key Project Constraints
 - **LOCAL ONLY** - Never connect to cloud databases
-- **Tax year focus** - Calendar years, currently processing 2024 documents
-- **Phase 1 scope** - Document processing and categorization (no performance analysis yet)
+- **Tax year focus** - Calendar years, currently processing 2024-2025 documents
+- **Phase 1 scope** - Document processing and extraction (database loading next)
 
 ## 🚨 When to STOP and ASK
 
@@ -80,6 +124,98 @@ This is collaborative intelligence - you and the user working together. The user
 
 When ending a session, note what was accomplished and next steps for smooth handoffs.
 
+## 🎯 Code Quality Standards
+
+### Simplicity First - Anti-Over-Engineering Rules
+
+**ALWAYS Ask These Questions First:**
+1. **"What's the simplest solution that works?"** - Start with the most basic approach
+2. **"Am I solving a problem that actually exists?"** - Don't build for imaginary future needs
+3. **"Can this be done in 50% fewer lines?"** - Prefer concise, readable code
+4. **"Am I adding abstraction without clear benefit?"** - Avoid unnecessary layers
+
+### 🛑 Stop Signals - When to PAUSE and Simplify
+
+**STOP when you find yourself:**
+- Creating more than 3 functions for a simple task
+- Adding caching for data that's accessed rarely
+- Supporting multiple formats when only one is used
+- Writing "flexible" code for requirements that don't exist
+- Creating classes/modules for single-use logic
+- Adding configuration for values that never change
+
+### ✅ Simplicity Principles
+
+**Follow the "Single Task, Single Function" Rule:**
+- One function should do one clear thing
+- If you can't explain the function in one sentence, split it
+- Prefer direct database queries over caching for rare operations
+
+**Prefer Explicit Over Generic:**
+- Hard-code known values instead of making them configurable
+- Use specific logic instead of generic frameworks for simple cases
+- Choose readable code over "clever" abstractions
+
+**Data Loading Specifically:**
+- If data structure is consistent, write for that structure only
+- Don't support legacy formats unless actively used
+- Transcribe data directly - avoid interpretation layers
+
+### 📏 Complexity Limits
+
+**File Size Limits:**
+- Single-purpose modules: < 100 lines
+- Main logic files: < 200 lines
+- If approaching limits, explain necessity or refactor
+
+**Function Limits:**
+- Simple functions: < 20 lines
+- Complex functions: < 50 lines
+- If longer, break into smaller pieces with clear names
+
+### 🔄 Review Questions Before Committing Code
+
+1. **"Could a junior developer understand this in 5 minutes?"**
+2. **"Am I building for actual requirements or imagined ones?"**
+3. **"What would happen if I deleted 50% of this code?"**
+4. **"Is this the simplest solution that meets the known requirements?"**
+
+### 🎯 When Complexity IS Justified
+
+**Add complexity ONLY when:**
+- Requirements explicitly demand flexibility
+- Performance is measured and insufficient
+- Multiple real use cases exist (not hypothetical)
+- Error handling for critical operations
+- User explicitly requests configurability
+
+### 🚨 Red Flag Phrases to Avoid
+
+- "This makes it more flexible for the future"
+- "We might need this later"
+- "This is more enterprise-ready"
+- "This follows best practices" (without specific benefit)
+- "This is more scalable" (without scale requirements)
+
+### User Coaching
+
+When you catch yourself over-engineering, tell the user: *"I notice I'm adding complexity. Let me step back and implement the simplest solution that meets your actual needs."*
+
+**Remember:** Simple, working code beats complex, "enterprise" code every time.
+
 ---
 
-**Get Started:** Run `/process` to begin document processing, or ask "What would you like me to help with?" for other tasks.
+**Get Started:** Run `/process-inbox` to begin document processing, or ask "What would you like me to help with?" for other tasks.
+
+## 🔄 Recent Improvements (09/22/25)
+
+### Document Processing System
+- **Enhanced extraction agents** with improved confidence and reduced false error reporting
+- **Parallel processing support** - multiple extractions can run simultaneously
+- **Streamlined workflow** - simplified from 6 to 5 steps with better user prompting
+- **Comprehensive testing** - successfully processed 3 statements with 8 extractions
+
+### Current State
+- **Clean database** - completely wiped and ready for baseline migration
+- **No existing data** - fresh start for implementing enhanced schema
+- **Ready for next phase** - database migration and data loading development

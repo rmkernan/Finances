@@ -2,8 +2,27 @@
 
 **Created:** 09/22/25 1:35PM ET
 **Updated:** 09/22/25 6:04PM ET - Corrected est_yield format to percentage (e.g., 4.880) not decimal (0.0488)
+**Updated:** 09/22/25 8:55PM ET - Added doc_md5_hash field to extraction_metadata for duplicate prevention
+**Updated:** 09/23/25 2:32PM - Added required account_type field to account-level metadata for loader compatibility
+**Updated:** 09/23/25 2:37PM - Aligned data type rules with activities specification for consistency
+**Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Purpose:** Formal specification for JSON output from Fidelity statement extraction
 **Related:** [Map_Stmnt_Fid_Positions.md](./Map_Stmnt_Fid_Positions.md)
+
+## ⚙️ Extraction vs Classification Philosophy
+
+**IMPORTANT:** This guide focuses on **pure transcription** from PDF statements. The extractor should capture data exactly as shown without interpretation or classification.
+
+**Transaction Classification:** Happens automatically in the loader using the configuration-driven mapping system (`/config/data-mappings.json`):
+- **Transaction types:** dividend vs interest vs trade categorization
+- **Security classification:** call vs put options identification
+- **Lifecycle tracking:** opening/closing transactions and assignments
+- **Tax categories:** municipal bonds vs regular interest separation
+
+**Extractor Responsibility:** Accurate data capture from PDF
+**Loader Responsibility:** Data classification and categorization
+
+**New Patterns:** When encountering new transaction types, add patterns to `/config/data-mappings.json` rather than modifying extraction logic.
 
 ## Overview
 
@@ -24,6 +43,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
 | Dates | `YYYY-MM-DD` | `"2024-08-31"` | ISO 8601 format |
 | Currency | String with 2 decimals | `"17525.00"` | Preserve precision, negative for debits |
 | Quantities | String with 6 decimals | `"100.000000"` | Preserve all decimal places shown |
+| Prices | String with 4 decimals | `"175.2500"` | Preserve all decimal places |
 | Percentages | Decimal string | `"0.0525"` | 5.25% = "0.0525" |
 | Missing values | `null` | `null` | Not "unavailable" or empty string |
 | Account numbers | String | `"X12-123456"` | Preserve format exactly |
@@ -37,6 +57,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
     "document_id": "generated_uuid",
     "file_path": "/path/to/statement.pdf",
     "file_hash": "sha256_hash_of_file",
+    "doc_md5_hash": "md5_hash_of_file",
     "extraction_type": "holdings",
     "extraction_timestamp": "2024-09-22T13:35:00Z",
     "extractor_version": "1.0",
@@ -56,6 +77,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
       "account_number": "X12-123456",
       "account_name": "INDIVIDUAL - TOD",
       "account_holder_name": "JOHN DOE",
+      "account_type": "brokerage",
 
       "portfolio_summary": {
         "beginning_value": "500000.00",
@@ -204,7 +226,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
 ## Field Completeness Rules
 
 ### Required Fields (Never null)
-- All metadata fields
+- All metadata fields (including `doc_md5_hash`)
 - `account_number`
 - `sec_type`
 - `sec_description`

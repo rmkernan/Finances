@@ -1,0 +1,82 @@
+{
+  "_description": "Simplified account mappings for database loader - only maps accounts to owner names",
+  "_created": "09/23/25 10:45AM ET",
+  "_updated": "09/23/25 10:55AM ET - Simplified to lazy creation pattern",
+  "_purpose": "Maps account numbers to account owner names - entities/institutions created on demand",
+
+  "_strategy": {
+    "approach": "Lazy creation - entities and institutions are created when first encountered",
+    "entity_creation": "Inferred from account holder name in extraction JSON",
+    "institution_creation": "Inferred from document source",
+    "benefits": "No need to pre-define entities, can be edited later in application UI"
+  },
+
+  "account_mappings": {
+    "_comment": "Maps account numbers to owner names for entity creation/matching",
+
+    "****7872": {
+      "owner_name": "ACCOUNT_HOLDER_NAME_1",
+      "account_nickname": "Brokerage",
+      "account_type": "brokerage",
+      "is_tax_deferred": false,
+      "_note": "Main taxable brokerage account"
+    },
+
+    "****5656": {
+      "owner_name": "ACCOUNT_HOLDER_NAME_1",
+      "account_nickname": "Cash Management",
+      "account_type": "cash_management",
+      "is_tax_deferred": false,
+      "_note": "Fidelity CMA account"
+    },
+
+    "****4067": {
+      "owner_name": "ACCOUNT_HOLDER_NAME_2",
+      "account_nickname": "Milton",
+      "account_type": "brokerage",
+      "is_tax_deferred": false,
+      "_note": "Verify actual owner name from statement"
+    }
+  },
+
+  "entity_defaults": {
+    "_comment": "Default values for auto-created entities",
+    "entity_type": "individual",
+    "georgia_resident": true,
+    "tax_year_end": "12-31",
+    "entity_status": "active"
+  },
+
+  "institution_defaults": {
+    "Fidelity": {
+      "formal_name": "Fidelity Investments",
+      "institution_type": "brokerage"
+    },
+    "Bank of America": {
+      "formal_name": "Bank of America",
+      "institution_type": "bank"
+    },
+    "SunTrust": {
+      "formal_name": "SunTrust Bank",
+      "institution_type": "bank"
+    }
+  },
+
+  "loader_settings": {
+    "auto_create_entities": true,
+    "auto_create_institutions": true,
+    "auto_create_accounts": true,
+    "match_on_last_four": true,
+    "use_owner_name_for_entity": true,
+    "generate_placeholder_tax_id": true
+  },
+
+  "_usage_notes": [
+    "Entities are created automatically based on account holder names from statements",
+    "Tax IDs will be placeholder values like 'PENDING-001' until updated in UI",
+    "Institution names are normalized using institution_defaults",
+    "Account types can be inferred from account names/descriptions",
+    "All created entities can be edited later through the application UI",
+    "The loader focuses on getting data in - cleanup happens in the app"
+  ]
+}

@@ -6,7 +6,30 @@
 **Updated:** 09/22/25 5:21PM ET - Added multi-line description parsing guidance and Bill Payments section details
 **Updated:** 09/22/25 6:13PM ET - Clarified bond redemption pricing, dividend reinvestment dual-entry, and null handling based on agent feedback
 **Updated:** 09/22/25 8:02PM ET - Enhanced bond redemption section with specific examples and clarified normal null price behavior
+**Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Purpose:** Navigation guide for locating and extracting account activity data from Fidelity statements
+
+## ⚙️ Extraction vs Classification Philosophy
+
+**IMPORTANT:** This guide focuses on **pure transcription** from PDF statements. The extractor should capture data exactly as shown without interpretation or classification.
+
+**Transaction Classification:** Happens automatically in the loader using the configuration-driven mapping system (`/config/data-mappings.json`):
+- **Transaction types:** dividend vs interest vs trade categorization
+- **Security classification:** call vs put options identification
+- **Lifecycle tracking:** opening/closing transactions and assignments
+- **Tax categories:** municipal bonds vs regular interest separation
+
+**Extractor Responsibility:** Accurate data capture from PDF
+**Loader Responsibility:** Data classification and categorization
+
+**New Patterns:** When encountering new transaction types, add patterns to `/config/data-mappings.json` rather than modifying extraction logic.
+
+### Transaction Description Handling
+Extract transaction descriptions exactly as shown in the PDF. Do not attempt to standardize or categorize - the mapping system handles:
+- "Muni Exempt Int" → interest/muni_exempt classification
+- "Dividend Received" → dividend/received classification
+- "CLOSING TRANSACTION" → closing_transaction subtype
+- "ASSIGNED PUTS" → assignment subtype
 
 ## Claude's Role as Financial Activity Transcriber
 

@@ -1,23 +1,81 @@
 {
-  "fidelity": {
-    "7872": "Brok",
-    "5656": "CMA",
-    "4067": "Milton",
-    "_comment": "Add new accounts as discovered. Use last 4 digits of account number as key."
+  "_metadata": {
+    "purpose": "Complete account metadata for database creation and filename generation",
+    "updated": "2025-09-23T15:15:00Z",
+    "structure": "institution -> account_last_4_digits -> complete_metadata"
   },
-  "bank_of_america": {
-    "_comment": "BoA accounts will be added here as we process them"
-  },
-  "suntrust": {
-    "_comment": "SunTrust accounts will be added here as we process them"
-  },
-  "_instructions": {
-    "usage": "Maps account number endings to human-readable labels for filename generation",
-    "format": "Institution name (lowercase) -> last 4 digits -> short label",
-    "examples": {
-      "single_account": "Fid_Stmnt_2025-08_Brok.pdf",
-      "multiple_accounts": "Fid_Stmnt_2025-08_Brok&CMA.pdf",
-      "unknown_account": "Falls back to Fid_Stmnt_2025-08_9999.pdf and prompts to update mapping"
+
+  "entities": {
+    "kernan_family": {
+      "entity_name": "Kernan Family",
+      "entity_type": "individual",
+      "tax_id": "2222",
+      "primary_taxpayer": "Richard Michael Kernan",
+      "georgia_resident": true
+    },
+    "milton_preschool": {
+      "entity_name": "Milton Preschool Inc",
+      "entity_type": "s_corp",
+      "tax_id": "PLACEHOLDER_EIN_MILTON",
+      "primary_taxpayer": "Milton Preschool Inc",
+      "georgia_resident": true
     }
+  },
+
+  "institutions": {
+    "fidelity": {
+      "institution_name": "Fidelity",
+      "institution_type": "brokerage"
+    }
+  },
+
+  "accounts": {
+    "fidelity": {
+      "7872": {
+        "filename_label": "KernBrok",
+        "account_number": "Z24-527872",
+        "account_holder_name": "RICHARD M KERNAN AND PEGGY E KERNAN",
+        "account_name": "Joint Brokerage",
+        "account_type": "brokerage",
+        "account_subtype": "joint_taxable",
+        "entity_key": "kernan_family",
+        "is_tax_deferred": false,
+        "is_tax_free": false,
+        "requires_rmd": false
+      },
+      "5656": {
+        "filename_label": "KernCMA",
+        "account_number": "Z27-375656",
+        "account_holder_name": "RICHARD M KERNAN AND PEGGY E KERNAN",
+        "account_name": "Cash Management Account",
+        "account_type": "cash_management",
+        "account_subtype": "joint_cash",
+        "entity_key": "kernan_family",
+        "is_tax_deferred": false,
+        "is_tax_free": false,
+        "requires_rmd": false
+      },
+      "4067": {
+        "filename_label": "Milton",
+        "account_number": "Z40-394067",
+        "account_holder_name": "MILTON PRESCHOOL INC",
+        "account_name": "Brokerage Account",
+        "account_type": "brokerage",
+        "account_subtype": "corporate",
+        "entity_key": "milton_preschool",
+        "is_tax_deferred": false,
+        "is_tax_free": false,
+        "requires_rmd": false
+      }
+    }
+  },
+
+  "_usage_examples": {
+    "filename_generation": {
+      "single_account": "Fid_Stmnt_2025-08_Brok.pdf",
+      "multiple_accounts": "Fid_Stmnt_2025-08_Brok+CMA.pdf"
+    },
+    "database_creation": "Use entities, institutions, and accounts sections to create complete database records",
+    "account_lookup": "accounts.fidelity['7872'] gives complete metadata for Z24-527872"
   }
 }

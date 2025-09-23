@@ -1,258 +1,434 @@
-# Scripts - Utility Scripts and Automation
+# Scripts Directory Documentation
 
-**Created:** 09/09/25 6:04PM ET  
-**Updated:** 09/09/25 6:04PM ET  
-**Purpose:** Directory for utility scripts and automation tools for financial data management
+**Created:** 09/23/25 7:16PM
+**Updated:** 09/23/25 7:30PM
+**Purpose:** Comprehensive guide to utility scripts for data management and mapping system maintenance
 
-## Directory Purpose
+## Overview
 
-This directory is reserved for utility scripts that support the financial data management system. Scripts will be added as operational needs are identified during development and deployment.
+This directory contains utility scripts for managing the financial data system, particularly focusing on the configuration-driven mapping system and data maintenance operations. These scripts work together to maintain data consistency and proper classification of financial transactions.
 
-## Planned Script Categories
+## Mapping System Scripts
 
-### Database Management Scripts
+### `load_data_mappings.py`
+**Purpose:** Loads all mapping configurations from JSON files into the database `data_mappings` table for dynamic transaction classification.
+
+**Usage:**
 ```bash
-# Database setup and initialization
-setup_database.sh           # Initial Supabase Docker setup
-migrate_schema.sql           # Schema updates and migrations  
-backup_database.sh           # Automated backup procedures
-restore_database.sh          # Database recovery procedures
+cd /Users/richkernan/Projects/Finances/scripts
+python3 load_data_mappings.py
 ```
 
-### File Management Automation
+**What it does:**
+- Reads `/config/data-mappings.json` configuration file
+- Clears existing mappings from `data_mappings` table
+- Loads all mapping types (transaction_descriptions, activity_sections, security_patterns, security_classification)
+- Validates successful load with count summaries
+- Tests key mappings to verify functionality
+
+**Example Output:**
+```
+Loading data mappings into database...
+Clearing existing mappings...
+
+Loading transaction_descriptions mappings...
+  Muni Exempt Int → income/tax-exempt
+  Dividend Received → income/dividend
+  ...
+
+✅ Successfully loaded 47 mappings into database
+
+Mapping counts by type:
+  activity_sections: 8
+  security_classification: 4
+  security_patterns: 4
+  transaction_descriptions: 31
+```
+
+**Prerequisites:**
+- Local Supabase database running on localhost:54322
+- Valid `/config/data-mappings.json` file
+- `data_mappings` table exists in database
+
+**Safety Notes:**
+- ⚠️ **DESTRUCTIVE**: Clears all existing mappings before reload
+- Always backup database before running
+- Verify configuration file syntax before execution
+
+### `fix_transaction_types.py`
+**Purpose:** Bulk correction of transaction_type and transaction_subtype fields for existing transactions using the dynamic mapping system.
+
+**Usage:**
 ```bash
-# Document processing automation
-monitor_inbox.sh             # Watch inbox folder for new documents
-archive_old_files.sh         # Move processed files to archive
-cleanup_temp_files.sh        # Clean temporary processing files
-validate_file_integrity.sh   # Check file checksums and integrity
+cd /Users/richkernan/Projects/Finances/scripts
+python3 fix_transaction_types.py
 ```
 
-### Data Processing Utilities
-```bash  
-# Data validation and quality assurance
-validate_tax_classifications.py    # Check tax treatment consistency
-reconcile_cross_sources.py        # Automated reconciliation checks
-generate_monthly_reports.py       # Standard report generation
-export_tax_summaries.py           # Tax preparation data exports
+**What it does:**
+- Tests mapping system with known examples first
+- Processes all existing transactions in database
+- Applies cascading mapping logic:
+  1. Description-based mapping (highest priority)
+  2. Activity section mapping (fallback)
+  3. Security pattern overrides (for subtypes)
+- Updates transaction_type and transaction_subtype fields
+- Provides detailed correction summary
+
+**Mapping Logic:**
+```
+Priority Order:
+1. transaction_descriptions: "Muni Exempt Int" → income/tax-exempt
+2. activity_sections: "dividends_interest_income" → income/null
+3. security_patterns: "CLOSING TRANSACTION" → option/closing
 ```
 
-### System Maintenance
+**Example Output:**
+```
+Testing mapping system:
+  dividends_interest_income + 'Muni Exempt Int' → income/tax-exempt
+  securities_bought_sold + 'You Bought' (with CLOSING TRANSACTION) → trade/closing
+
+Updated 47 transactions
+
+Corrections made:
+dividends_interest_income/null → income/tax-exempt:
+  • Muni Exempt Int (from dividends_interest_income)
+  • Interest Earned (from dividends_interest_income)
+```
+
+**Prerequisites:**
+- `load_data_mappings.py` must be run first to populate mappings
+- Existing transactions in `transactions` table
+- Database connection to localhost:54322
+
+**Safety Notes:**
+- Non-destructive: Only updates type/subtype fields
+- Provides preview with test cases before making changes
+- All changes committed in single transaction (atomic)
+
+### `populate_sec_class.py`
+**Purpose:** Adds security classification (call, put, etc.) to transactions based on security_name pattern matching.
+
+**Usage:**
 ```bash
-# Infrastructure and monitoring
-check_system_health.sh       # Database and service monitoring
-update_security_patches.sh   # System security maintenance
-monitor_disk_space.sh        # Storage utilization alerts
-backup_configuration.sh      # Config and documentation backups
+cd /Users/richkernan/Projects/Finances/scripts
+python3 populate_sec_class.py
 ```
 
-## Script Development Guidelines
+**What it does:**
+- Scans all transactions with non-null security_name fields
+- Applies pattern matching from `security_classification` mappings
+- Updates `sec_class` field with appropriate values
+- Handles options classification:
+  - "CALL (" → sec_class = 'call'
+  - "PUT (" → sec_class = 'put'
+  - "ASSIGNED CALLS" → sec_class = 'call'
+  - "ASSIGNED PUTS" → sec_class = 'put'
 
-### Standards and Conventions
-```markdown
-File Naming:
-- Use descriptive names with underscores
-- Include file extension (.sh, .py, .sql)
-- Prefix with category for organization
-
-Documentation Requirements:
-- Header comment with purpose and usage
-- Parameter descriptions and examples
-- Error handling and exit codes
-- Dependencies and requirements
-
-Security Considerations:
-- No hardcoded passwords or sensitive data
-- Proper file permissions (executable for owner only)
-- Input validation and sanitization
-- Audit logging for sensitive operations
+**Pattern Matching Logic:**
+```
+Ordered by pattern length (longest first for specificity):
+1. "ASSIGNED PUTS" (12 chars) → 'put'
+2. "ASSIGNED CALLS" (13 chars) → 'call'
+3. "PUT (" (4 chars) → 'put'
+4. "CALL (" (5 chars) → 'call'
 ```
 
-### Example Script Template
+**Example Output:**
+```
+Testing security classification:
+  'CALL (COIN) COINBASE GLOBAL INC AUG 15 25...' → call
+  'PUT (CRWV) COREWEAVE INC COM CL AUG 29 25...' → put
+  'TESLA INC COM ASSIGNED PUTS...' → put
+  'AT&T INC COM USD1...' → None
+
+✅ Updated 23 transactions with sec_class values
+
+Classifications applied:
+CALL:
+  • CALL (COIN) COINBASE GLOBAL INC AUG 15 25 $300...
+  • CALL (NVDA) NVIDIA CORP AUG 15 25 $140 (100 SHS)...
+
+PUT:
+  • PUT (CRWV) COREWEAVE INC COM CL AUG 29 25 $100...
+  • TESLA INC COM ASSIGNED PUTS...
+```
+
+**Prerequisites:**
+- `load_data_mappings.py` must be run first
+- Transactions with security_name data
+- `sec_class` column exists in transactions table
+
+**Safety Notes:**
+- Only updates transactions where classification is found AND different from current value
+- Does not overwrite existing correct classifications
+- Non-destructive to other transaction data
+
+## Data Management Scripts
+
+### `extract_pdf_pages.py`
+**Purpose:** Utility for extracting specific pages from PDF files, supporting both full PDF extraction and text-only extraction for token efficiency.
+
+**Usage:**
 ```bash
-#!/bin/bash
-# Script Name: example_script.sh
-# Purpose: Brief description of what the script does
-# Usage: ./example_script.sh [parameters]
-# Created: MM/DD/YY
-# Updated: MM/DD/YY - Description of changes
+cd /Users/richkernan/Projects/Finances/scripts
 
-set -euo pipefail  # Exit on error, undefined vars, pipe failures
+# Extract full PDF pages
+python3 extract_pdf_pages.py input.pdf output.pdf start_page [end_page]
 
-# Configuration
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-LOG_FILE="$PROJECT_DIR/logs/$(basename "$0" .sh).log"
-
-# Function definitions
-log_message() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
-}
-
-# Main script logic here
-main() {
-    log_message "Starting script execution"
-    # Implementation
-    log_message "Script completed successfully"
-}
-
-# Error handling
-trap 'log_message "Script failed with error on line $LINENO"' ERR
-
-# Execute main function
-main "$@"
+# Extract text only (token efficient)
+python3 extract_pdf_pages.py input.pdf output.txt start_page [end_page] --text
 ```
 
-## Integration with Project Workflow
+**Examples:**
+```bash
+# Extract first page as PDF
+python3 extract_pdf_pages.py statement.pdf first_page.pdf 1
 
-### Command Template Integration
-Scripts in this directory will support the command templates in `/commands/`:
-- **Document Processing:** Automated file monitoring and initial classification
-- **Reconciliation:** Scheduled cross-source validation checks
-- **Report Generation:** Automated QBO and summary report creation
+# Extract pages 1-3 as PDF
+python3 extract_pdf_pages.py statement.pdf first_three.pdf 1 3
 
-### Configuration Integration
-Scripts will reference configuration files in `/config/`:
-- **Database connections:** From Supabase configuration
-- **Account mappings:** From QuickBooks integration settings
-- **Tax rules:** From tax classification configuration
-
-### Logging and Monitoring
-```markdown
-Log Management:
-- All scripts log to /logs/ directory (to be created)
-- Standard log format: timestamp - message
-- Error logs include stack traces and context
-- Weekly log rotation and cleanup
-
-Monitoring Integration:
-- Health check scripts for system monitoring
-- Performance metrics for optimization
-- Alert scripts for operational issues
-- Dashboard integration for status visibility
+# Extract pages 1-2 as text file (for Claude reading)
+python3 extract_pdf_pages.py statement.pdf first_two.txt 1 2 --text
 ```
 
-## Future Script Development
+**Output for text extraction:**
+```
+=== PAGE 1 ===
+[Extracted text content from page 1]
 
-### Phase 1: Core Operations (Development Priority)
-```markdown
-Immediate Needs:
-- Database setup automation for Mac Mini deployment
-- File monitoring for document inbox processing
-- Backup automation for data protection
-- Basic system health checks
-
-Implementation Timeline: During Phase 1 development
+=== PAGE 2 ===
+[Extracted text content from page 2]
 ```
 
-### Phase 2: Process Automation (Operational Priority)
-```markdown
-Operational Efficiency:
-- Automated document processing workflows
-- Scheduled reconciliation reporting
-- QBO generation and validation
-- Data quality monitoring
+**Prerequisites:**
+- PyPDF2 library installed (`pip install PyPDF2`)
+- Valid PDF input file
 
-Implementation Timeline: During Phase 2-3 development  
+**Use Cases:**
+- Reducing Claude token usage when analyzing large PDFs
+- Extracting summary pages from statements
+- Isolating specific transaction sections
+
+## Common Workflows
+
+### Initial System Setup
+Complete setup sequence for new database:
+
+```bash
+cd /Users/richkernan/Projects/Finances/scripts
+
+# 1. Load mapping configurations into database
+python3 load_data_mappings.py
+
+# 2. Fix existing transaction classifications
+python3 fix_transaction_types.py
+
+# 3. Populate security classifications
+python3 populate_sec_class.py
 ```
 
-### Phase 3: Advanced Automation (Optimization Priority)
-```markdown
-Advanced Features:
-- Machine learning for document classification
-- Predictive analytics for tax optimization
-- Automated anomaly detection
-- Integration with external services
+### Adding New Transaction Types
+When new transaction patterns are discovered:
 
-Implementation Timeline: Phase 4+ based on operational needs
+1. **Update configuration:**
+   ```bash
+   # Edit the mapping configuration
+   code /Users/richkernan/Projects/Finances/config/data-mappings.json
+   ```
+
+2. **Reload mappings:**
+   ```bash
+   python3 load_data_mappings.py
+   ```
+
+3. **Apply to existing data:**
+   ```bash
+   python3 fix_transaction_types.py
+   ```
+
+### Bulk Data Corrections
+After adding new mapping rules:
+
+```bash
+# Full correction sequence
+python3 load_data_mappings.py     # Reload updated mappings
+python3 fix_transaction_types.py  # Fix transaction types
+python3 populate_sec_class.py     # Update security classifications
 ```
 
-## Development and Testing
+### Testing and Validation
+Verify mapping system functionality:
 
-### Script Testing Framework
-```markdown
-Testing Approach:
-- Unit tests for individual functions
-- Integration tests with sample data
-- End-to-end testing in development environment
-- Production validation with monitoring
-
-Test Data:
-- Use anonymized sample documents
-- Create test database with known data patterns
-- Validate against expected outcomes
-- Document test cases and edge conditions
+```bash
+# Each script includes test functionality
+python3 load_data_mappings.py    # Tests key mappings after load
+python3 fix_transaction_types.py # Tests mapping logic before applying
+python3 populate_sec_class.py    # Tests classification patterns
 ```
 
-### Version Control and Deployment
-```markdown
-Development Process:
-- All scripts committed to version control
-- Code review for financial data operations
-- Staged deployment (dev → staging → production)
-- Rollback procedures for failed deployments
+**Database verification queries:**
+```sql
+-- Check mapping distribution
+SELECT mapping_type, COUNT(*) FROM data_mappings GROUP BY mapping_type;
 
-Deployment Standards:
-- Automated deployment through configuration management
-- Environment-specific configuration files
-- Health checks post-deployment
-- Documentation updates with each release
+-- Verify transaction type corrections
+SELECT transaction_type, transaction_subtype, COUNT(*)
+FROM transactions
+GROUP BY transaction_type, transaction_subtype
+ORDER BY count DESC;
+
+-- Check security classifications
+SELECT sec_class, COUNT(*) FROM transactions
+WHERE sec_class IS NOT NULL
+GROUP BY sec_class;
 ```
 
-## Operations and Maintenance
+## Script Usage Examples
 
-### Scheduled Operations
-```markdown
-Daily:
-- Document inbox monitoring
-- Database health checks
-- Backup validation
-- Log file review
+### PDF Processing for Document Analysis
+```bash
+# Extract account summary page for Claude analysis
+python3 extract_pdf_pages.py "/path/to/statement.pdf" "summary.txt" 1 --text
 
-Weekly:
-- Reconciliation report generation
-- System performance analysis
-- Security update checks
-- File cleanup and archiving
-
-Monthly:
-- Comprehensive data validation
-- Performance optimization review
-- Script effectiveness analysis
-- Documentation updates
+# Extract activity pages 3-8 for transaction processing
+python3 extract_pdf_pages.py "/path/to/statement.pdf" "activities.txt" 3 8 --text
 ```
 
-### Error Recovery Procedures
-```markdown
-Script Failure Response:
-1. Immediate notification via logging system
-2. Automatic rollback to last known good state
-3. Manual investigation of failure cause
-4. Fix implementation and testing
-5. Redeployment with enhanced monitoring
+### Mapping System Maintenance
+```bash
+# Weekly mapping update routine
+echo "Updating mapping system..."
+python3 load_data_mappings.py
 
-Common Issues:
-- Database connection failures
-- File permission problems
-- Disk space limitations
-- Network connectivity issues
+echo "Correcting transaction types..."
+python3 fix_transaction_types.py
+
+echo "Updating security classifications..."
+python3 populate_sec_class.py
+
+echo "Mapping system update complete!"
 ```
 
-## Related Documentation
+### Development Testing
+```bash
+# Test individual mapping lookups
+python3 -c "
+from load_data_mappings import test_mapping_lookup
+test_mapping_lookup('transaction_descriptions', 'Muni Exempt Int')
+test_mapping_lookup('security_classification', 'PUT (')
+"
+```
 
-### System Architecture
-- **[/docs/decisions/001-supabase-over-sqlite.md](../docs/decisions/001-supabase-over-sqlite.md)** - Database platform setup
-- **[/docs/technical/database-schema.md](../docs/technical/database-schema.md)** - Database structure
+## Troubleshooting
 
-### Processing Workflows
-- **[/commands/](../commands/)** - Manual operation templates
-- **[/config/](../config/)** - Configuration and business rules
-- **[/docs/technical/processing-rules.md](../docs/technical/processing-rules.md)** - Processing logic
+### Common Issues and Solutions
 
-### Project Management
-- **[README.md](../README.md)** - Project overview and quick start
-- **[/docs/requirements/current-requirements.md](../docs/requirements/current-requirements.md)** - Development roadmap
+**Database Connection Errors:**
+```
+Error: psycopg2.OperationalError: could not connect to server
+```
+**Solution:** Verify Supabase is running on localhost:54322
+```bash
+# Check if Supabase is running
+docker ps | grep supabase
+
+# Start Supabase if needed
+cd /Users/richkernan/Projects/Finances
+supabase start
+```
+
+**Missing Mappings Configuration:**
+```
+Error: FileNotFoundError: config/data-mappings.json
+```
+**Solution:** Ensure configuration file exists with valid JSON structure
+```bash
+# Verify file exists
+ls -la /Users/richkernan/Projects/Finances/config/data-mappings.json
+
+# Validate JSON syntax
+python3 -m json.tool /Users/richkernan/Projects/Finances/config/data-mappings.json
+```
+
+**Empty Tables:**
+```
+Error: No mappings found / No transactions to process
+```
+**Solution:**
+- For mappings: Run `load_data_mappings.py` first
+- For transactions: Ensure data has been loaded into transactions table
+- Check database schema migration status
+
+**Permission Errors:**
+```
+Error: Permission denied when writing output files
+```
+**Solution:** Ensure write permissions to output directory
+```bash
+# Check/fix permissions
+chmod 755 /Users/richkernan/Projects/Finances/scripts/
+chmod +x /Users/richkernan/Projects/Finances/scripts/*.py
+```
+
+**PyPDF2 Import Errors:**
+```
+ModuleNotFoundError: No module named 'PyPDF2'
+```
+**Solution:** Install required dependency
+```bash
+pip3 install PyPDF2
+```
+
+### Database Schema Issues
+If scripts fail due to missing tables/columns:
+
+```sql
+-- Verify required tables exist
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public'
+AND table_name IN ('data_mappings', 'transactions');
+
+-- Check data_mappings structure
+\d data_mappings
+
+-- Check transactions structure
+\d transactions
+```
+
+### Data Validation
+After running scripts, verify results:
+
+```sql
+-- Check for unmapped transactions
+SELECT DISTINCT transaction_type, transaction_subtype
+FROM transactions
+WHERE transaction_type NOT IN (
+    SELECT DISTINCT target_type FROM data_mappings
+)
+LIMIT 10;
+
+-- Find transactions without security classification
+SELECT COUNT(*) FROM transactions
+WHERE security_name IS NOT NULL
+AND sec_class IS NULL;
+```
+
+### Script Dependencies
+If scripts fail, ensure proper execution order:
+
+1. **load_data_mappings.py** (must run first)
+2. **fix_transaction_types.py** (requires mappings)
+3. **populate_sec_class.py** (requires mappings)
+4. **extract_pdf_pages.py** (independent)
+
+### Performance Considerations
+For large datasets:
+- Scripts process transactions in batches
+- Consider running during off-peak hours
+- Monitor disk space during PDF extraction
+- Database transactions are atomic but may be slow for large updates
 
 ---
 
-*This directory will evolve based on operational needs identified during system development and deployment. Scripts will prioritize reliability and auditability for financial data operations.*
+*These scripts are designed for reliability and auditability of financial data operations. Always backup your database before running destructive operations like `load_data_mappings.py`.*
