@@ -23,6 +23,10 @@ Updated: 09/23/25 7:16PM - Added configuration-driven mapping system and sec_cla
   - Added sec_class column population for options classification (call, put)
   - Enhanced transaction_subtype with security pattern overrides (opening_transaction, closing_transaction, assignment)
   - Comprehensive mapping priority: security patterns > description mapping > section mapping
+Updated: 09/23/25 10:10PM - Fixed doc_level_data loading to match actual schema columns:
+Updated: 09/24/25 11:52AM - Updated JSON metadata attribute names to align with new schema: source_pdf_filepath, json_output_md5_hash
+  - Changed from key-value pairs to direct column mapping for portfolio_summary, income_summary, realized_gains
+  - Single row per account with all summary fields populated from JSON
 Purpose: Pure transcription system to load JSON extractions into PostgreSQL database
 
 Design Principles:
@@ -282,7 +286,7 @@ def create_document(data, institution_id, loaded_path, conn):
 
     # Create document
     doc_id = str(uuid.uuid4())
-    file_name = Path(metadata.get('file_path', 'unknown.pdf')).name
+    file_name = Path(metadata.get('source_pdf_filepath', 'unknown.pdf')).name
 
     # Store extraction metadata as JSON in a metadata column
     extraction_metadata = {
@@ -291,7 +295,7 @@ def create_document(data, institution_id, loaded_path, conn):
         'extractor_version': metadata.get('extractor_version'),
         'pages_processed': metadata.get('pages_processed'),
         'extraction_notes': metadata.get('extraction_notes', []),
-        'file_hash': metadata.get('file_hash')
+        'json_output_md5_hash': metadata.get('json_output_md5_hash')
     }
 
     cur.execute("""
@@ -472,52 +476,81 @@ def load_activities(account_data, doc_id, account_id, entity_id, conn):
 def load_doc_level_data(account_data, doc_id, account_id, statement_date, conn):
     """Load account-level summary data to doc_level_data table"""
     cur = conn.cursor()
-    count = 0
     account_number = account_data.get('account_number')
 
-    # Load portfolio summary
-    if 'portfolio_summary' in account_data:
-        portfolio = account_data['portfolio_summary']
-        for field, value in portfolio.items():
-            if value is not None:
-                doc_data_id = str(uuid.uuid4())
-                cur.execute("""
-                    INSERT INTO doc_level_data (id, document_id, account_id, account_number, doc_section,
-                                                field_name, field_value, as_of_date)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """, (doc_data_id, doc_id, account_id, account_number,
-                      'portfolio_summary', field, str(value), statement_date))
-                count += 1
+    # Combine all summary data
+    portfolio = account_data.get('portfolio_summary', {})
+    income = account_data.get('income_summary', {})
+    gains = account_data.get('realized_gains', {})
 
-    # Load income_summary
-    if 'income_summary' in account_data:
-        income = account_data['income_summary']
-        for field, value in income.items():
-            if value is not None:
-                doc_data_id = str(uuid.uuid4())
-                cur.execute("""
-                    INSERT INTO doc_level_data (id, document_id, account_id, account_number, doc_section,
-                                                field_name, field_value, as_of_date)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """, (doc_data_id, doc_id, account_id, account_number,
-                      'income_summary', field, str(value), statement_date))
-                count += 1
+    # Only insert if we have data
+    if not (portfolio or income or gains):
+        return 0
 
-    # Load realized_gains
-    if 'realized_gains' in account_data:
-        gains = account_data['realized_gains']
-        for field, value in gains.items():
-            if value is not None:
-                doc_data_id = str(uuid.uuid4())
-                cur.execute("""
-                    INSERT INTO doc_level_data (id, document_id, account_id, account_number, doc_section,
-                                                field_name, field_value, as_of_date)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """, (doc_data_id, doc_id, account_id, account_number,
-                      'realized_gains', field, str(value), statement_date))
-                count += 1
+    doc_data_id = str(uuid.uuid4())
 
-    return count
+    # Map JSON fields to database columns
+    cur.execute("""
+        INSERT INTO doc_level_data (
+            id, document_id, account_id, account_number, doc_section, as_of_date,
+            -- Portfolio summary fields
+            net_acct_value, beg_value, end_value,
+            -- Income summary fields
+            taxable_total_period, taxable_total_ytd,
+            divs_taxable_period, divs_taxable_ytd,
+            stcg_taxable_period, stcg_taxable_ytd,
+            int_taxable_period, int_taxable_ytd,
+            ltcg_taxable_period, ltcg_taxable_ytd,
+            tax_exempt_total_period, tax_exempt_total_ytd,
+            divs_tax_exempt_period, divs_tax_exempt_ytd,
+            int_tax_exempt_period, int_tax_exempt_ytd,
+            roc_period, roc_ytd,
+            grand_total_period, grand_total_ytd,
+            -- Realized gains fields
+            st_gain_period, st_loss_period,
+            lt_gain_ytd, lt_loss_ytd
+        ) VALUES (
+            %s, %s, %s, %s, %s, %s,
+            %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s
+        )
+    """, (
+        doc_data_id, doc_id, account_id, account_number, 'combined', statement_date,
+        # Portfolio values
+        parse_amount(portfolio.get('net_account_value')),
+        parse_amount(portfolio.get('beginning_value')),
+        parse_amount(portfolio.get('ending_value')),
+        # Income values
+        parse_amount(income.get('taxable_total_period')),
+        parse_amount(income.get('taxable_total_ytd')),
+        parse_amount(income.get('divs_taxable_period')),
+        parse_amount(income.get('divs_taxable_ytd')),
+        parse_amount(income.get('stcg_taxable_period')),
+        parse_amount(income.get('stcg_taxable_ytd')),
+        parse_amount(income.get('int_taxable_period')),
+        parse_amount(income.get('int_taxable_ytd')),
+        parse_amount(income.get('ltcg_taxable_period')),
+        parse_amount(income.get('ltcg_taxable_ytd')),
+        parse_amount(income.get('tax_exempt_total_period')),
+        parse_amount(income.get('tax_exempt_total_ytd')),
+        parse_amount(income.get('divs_tax_exempt_period')),
+        parse_amount(income.get('divs_tax_exempt_ytd')),
+        parse_amount(income.get('int_tax_exempt_period')),
+        parse_amount(income.get('int_tax_exempt_ytd')),
+        parse_amount(income.get('roc_period')),
+        parse_amount(income.get('roc_ytd')),
+        parse_amount(income.get('grand_total_period')),
+        parse_amount(income.get('grand_total_ytd')),
+        # Gains values
+        parse_amount(gains.get('st_gain_period')),
+        parse_amount(gains.get('st_loss_period')),
+        parse_amount(gains.get('lt_gain_ytd')),
+        parse_amount(gains.get('lt_loss_ytd'))
+    ))
+
+    return 1
 
 def move_to_loaded(json_path):
     """Move file to loaded directory"""
@@ -544,6 +577,7 @@ def load_document(json_path):
 
     with connect_db() as conn:
         try:
+
             # Process first account to get entity and institution
             accounts = data.get('accounts', [])
             if not accounts:
@@ -614,6 +648,9 @@ def load_document(json_path):
             print(f"Moved to: {loaded_path}")
 
         except Exception as e:
+            import traceback
+            print(f"Error during processing: {e}")
+            traceback.print_exc()
             conn.rollback()
             # Move file back if it was moved
             if 'loaded_path' in locals():

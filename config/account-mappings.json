@@ -73,7 +73,7 @@
   "_usage_examples": {
     "filename_generation": {
       "single_account": "Fid_Stmnt_2025-08_Brok.pdf",
-      "multiple_accounts": "Fid_Stmnt_2025-08_Brok+CMA.pdf"
+      "multiple_accounts": "Fid_Stmnt_2025-08_KernBrok+KerCMA.pdf"
     },
     "database_creation": "Use entities, institutions, and accounts sections to create complete database records",
     "account_lookup": "accounts.fidelity['7872'] gives complete metadata for Z24-527872"

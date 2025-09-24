@@ -2,6 +2,10 @@
 
 **Created:** 09/22/25 9:20PM ET
 **Updated:** 09/23/25 2:58PM - Added comprehensive schema design defense and clarified doc_level_data as transcribed data
+**Updated:** 09/23/25 8:00PM - Enhanced duplicate prevention documentation with multi-level JSON hash tracking and audit trail queries
+**Updated:** 09/23/25 8:15PM - Fixed JSON hash design - moved hash tracking from documents to transactions/positions tables
+**Updated:** 09/24/25 9:50AM - Added configuration-driven mapping system documentation with three-table design and CSV rule management
+**Updated:** 09/24/25 11:52AM - Updated JSON metadata attribute names throughout: source_json_hash→json_output_md5_hash, added json_output_id documentation
 **Purpose:** Database-specific context and orientation for Claude when working with the financial database
 
 ## 🚀 Quick Start - Connection Details
@@ -46,6 +50,10 @@ psql -h localhost -p 54322 -U postgres -d postgres
 6. **transactions** - Individual financial transactions
 7. **positions** - Point-in-time holdings snapshots
 8. **doc_level_data** - Document-level summary data transcribed directly from PDFs
+9. **map_rules** - User-defined classification rules for transaction categorization
+10. **map_conditions** - Trigger conditions for classification rules (IF logic)
+11. **map_actions** - Actions taken when rules match (SET logic)
+12. **data_mappings** - Legacy single-table mapping system (to be replaced)
 
 ## 🛡️ Schema Design Defense
 
@@ -102,8 +110,11 @@ transactions + positions (actual financial data)
 
 ### 1. Duplicate Prevention Strategy
 - **Stage 1:** MD5 hash generated during document staging (`md5sum` command)
-- **Stage 2:** Database UNIQUE constraint on `doc_md5_hash` column
+- **Stage 2:** Database UNIQUE constraint on `doc_md5_hash` column (PDF level)
+- **Stage 3:** JSON content hash in `json_output_md5_hash` columns in transactions/positions tables
+- **Stage 4:** Source file tracking in `source_file` columns for audit trail
 - **Important:** Using MD5, NOT SHA-256 for hashing
+- **Key Design:** Each PDF creates 2 JSONs (activities/holdings) - hash tracking at data level
 
 ### 2. Multi-Entity Architecture
 - One document can reference multiple accounts (consolidated statements)
@@ -134,20 +145,156 @@ WHERE table_name = 'tablename';
 ```
 
 ### Critical Comments to Know
-- `doc_md5_hash`: "MD5 hash (NOT SHA-256) for duplicate detection"
+- `doc_md5_hash`: "MD5 hash (NOT SHA-256) for PDF duplicate detection"
+- `json_output_md5_hash`: "MD5 hash of JSON extraction file content in documents/transactions/positions tables"
+- `json_output_id`: "Unique identifier for JSON extraction output file"
+- `source_file`: "JSON filename that created this transaction/position record"
 - `doc_level_data` table: "Transcribed summary data from PDF documents - NOT derived/calculated"
 - `document_accounts` table: "Essential junction table for consolidated statements covering multiple accounts"
 - `account_number`: "Should be encrypted/masked in production"
 - `is_archived`: "Soft delete flag - true means hidden from normal queries"
 
+## 🗺️ Configuration-Driven Transaction Classification
+
+### Three-Table Mapping System
+
+The system uses a flexible, user-editable rule-based approach for automatic transaction classification:
+
+**map_rules** - Master rule definitions
+```sql
+CREATE TABLE map_rules (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    rule_name text NOT NULL,                    -- "Muni Bond Interest", "Opening Options Transaction"
+    application_order integer NOT NULL,         -- Processing order (1=first)
+    rule_category text NOT NULL,               -- "Options Lifecycle", "Transaction Types"
+    problem_solved text,                        -- Business justification for rule
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
+);
+```
+
+**map_conditions** - Rule trigger conditions (IF logic)
+```sql
+CREATE TABLE map_conditions (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    rule_id uuid REFERENCES map_rules(id) ON DELETE CASCADE,
+    check_field text NOT NULL,                  -- "activities.description", "activities.section"
+    match_operator text NOT NULL,              -- "contains", "equals", "starts_with"
+    match_value text NOT NULL,                 -- "Muni Exempt Int", "dividends_interest_income"
+    logic_connector text DEFAULT 'AND'         -- "AND", "OR" for multiple conditions
+);
+```
+
+**map_actions** - Rule outcomes (SET logic)
+```sql
+CREATE TABLE map_actions (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    rule_id uuid REFERENCES map_rules(id) ON DELETE CASCADE,
+    set_field text NOT NULL,                   -- "activities.type", "activities.subtype"
+    set_value text NOT NULL                    -- "interest", "muni_exempt", "call"
+);
+```
+
+### Human-Readable View
+
+The system includes a view that formats rules in business-friendly IF-THEN format:
+
+```sql
+CREATE VIEW mapping_rules_readable AS
+SELECT
+    r.rule_name,
+    STRING_AGG(
+        c.check_field || ' ' || c.match_operator || ' "' || c.match_value || '"',
+        ' ' || c.logic_connector || ' '
+        ORDER BY c.id
+    ) as triggers,
+    STRING_AGG(
+        'SET ' || a.set_field || ' = "' || a.set_value || '"',
+        '; '
+        ORDER BY a.id
+    ) as actions,
+    r.problem_solved
+FROM map_rules r
+LEFT JOIN map_conditions c ON r.id = c.rule_id
+LEFT JOIN map_actions a ON r.id = a.rule_id
+GROUP BY r.id, r.rule_name, r.problem_solved
+ORDER BY r.application_order;
+```
+
+### CSV Rule Management Workflow
+
+**User-Friendly Rule Editing:**
+1. **CSV File:** `/config/mapping-rules.csv` - Human-readable format with columns:
+   - Rule Name, Triggers, Actions, Problem Solved
+2. **Excel Integration:** User opens CSV in Excel for visual editing with formatting
+3. **Bulk Updates:** User saves changes, Claude reads CSV and updates database tables
+4. **Real-time Application:** Updated rules immediately apply to new transaction processing
+
+**Example CSV Format:**
+```csv
+Rule Name,Triggers,Actions,Problem Solved
+"Muni Bond Interest","activities.description contains ""Muni Exempt Int"" AND activities.section equals ""dividends_interest_income""","SET activities.type = ""interest""; SET activities.subtype = ""muni_exempt""","Municipal bonds in dividend section were taxed as dividends instead of tax-free interest"
+```
+
+### Rule Processing Logic
+
+Rules are applied in `application_order` sequence:
+1. **Options Lifecycle** (order 1) - Override subtypes for options tracking
+2. **Transaction Types** (order 2) - Specific description-based classification
+3. **Security Identification** (order 3) - Call/put identification for matching
+4. **Section Fallbacks** (order 4) - Generic section-based classification
+5. **General Securities** (order 5) - Basic security type classification
+
+**Key Benefits:**
+- **No code changes** needed to add new transaction patterns
+- **User-controlled** classification rules via Excel interface
+- **Consistent results** across all transaction processing
+- **Audit trail** with business justification for each rule
+- **Cross-table capability** ready for future `positions.security_type` triggers
+
 ## 🔍 Common Database Queries
+
+### Rule Management Queries
+
+```sql
+-- View all mapping rules in readable format
+SELECT * FROM mapping_rules_readable ORDER BY rule_name;
+
+-- Find rules that modify a specific field
+SELECT r.rule_name, a.set_field, a.set_value
+FROM map_rules r
+JOIN map_actions a ON r.id = a.rule_id
+WHERE a.set_field = 'activities.type';
+
+-- Find rules triggered by specific descriptions
+SELECT r.rule_name, c.match_value, a.set_field, a.set_value
+FROM map_rules r
+JOIN map_conditions c ON r.id = c.rule_id
+JOIN map_actions a ON r.id = a.rule_id
+WHERE c.match_value ILIKE '%muni%';
+
+-- Test what rules would trigger for a sample transaction
+-- (Useful for debugging classification issues)
+```
 
 ### Check for Duplicate Documents
 ```sql
--- Before inserting, check if document exists
+-- Check PDF document hash
 SELECT id, file_name, period_start, period_end
 FROM documents
-WHERE doc_md5_hash = 'your_md5_hash_here';
+WHERE doc_md5_hash = 'your_pdf_hash_here';
+
+-- Check if activities JSON already loaded
+SELECT COUNT(*) FROM transactions
+WHERE json_output_md5_hash = 'your_json_hash_here';
+
+-- Check if holdings JSON already loaded
+SELECT COUNT(*) FROM positions
+WHERE json_output_md5_hash = 'your_json_hash_here';
+
+-- Check by filename for audit trail
+SELECT COUNT(*) FROM transactions WHERE source_file = 'activities.json';
+SELECT COUNT(*) FROM positions WHERE source_file = 'holdings.json';
 ```
 
 ### Find All Accounts for an Entity

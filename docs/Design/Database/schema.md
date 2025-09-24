@@ -17,6 +17,12 @@
 **Updated:** 09/23/25 2:58PM - Added comprehensive design justification for document_accounts table and clarified doc_level_data as transcribed data
 **Updated:** 09/23/25 3:52PM - Removed entity_id from institutions table (institutions now shared across entities) and added institution_name to accounts table as derived field
 **Updated:** 09/23/25 6:15PM - Added data_mappings table for configuration-driven classification and sec_class column to transactions table for options tracking
+**Updated:** 09/23/25 7:43PM - Added comprehensive duplicate detection with JSON hash tracking and source file audit trail
+**Updated:** 09/23/25 8:00PM - Updated data types to match applied database migration (VARCHAR constraints for new columns)
+**Updated:** 09/23/25 8:15PM - Removed extraction columns from documents, added source_json_hash to transactions/positions tables
+**Updated:** 09/23/25 10:07PM - Renamed positions columns to match JSON: agency_rating→agency_ratings, next_call→next_call_date
+**Updated:** 09/24/25 9:50AM - Added three-table mapping system (map_rules, map_conditions, map_actions) with CSV management workflow
+**Updated:** 09/24/25 11:52AM - Updated JSON metadata column names: source_json_hash→json_output_md5_hash, added json_output_id column to documents table
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -244,90 +250,126 @@ COMMENT ON COLUMN accounts.updated_at IS 'Timestamp when record was last modifie
 
 ## Configuration and Classification Tables
 
-### Table: data_mappings
+### Three-Table Mapping System
 
-**Purpose:** Configuration table for mapping source values to standardized types and subtypes. Enables data-driven classification of transactions, securities, and other domain-specific categorization without code changes.
+**Purpose:** User-editable rule-based system for automatic transaction classification. 
 
-| Column (*R = Req)    | Data Type   | Constraints                                               | Purpose/Source                                          |
-|----------------------|-------------|-----------------------------------------------------------|---------------------------------------------------------|
-| `id`                 | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid()                     | Auto-generated unique identifier                        |
-| `mapping_type` *R    | TEXT        | NOT NULL                                                  | Category: 'transaction_descriptions', 'security_patterns', etc. |
-| `source_value` *R    | TEXT        | NOT NULL                                                  | Original value from source data                         |
-| `target_type` *R     | TEXT        | NOT NULL                                                  | Standardized type to map to                             |
-| `target_subtype`     | TEXT        |                                                           | Optional subtype for additional categorization           |
-| `notes`              | TEXT        |                                                           | Human-readable explanation                              |
-| `created_at`         | TIMESTAMPTZ | DEFAULT NOW()                                             | Record creation timestamp                               |
-| `updated_at`         | TIMESTAMPTZ | DEFAULT NOW()                                             | Last modification timestamp                             |
+#### Table: map_rules
 
-**PostgreSQL Table Comment:**
+**Purpose:** Master rule definitions with business context and processing order.
+
+| Column (*R = Req)     | Data Type   | Constraints                           | Purpose/Source                                        |
+|-----------------------|-------------|---------------------------------------|-------------------------------------------------------|
+| `id`                  | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid() | Auto-generated unique identifier                      |
+| `rule_name` *R        | TEXT        | NOT NULL                              | Human-readable rule name (e.g., "Muni Bond Interest") |
+| `application_order` *R| INTEGER     | NOT NULL                              | Processing sequence (1=first, 5=last)                 |
+| `rule_category` *R    | TEXT        | NOT NULL                              | Rule grouping (e.g., "Options Lifecycle")             |
+| `problem_solved`      | TEXT        |                                       | Business justification for the rule                   |
+| `created_at`          | TIMESTAMPTZ | DEFAULT NOW()                         | Record creation timestamp                             |
+| `updated_at`          | TIMESTAMPTZ | DEFAULT NOW()                         | Last modification timestamp                           |
+
+#### Table: map_conditions
+
+**Purpose:** Trigger conditions for classification rules (IF logic with compound conditions).
+
+| Column (*R = Req)     | Data Type   | Constraints                           | Purpose/Source                                    |
+|-----------------------|-------------|---------------------------------------|---------------------------------------------------|
+| `id`                  | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid() | Auto-generated unique identifier                  |
+| `rule_id` *R          | UUID (FK)   | NOT NULL REFERENCES map_rules(id) ON DELETE CASCADE | Link to parent rule                 |
+| `check_field` *R      | TEXT        | NOT NULL                              | Field to examine (e.g., "activities.description") |
+| `match_operator` *R   | TEXT        | NOT NULL                              | Comparison operator ("contains", "equals")        |
+| `match_value` *R      | TEXT        | NOT NULL                              | Value to match against                            |
+| `logic_connector`     | TEXT        | DEFAULT 'AND'                         | Connector for multiple conditions ("AND", "OR")   |
+
+#### Table: map_actions
+
+**Purpose:** Actions taken when rules match (SET logic with multiple field updates).
+
+| Column (*R = Req)     | Data Type   | Constraints                           | Purpose/Source                            |
+|-----------------------|-------------|---------------------------------------|-------------------------------------------|
+| `id`                  | UUID (PK)   | PRIMARY KEY DEFAULT gen_random_uuid() | Auto-generated unique identifier          |
+| `rule_id` *R          | UUID (FK)   | NOT NULL REFERENCES map_rules(id) ON DELETE CASCADE | Link to parent rule         |
+| `set_field` *R        | TEXT        | NOT NULL                              | Field to update (e.g., "activities.type") |
+| `set_value` *R        | TEXT        | NOT NULL                              | Value to set                              |
+
+### Human-Readable View
+
+**Purpose:** Formats the three-table system into business-friendly IF-THEN rules.
+
 ```sql
-COMMENT ON TABLE data_mappings IS 'Configuration table for mapping source values to standardized types and subtypes - enables data-driven classification';
+CREATE VIEW mapping_rules_readable AS
+SELECT
+    r.rule_name,
+    STRING_AGG(
+        c.check_field || ' ' || c.match_operator || ' "' || c.match_value || '"',
+        ' ' || c.logic_connector || ' '
+        ORDER BY c.id
+    ) as triggers,
+    STRING_AGG(
+        'SET ' || a.set_field || ' = "' || a.set_value || '"',
+        '; '
+        ORDER BY a.id
+    ) as actions,
+    r.problem_solved
+FROM map_rules r
+LEFT JOIN map_conditions c ON r.id = c.rule_id
+LEFT JOIN map_actions a ON r.id = a.rule_id
+GROUP BY r.id, r.rule_name, r.problem_solved
+ORDER BY r.application_order;
 ```
 
-**PostgreSQL Column Comments:**
-```sql
-COMMENT ON COLUMN data_mappings.id IS 'Auto-generated unique identifier';
-COMMENT ON COLUMN data_mappings.mapping_type IS 'Category of mapping: transaction_descriptions, security_patterns, account_types, etc.';
-COMMENT ON COLUMN data_mappings.source_value IS 'Original value from source data that needs classification';
-COMMENT ON COLUMN data_mappings.target_type IS 'Standardized type to map the source value to';
-COMMENT ON COLUMN data_mappings.target_subtype IS 'Optional subtype for additional granular categorization';
-COMMENT ON COLUMN data_mappings.notes IS 'Human-readable explanation of the mapping rule';
-COMMENT ON COLUMN data_mappings.created_at IS 'Timestamp when mapping rule was created';
-COMMENT ON COLUMN data_mappings.updated_at IS 'Timestamp when mapping rule was last modified - updated by trigger';
+### CSV Rule Management Workflow
+
+**User-Friendly Editing Process:**
+
+1. **CSV File:** `/config/mapping-rules.csv` - Human-readable format with columns:
+   - Rule Name, Triggers, Actions, Problem Solved
+
+2. **Excel Integration:**
+   - User opens CSV in Excel for visual editing with formatting
+   - Compound conditions: Use "AND"/"OR" (e.g., `activities.description contains "Muni Exempt Int" AND activities.section equals "dividends_interest_income"`)
+   - Multiple actions: Separate with semicolons (e.g., `SET activities.type = "interest"; SET activities.subtype = "muni_exempt"`)
+
+3. **Bulk Updates:**
+   - User saves changes in Excel (keeps CSV format)
+   - Claude reads updated CSV and parses into three database tables
+   - Changes immediately apply to new transaction processing
+
+4. **Real-time Classification:** Updated rules automatically apply to all future document processing
+
+**Example CSV Format:**
+```csv
+Rule Name,Triggers,Actions,Problem Solved
+"Muni Bond Interest","activities.description contains ""Muni Exempt Int"" AND activities.section equals ""dividends_interest_income""","SET activities.type = ""interest""; SET activities.subtype = ""muni_exempt""","Municipal bonds in dividend section were taxed as dividends instead of tax-free interest"
+"Opening Options Transaction","activities.description contains ""OPENING TRANSACTION""","SET activities.subtype = ""opening_transaction""","Options trades were classified as generic trades, preventing P&L matching"
 ```
 
-**Unique Constraints:**
-- UNIQUE(mapping_type, source_value) - Prevents duplicate mappings for same type/value combination
+### Rule Processing Logic
 
-**Indexes:**
-```sql
--- Fast lookups during data processing
-CREATE UNIQUE INDEX idx_data_mappings_lookup ON data_mappings(mapping_type, source_value);
-CREATE INDEX idx_data_mappings_type ON data_mappings(mapping_type);
-```
+Rules are applied in `application_order` sequence:
 
-**Configuration-Driven Classification System:**
+1. **Options Lifecycle** (order 1) - Override subtypes for options tracking
+2. **Transaction Types** (order 2) - Specific description-based classification
+3. **Security Identification** (order 3) - Call/put identification for matching
+4. **Section Fallbacks** (order 4) - Generic section-based classification
+5. **General Securities** (order 5) - Basic security type classification
 
-This table supports a flexible mapping system where source data values can be classified without code changes:
+**Cross-Table Support:** Ready for future triggers on `positions.security_type`, `accounts.account_type`, etc.
 
-1. **Transaction Descriptions:** Map Fidelity transaction descriptions to standardized transaction types
-   - Example: "REINVESTMENT" → type: "reinvest", subtype: "dividend_reinvestment"
-   - Example: "SHORT TERM CAP GAIN" → type: "capital_gain", subtype: "short_term"
+**Key Benefits:**
+- **No code changes** needed to add new transaction patterns
+- **User-controlled** classification rules via Excel interface
+- **Consistent results** across all transaction processing
+- **Audit trail** with business justification for each rule
+- **Compound conditions** support complex matching scenarios
+- **Multiple actions** per rule for comprehensive field updates
 
-2. **Security Patterns:** Classify securities based on symbol or description patterns
-   - Example: "CALL" options → type: "option", subtype: "call"
-   - Example: Municipal bonds → type: "bond", subtype: "municipal"
-
-3. **Options Tracking Support:** Essential for matching option transactions and calculating P&L
-   - Example: "AAPL Apr 21 '25 $150 Call" → sec_class: "call", underlying: "AAPL"
-   - Enables matching buy/sell transactions for same option contract
-
-4. **Data Mapping Types:**
-   - `transaction_descriptions`: Map transaction descriptions to transaction_type/subtype
-   - `security_patterns`: Classify securities by symbol/name patterns
-   - `account_types`: Standardize account type classifications
-   - `tax_categories`: Map income types to tax treatment
-
-**Example Mapping Queries:**
-```sql
--- Find transaction type for a description
-SELECT target_type, target_subtype
-FROM data_mappings
-WHERE mapping_type = 'transaction_descriptions'
-AND source_value = 'REINVESTMENT';
-
--- Classify a security based on description
-SELECT target_type, target_subtype
-FROM data_mappings
-WHERE mapping_type = 'security_patterns'
-AND 'AAPL Apr 21 25 $150 Call' ILIKE '%' || source_value || '%';
-```
 
 ---
 
 ## Document and Transaction Tables
 
-### Table: documents (Enhanced)
+### Table: documents 
 
 **Purpose:** Stores document metadata and extraction results with enhanced multi-entity support and processing audit trail. Documents are globally unique by file, issued by exactly one institution, and link to one or more accounts via a join table. Each document is associated with a specific tax year.
 
@@ -362,6 +404,8 @@ AND 'AAPL Apr 21 25 $150 Call' ILIKE '%' || source_value || '%';
 | `processed_by`             | TEXT        | DEFAULT 'claude'                                                | Processing agent identifier                           |
 | `extraction_notes`         | TEXT        |                                                                 | Claude's notes about the extraction                   |
 | `extraction_json_path`     | TEXT        |                                                                 | Path to JSON file with full extraction data           |
+| `json_output_id`           | TEXT        |                                                                 | Unique identifier for JSON extraction output          |
+| `json_output_md5_hash`     | VARCHAR(32) |                                                                 | MD5 hash of the JSON extraction file content          |
 | **Archival Support**       |             |                                                                 |                                                       |
 | `is_archived`              | BOOLEAN     | DEFAULT FALSE                                                   | True if document is archived (soft delete)            |
 | **Audit Trail**            |             |                                                                 |                                                       |
@@ -421,13 +465,13 @@ This junction table is **absolutely essential** for the document-centric archite
    WHERE da.account_id = 'account-uuid'
    ```
 
-| Column (*R = Req)   | Data Type   | Constraints                                                     | Purpose/Source                                 |
-|---------------------|-------------|-----------------------------------------------------------------|------------------------------------------------|
-| `document_id` *R    | UUID (FK)   | NOT NULL REFERENCES documents(id) ON DELETE CASCADE            | Linked document                                |
-| `account_id` *R     | UUID (FK)   | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT            | Linked account                                 |
-| `created_at`        | TIMESTAMPTZ | DEFAULT NOW()                                                   | Link creation timestamp                        |
-| `Comment`           |             |                                                                 |                                                |
-|---------------------|-------------|-------------------------------------------------------------------|------------------------------------------------|
+| Column (*R = Req)   | Data Type   | Constraints                                         | Purpose/Source          |
+|---------------------|-------------|-----------------------------------------------------|-------------------------|
+| `document_id` *R    | UUID (FK)   | NOT NULL REFERENCES documents(id) ON DELETE CASCADE | Linked document         |
+| `account_id` *R     | UUID (FK)   | NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT | Linked account          |
+| `created_at`        | TIMESTAMPTZ | DEFAULT NOW()                                       | Link creation timestamp |
+| `Comment`           |             |                                                     |                         |
+|---------------------|-------------|-----------------------------------------------------|-------------------------|
 | FK to documents table | FK to accounts table | Link creation timestamp |
 
 **Constraints:**
@@ -512,6 +556,8 @@ This junction table is **absolutely essential** for the document-centric archite
 | `created_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Record creation timestamp                                 |
 | `updated_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Last modification timestamp                               |
 | `processed_by`            | TEXT          | DEFAULT 'claude'                                                  | Processing agent identifier                               |
+| `source_file`             | VARCHAR(255)  |                                                                   | JSON extraction filename that created this record         |
+| `json_output_md5_hash`    | VARCHAR(32)   |                                                                   | MD5 hash of activities JSON that created this transaction |
 | `Comment`                 |               |                                                                   |                                                           |
 |---------------------------|---------------|-------------------------------------------------------------------|-----------------------------------------------------------|
 | Auto-generated unique identifier | FK to entities table | FK to documents table | FK to accounts table |
@@ -631,8 +677,8 @@ ORDER BY net_amount DESC;
 | maturity_date                     | maturity_date        | Maturity Date           | DATE          |                                                     |
 | coupon_rate                       | coupon_rate          | Coupon Rate             | NUMERIC(5,3)  |                                                     |
 | accrued_int                       | accrued_int          | Accrued Interest        | NUMERIC(15,2) |                                                     |
-| agency_rating                     | agency_ratings       | Ratings                 | TEXT          |                                                     |
-| next_call                         | next_call_date       | Next Call Date          | DATE          |                                                     |
+| agency_ratings                    | agency_ratings       | Ratings                 | TEXT          |                                                     |
+| next_call_date                    | next_call_date       | Next Call Date          | DATE          |                                                     |
 | call_price                        | call_price           | Call Price              | NUMERIC(12,4) |                                                     |
 | payment_freq                      | payment_freq         | Payment Frequency       | TEXT          |                                                     |
 | bond_features                     | bond_features        | Bond Features           | TEXT          |                                                     |
@@ -642,6 +688,8 @@ ORDER BY net_amount DESC;
 | **-- Audit Trail --**             |
 | created_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                                       |
 | updated_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                                       |
+| source_file                       | -                    | -                       | VARCHAR(255)  | JSON extraction filename that created this record   |
+| json_output_md5_hash              | -                    | -                       | VARCHAR(32)   | MD5 hash of holdings JSON that created this position |
 
 **Unique Constraints:**
 - UNIQUE(document_id, account_id, position_date, sec_ticker, cusip) - Prevents duplicate positions from same document

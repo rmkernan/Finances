@@ -8,6 +8,7 @@
 **Updated:** 09/22/25 11:20AM - Simplified to pure data location guide: removed redundant notes, interpretive content, and explanations
 **Updated:** 09/22/25 12:30PM - Added Document Structure Overview section for navigation context
 **Updated:** 09/22/25 1:52PM - Clarified multi-account structure and extraction requirements for ALL accounts
+**Updated:** 09/23/25 10:07PM - Updated DB columns to match JSON: agency_ratings, next_call_date
 **Updated:** 09/22/25 6:04PM - Added Core Account section, standardized est_yield to percentage format (not decimal)
 **Updated:** 09/22/25 6:17PM - Clarified that Realized Gains section only appears when sales occurred (use null when absent)
 **Updated:** 09/22/25 7:58PM - Enhanced data transcription guidance to clarify faithful copying of all values including "unavailable"
@@ -190,8 +191,8 @@ There is one holding section per account listed in the document. This section co
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                        |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                        |
 | Coupon Rate             | coupon_rate          | positions.coupon_rate          | NUMBER   | **REQ** - From last column             |
-| Ratings                 | agency_ratings       | positions.agency_rating        | TEXT     | Optional - From detail line            |
-| Next Call Date          | next_call_date       | positions.next_call            | DATE     | Optional - Only if callable            |
+| Ratings                 | agency_ratings       | positions.agency_ratings       | TEXT     | Optional - From detail line            |
+| Next Call Date          | next_call_date       | positions.next_call_date       | DATE     | Optional - Only if callable            |
 | Call Price              | call_price           | positions.call_price           | NUMBER   | Optional - Only if callable            |
 | Payment Frequency       | payment_freq         | positions.payment_freq         | TEXT     | **REQ** - From detail line             |
 | Bond Features           | bond_features        | positions.bond_features        | TEXT     | Optional - Special features if present |

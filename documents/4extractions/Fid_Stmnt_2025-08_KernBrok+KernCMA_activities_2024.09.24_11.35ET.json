@@ -1,31 +1,30 @@
 {
   "extraction_metadata": {
-    "document_id": "fid_stmnt_2025_08_brok_cma_activities",
-    "file_path": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_Brok+CMA.pdf",
+    "document_id": "fidelity_2025_08_activities",
+    "file_path": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf",
     "file_hash": "sha256_placeholder",
-    "doc_md5_hash": "test_hash_for_options_symbol_extraction",
+    "doc_md5_hash": "32967b1d3e40b2c544cc42e0c6f378e5",
     "extraction_type": "activities",
-    "extraction_timestamp": "2025-09-22T18:30:00Z",
+    "extraction_timestamp": "2024-09-24T11:35:00Z",
     "extractor_version": "1.0",
     "pages_processed": 36,
-    "extraction_notes": [
-      "Comprehensive multi-account statement with extensive options trading",
-      "Complex security descriptions parsed for multi-line entries",
-      "Bond redemptions with proper price handling",
-      "Dividend reinvestments processed as dual entries"
-    ]
+    "extraction_notes": []
   },
+
   "document_data": {
     "institution": "Fidelity",
     "statement_date": "2025-08-31",
     "period_start": "2025-08-01",
     "period_end": "2025-08-31"
   },
+
   "accounts": [
     {
       "account_number": "Z24-527872",
-      "account_name": "Joint Brokerage",
-      "account_holder_name": "Kernan Family",
+      "account_name": "FIDELITY ACCOUNT RICHARD M KERNAN AND PEGGY E KERNAN - WITH RIGHTS OF SURVIVORSHIP TOD",
+      "account_holder_name": "RICHARD M KERNAN AND PEGGY E KERNAN",
+      "account_type": "brokerage",
+
       "securities_bought_sold": [
         {
           "settlement_date": "2025-08-04",
@@ -34,7 +33,7 @@
           "cusip": "88160R101",
           "description": "You Bought",
           "quantity": "500.000000",
-          "price_per_unit": "305.00000",
+          "price_per_unit": "305.0000",
           "cost_basis": null,
           "transaction_cost": null,
           "amount": "-152500.00"
@@ -46,9 +45,9 @@
           "cusip": "7378399EA",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "10.70000",
+          "price_per_unit": "10.7000",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "10693.26"
         },
         {
@@ -58,9 +57,9 @@
           "cusip": "7894949PJ",
           "description": "You Sold",
           "quantity": "-5.000000",
-          "price_per_unit": "7.61000",
+          "price_per_unit": "7.6100",
           "cost_basis": null,
-          "transaction_cost": "3.37",
+          "transaction_cost": "-3.37",
           "amount": "3801.63"
         },
         {
@@ -70,9 +69,9 @@
           "cusip": "7285639EE",
           "description": "You Sold",
           "quantity": "-5.000000",
-          "price_per_unit": "6.48000",
+          "price_per_unit": "6.4800",
           "cost_basis": null,
-          "transaction_cost": "3.37",
+          "transaction_cost": "-3.37",
           "amount": "3236.63"
         },
         {
@@ -82,9 +81,9 @@
           "cusip": "7999339BX",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "2.90000",
+          "price_per_unit": "2.9000",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "2893.26"
         },
         {
@@ -94,9 +93,9 @@
           "cusip": "7347879NJ",
           "description": "You Sold",
           "quantity": "-5.000000",
-          "price_per_unit": "6.22000",
+          "price_per_unit": "6.2200",
           "cost_basis": null,
-          "transaction_cost": "3.37",
+          "transaction_cost": "-3.37",
           "amount": "3106.63"
         },
         {
@@ -106,9 +105,9 @@
           "cusip": "7408299DD",
           "description": "You Bought",
           "quantity": "2.000000",
-          "price_per_unit": "4.22000",
+          "price_per_unit": "4.2200",
           "cost_basis": null,
-          "transaction_cost": "1.35",
+          "transaction_cost": "-1.35",
           "amount": "-845.35"
         },
         {
@@ -118,9 +117,9 @@
           "cusip": "7408299DD",
           "description": "You Bought",
           "quantity": "3.000000",
-          "price_per_unit": "4.23000",
+          "price_per_unit": "4.2300",
           "cost_basis": null,
-          "transaction_cost": "2.02",
+          "transaction_cost": "-2.02",
           "amount": "-1271.02"
         },
         {
@@ -130,9 +129,9 @@
           "cusip": "7986819AS",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "0.85000",
+          "price_per_unit": "0.8500",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "843.26"
         },
         {
@@ -142,9 +141,9 @@
           "cusip": "7408289VR",
           "description": "You Sold",
           "quantity": "-3.000000",
-          "price_per_unit": "2.66000",
+          "price_per_unit": "2.6600",
           "cost_basis": null,
-          "transaction_cost": "2.02",
+          "transaction_cost": "-2.02",
           "amount": "795.98"
         },
         {
@@ -154,9 +153,9 @@
           "cusip": "7408289VR",
           "description": "You Sold",
           "quantity": "-2.000000",
-          "price_per_unit": "2.67000",
+          "price_per_unit": "2.6700",
           "cost_basis": null,
-          "transaction_cost": "1.35",
+          "transaction_cost": "-1.35",
           "amount": "532.65"
         },
         {
@@ -166,9 +165,9 @@
           "cusip": "7669819SQ",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "1.40000",
+          "price_per_unit": "1.4000",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "1393.26"
         },
         {
@@ -190,9 +189,9 @@
           "cusip": "7729649UU",
           "description": "You Bought",
           "quantity": "20.000000",
-          "price_per_unit": "0.52000",
+          "price_per_unit": "0.5200",
           "cost_basis": null,
-          "transaction_cost": "13.49",
+          "transaction_cost": "-13.49",
           "amount": "-1053.49"
         },
         {
@@ -202,7 +201,7 @@
           "cusip": "458140100",
           "description": "You Bought",
           "quantity": "1000.000000",
-          "price_per_unit": "20.90500",
+          "price_per_unit": "20.9050",
           "cost_basis": null,
           "transaction_cost": null,
           "amount": "-20905.00"
@@ -214,9 +213,9 @@
           "cusip": "7766399TT",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "2.60000",
+          "price_per_unit": "2.6000",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "2593.26"
         },
         {
@@ -226,9 +225,9 @@
           "cusip": "7729639FZ",
           "description": "You Sold",
           "quantity": "-20.000000",
-          "price_per_unit": "0.41000",
+          "price_per_unit": "0.4100",
           "cost_basis": null,
-          "transaction_cost": "13.49",
+          "transaction_cost": "-13.49",
           "amount": "806.51"
         },
         {
@@ -238,15 +237,15 @@
           "cusip": "7990219SO",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "3.08000",
+          "price_per_unit": "3.0800",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "3073.26"
         },
         {
           "settlement_date": "2025-08-13",
           "sec_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
-          "sec_symbol": null,
+          "sec_symbol": "FTCXX",
           "cusip": "316176106",
           "description": "You Sold",
           "quantity": "-50583.120000",
@@ -274,9 +273,9 @@
           "cusip": "8001059DZ",
           "description": "You Sold",
           "quantity": "-20.000000",
-          "price_per_unit": "5.75000",
+          "price_per_unit": "5.7500",
           "cost_basis": null,
-          "transaction_cost": "13.49",
+          "transaction_cost": "-13.49",
           "amount": "11486.51"
         },
         {
@@ -286,9 +285,9 @@
           "cusip": "6922869EC",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "35.25000",
+          "price_per_unit": "35.2500",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "35243.26"
         },
         {
@@ -298,9 +297,9 @@
           "cusip": "7881139QQ",
           "description": "You Sold",
           "quantity": "-5.000000",
-          "price_per_unit": "5.97000",
+          "price_per_unit": "5.9700",
           "cost_basis": null,
-          "transaction_cost": "3.37",
+          "transaction_cost": "-3.37",
           "amount": "2981.63"
         },
         {
@@ -310,7 +309,7 @@
           "cusip": "21873S108",
           "description": "You Bought",
           "quantity": "500.000000",
-          "price_per_unit": "135.00000",
+          "price_per_unit": "135.0000",
           "cost_basis": null,
           "transaction_cost": null,
           "amount": "-67500.00"
@@ -322,7 +321,7 @@
           "cusip": "21873S108",
           "description": "You Bought",
           "quantity": "500.000000",
-          "price_per_unit": "155.00000",
+          "price_per_unit": "155.0000",
           "cost_basis": null,
           "transaction_cost": null,
           "amount": "-77500.00"
@@ -330,7 +329,7 @@
         {
           "settlement_date": "2025-08-18",
           "sec_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
-          "sec_symbol": null,
+          "sec_symbol": "FTCXX",
           "cusip": "316176106",
           "description": "You Sold",
           "quantity": "-71608.480000",
@@ -346,9 +345,9 @@
           "cusip": "7378399EA",
           "description": "You Bought - Short-term gain: $10,683.02",
           "quantity": "10.000000",
-          "price_per_unit": "0.01000",
-          "cost_basis": "10693.26",
-          "transaction_cost": "0.24",
+          "price_per_unit": "0.0100",
+          "cost_basis": "-10693.26",
+          "transaction_cost": "-0.24",
           "amount": "-10.24"
         },
         {
@@ -358,7 +357,7 @@
           "cusip": "594972408",
           "description": "You Bought",
           "quantity": "500.000000",
-          "price_per_unit": "370.00000",
+          "price_per_unit": "370.0000",
           "cost_basis": null,
           "transaction_cost": null,
           "amount": "-185000.00"
@@ -370,9 +369,9 @@
           "cusip": "8041349XV",
           "description": "You Bought",
           "quantity": "2.000000",
-          "price_per_unit": "7.25000",
+          "price_per_unit": "7.2500",
           "cost_basis": null,
-          "transaction_cost": "1.35",
+          "transaction_cost": "-1.35",
           "amount": "-1451.35"
         },
         {
@@ -382,9 +381,9 @@
           "cusip": "8041349XV",
           "description": "You Bought",
           "quantity": "8.000000",
-          "price_per_unit": "7.14000",
+          "price_per_unit": "7.1400",
           "cost_basis": null,
-          "transaction_cost": "5.39",
+          "transaction_cost": "-5.39",
           "amount": "-5717.39"
         },
         {
@@ -394,9 +393,9 @@
           "cusip": "8051819VP",
           "description": "You Bought",
           "quantity": "1.000000",
-          "price_per_unit": "2.74000",
+          "price_per_unit": "2.7400",
           "cost_basis": null,
-          "transaction_cost": "0.67",
+          "transaction_cost": "-0.67",
           "amount": "-274.67"
         },
         {
@@ -406,9 +405,9 @@
           "cusip": "8051819VP",
           "description": "You Bought",
           "quantity": "19.000000",
-          "price_per_unit": "2.74000",
+          "price_per_unit": "2.7400",
           "cost_basis": null,
-          "transaction_cost": "12.81",
+          "transaction_cost": "-12.81",
           "amount": "-5218.81"
         },
         {
@@ -418,9 +417,9 @@
           "cusip": "7997579KG",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "7.00000",
+          "price_per_unit": "7.0000",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "6993.26"
         },
         {
@@ -430,9 +429,9 @@
           "cusip": "7998979GG",
           "description": "You Sold",
           "quantity": "-5.000000",
-          "price_per_unit": "12.02000",
+          "price_per_unit": "12.0200",
           "cost_basis": null,
-          "transaction_cost": "3.37",
+          "transaction_cost": "-3.37",
           "amount": "6006.63"
         },
         {
@@ -442,9 +441,9 @@
           "cusip": "8000269GE",
           "description": "You Sold",
           "quantity": "-6.000000",
-          "price_per_unit": "1.43000",
+          "price_per_unit": "1.4300",
           "cost_basis": null,
-          "transaction_cost": "4.05",
+          "transaction_cost": "-4.05",
           "amount": "853.95"
         },
         {
@@ -454,9 +453,9 @@
           "cusip": "8000269GE",
           "description": "You Sold",
           "quantity": "-4.000000",
-          "price_per_unit": "1.43000",
+          "price_per_unit": "1.4300",
           "cost_basis": null,
-          "transaction_cost": "2.70",
+          "transaction_cost": "-2.70",
           "amount": "569.30"
         },
         {
@@ -466,7 +465,7 @@
           "cusip": "03674X106",
           "description": "You Bought",
           "quantity": "1000.000000",
-          "price_per_unit": "33.00000",
+          "price_per_unit": "33.0000",
           "cost_basis": null,
           "transaction_cost": null,
           "amount": "-33000.00"
@@ -474,7 +473,7 @@
         {
           "settlement_date": "2025-08-25",
           "sec_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
-          "sec_symbol": null,
+          "sec_symbol": "FTCXX",
           "cusip": "316176106",
           "description": "You Sold",
           "quantity": "-22510.580000",
@@ -490,9 +489,9 @@
           "cusip": "8040849CU",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "5.55000",
+          "price_per_unit": "5.5500",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "5543.26"
         },
         {
@@ -502,9 +501,9 @@
           "cusip": "7999409MI",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "2.08000",
+          "price_per_unit": "2.0800",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "2073.26"
         },
         {
@@ -514,9 +513,9 @@
           "cusip": "7999339QK",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "2.95000",
+          "price_per_unit": "2.9500",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "2943.26"
         },
         {
@@ -526,9 +525,9 @@
           "cusip": "8053339OK",
           "description": "You Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "0.89000",
+          "price_per_unit": "0.8900",
           "cost_basis": null,
-          "transaction_cost": "6.74",
+          "transaction_cost": "-6.74",
           "amount": "883.26"
         },
         {
@@ -538,7 +537,7 @@
           "cusip": "007903107",
           "description": "You Bought",
           "quantity": "2000.000000",
-          "price_per_unit": "180.00000",
+          "price_per_unit": "180.0000",
           "cost_basis": null,
           "transaction_cost": null,
           "amount": "-360000.00"
@@ -546,7 +545,7 @@
         {
           "settlement_date": "2025-08-29",
           "sec_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
-          "sec_symbol": null,
+          "sec_symbol": "FTCXX",
           "cusip": "316176106",
           "description": "You Sold",
           "quantity": "-348459.670000",
@@ -556,6 +555,7 @@
           "amount": "348459.67"
         }
       ],
+
       "dividends_interest_income": [
         {
           "settlement_date": "2025-08-01",
@@ -754,7 +754,7 @@
           "cusip": "316128503",
           "description": "Reinvestment",
           "quantity": "262.404000",
-          "price_per_unit": "10.73000",
+          "price_per_unit": "10.7300",
           "amount": "-2815.60"
         },
         {
@@ -774,7 +774,7 @@
           "cusip": "316176106",
           "description": "Reinvestment",
           "quantity": "5619.830000",
-          "price_per_unit": "1.00000",
+          "price_per_unit": "1.0000",
           "amount": "-5619.83"
         },
         {
@@ -808,6 +808,7 @@
           "amount": "90.00"
         }
       ],
+
       "other_activity_in": [
         {
           "settlement_date": "2025-08-01",
@@ -816,7 +817,7 @@
           "cusip": "8004479AY",
           "description": "Expired",
           "quantity": "5.000000",
-          "cost_basis": "12496.62",
+          "cost_basis": "-12496.62",
           "amount": "0.00"
         },
         {
@@ -826,7 +827,7 @@
           "cusip": "7946929CY",
           "description": "Expired",
           "quantity": "5.000000",
-          "cost_basis": "2061.62",
+          "cost_basis": "-2061.62",
           "amount": "0.00"
         },
         {
@@ -846,7 +847,7 @@
           "cusip": "7894949PJ",
           "description": "Expired",
           "quantity": "5.000000",
-          "cost_basis": "3801.63",
+          "cost_basis": "-3801.63",
           "amount": "0.00"
         },
         {
@@ -856,7 +857,7 @@
           "cusip": "7766399LJ",
           "description": "Expired",
           "quantity": "10.000000",
-          "cost_basis": "10173.21",
+          "cost_basis": "-10173.21",
           "amount": "0.00"
         },
         {
@@ -866,7 +867,7 @@
           "cusip": "7766399TT",
           "description": "Expired",
           "quantity": "10.000000",
-          "cost_basis": "2593.26",
+          "cost_basis": "-2593.26",
           "amount": "0.00"
         },
         {
@@ -876,7 +877,7 @@
           "cusip": "7285639EE",
           "description": "Expired",
           "quantity": "5.000000",
-          "cost_basis": "3236.63",
+          "cost_basis": "-3236.63",
           "amount": "0.00"
         },
         {
@@ -886,7 +887,7 @@
           "cusip": "7347879NJ",
           "description": "Expired",
           "quantity": "10.000000",
-          "cost_basis": "15308.25",
+          "cost_basis": "-15308.25",
           "amount": "0.00"
         },
         {
@@ -906,10 +907,11 @@
           "cusip": "7990219SO",
           "description": "Expired",
           "quantity": "10.000000",
-          "cost_basis": "3073.26",
+          "cost_basis": "-3073.26",
           "amount": "0.00"
         }
       ],
+
       "other_activity_out": [
         {
           "settlement_date": "2025-08-01",
@@ -960,6 +962,7 @@
           "quantity": "20.000000"
         }
       ],
+
       "deposits": [
         {
           "date": "2025-08-21",
@@ -968,6 +971,7 @@
           "amount": "8000.00"
         }
       ],
+
       "withdrawals": [
         {
           "date": "2025-08-01",
@@ -988,6 +992,7 @@
           "amount": "-250000.00"
         }
       ],
+
       "exchanges_in": [
         {
           "date": "2025-08-01",
@@ -1014,7 +1019,9 @@
           "amount": "156000.00"
         }
       ],
+
       "exchanges_out": [],
+
       "fees_charges": [
         {
           "date": "2025-08-06",
@@ -1022,7 +1029,9 @@
           "amount": "-3.00"
         }
       ],
+
       "billpay": [],
+
       "core_fund_activity": [
         {
           "settlement_date": "2025-08-01",
@@ -1032,7 +1041,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "2767.460000",
           "price_per_unit": "1.0000",
-          "amount": "-2767.46",
+          "amount": "2767.46",
           "balance": "331482.20"
         },
         {
@@ -1043,7 +1052,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-152500.000000",
           "price_per_unit": "1.0000",
-          "amount": "152500.00",
+          "amount": "-152500.00",
           "balance": "178982.20"
         },
         {
@@ -1054,7 +1063,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "236.220000",
           "price_per_unit": "1.0000",
-          "amount": "-236.22",
+          "amount": "236.22",
           "balance": "179218.42"
         },
         {
@@ -1065,7 +1074,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "23731.410000",
           "price_per_unit": "1.0000",
-          "amount": "-23731.41",
+          "amount": "23731.41",
           "balance": "202949.83"
         },
         {
@@ -1076,7 +1085,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "11952.510000",
           "price_per_unit": "1.0000",
-          "amount": "-11952.51",
+          "amount": "11952.51",
           "balance": "214902.34"
         },
         {
@@ -1087,7 +1096,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-15485.460000",
           "price_per_unit": "1.0000",
-          "amount": "15485.46",
+          "amount": "-15485.46",
           "balance": "199416.88"
         },
         {
@@ -1098,7 +1107,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-199416.880000",
           "price_per_unit": "1.0000",
-          "amount": "199416.88",
+          "amount": "-199416.88",
           "balance": "0.00"
         },
         {
@@ -1109,7 +1118,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "406000.000000",
           "price_per_unit": "1.0000",
-          "amount": "-406000.00",
+          "amount": "406000.00",
           "balance": "406000.00"
         },
         {
@@ -1120,7 +1129,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-250000.000000",
           "price_per_unit": "1.0000",
-          "amount": "250000.00",
+          "amount": "-250000.00",
           "balance": "156000.00"
         },
         {
@@ -1131,7 +1140,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "102401.760000",
           "price_per_unit": "1.0000",
-          "amount": "-102401.76",
+          "amount": "102401.76",
           "balance": "258401.76"
         },
         {
@@ -1142,7 +1151,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-258391.520000",
           "price_per_unit": "1.0000",
-          "amount": "258391.52",
+          "amount": "-258391.52",
           "balance": "10.24"
         },
         {
@@ -1153,7 +1162,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-10.240000",
           "price_per_unit": "1.0000",
-          "amount": "10.24",
+          "amount": "-10.24",
           "balance": "0.00"
         },
         {
@@ -1164,7 +1173,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "2090.920000",
           "price_per_unit": "1.0000",
-          "amount": "-2090.92",
+          "amount": "2090.92",
           "balance": "2090.92"
         },
         {
@@ -1175,7 +1184,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "4.500000",
           "price_per_unit": "1.0000",
-          "amount": "-4.50",
+          "amount": "4.50",
           "balance": "2095.42"
         },
         {
@@ -1186,7 +1195,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "8000.000000",
           "price_per_unit": "1.0000",
-          "amount": "-8000.00",
+          "amount": "8000.00",
           "balance": "10095.42"
         },
         {
@@ -1197,7 +1206,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "394.000000",
           "price_per_unit": "1.0000",
-          "amount": "-394.00",
+          "amount": "394.00",
           "balance": "10489.42"
         },
         {
@@ -1208,7 +1217,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-10489.420000",
           "price_per_unit": "1.0000",
-          "amount": "10489.42",
+          "amount": "-10489.42",
           "balance": "0.00"
         },
         {
@@ -1219,7 +1228,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "7616.520000",
           "price_per_unit": "1.0000",
-          "amount": "-7616.52",
+          "amount": "7616.52",
           "balance": "7616.52"
         },
         {
@@ -1230,7 +1239,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "3826.520000",
           "price_per_unit": "1.0000",
-          "amount": "-3826.52",
+          "amount": "3826.52",
           "balance": "11443.04"
         },
         {
@@ -1241,7 +1250,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-11540.330000",
           "price_per_unit": "1.0000",
-          "amount": "11540.33",
+          "amount": "-11540.33",
           "balance": "-97.29"
         },
         {
@@ -1252,7 +1261,7 @@
           "sec_symbol": "SPAXX",
           "quantity": "-451.650000",
           "price_per_unit": "1.0000",
-          "amount": "451.65",
+          "amount": "-451.65",
           "balance": "-548.94"
         },
         {
@@ -1263,10 +1272,11 @@
           "sec_symbol": "SPAXX",
           "quantity": "548.940000",
           "price_per_unit": "1.0000",
-          "amount": "-548.94",
+          "amount": "548.94",
           "balance": "0.00"
         }
       ],
+
       "trades_pending_settlement": [
         {
           "trade_date": "2025-08-29",
@@ -1274,9 +1284,9 @@
           "sec_description": "PUT (CRWV) COREWEAVE INC COM CL AUG 29 25 $100 (100 SHS) CLOSING TRANSACTION",
           "sec_symbol": "CRWV",
           "cusip": null,
-          "description": "You Bought - Short-term gain: $698.31",
+          "description": "Bought - Short-term gain: $698.31",
           "quantity": "1.000000",
-          "price_per_unit": "0.01000",
+          "price_per_unit": "0.0100",
           "amount": "-1.02"
         },
         {
@@ -1285,9 +1295,9 @@
           "sec_description": "PUT (CRWV) COREWEAVE INC COM CL AUG 29 25 $100 (100 SHS) CLOSING TRANSACTION",
           "sec_symbol": "CRWV",
           "cusip": null,
-          "description": "You Bought - Short-term gain: $6,284.71",
+          "description": "Bought - Short-term gain: $6,284.71",
           "quantity": "9.000000",
-          "price_per_unit": "0.01000",
+          "price_per_unit": "0.0100",
           "amount": "-9.22"
         },
         {
@@ -1296,9 +1306,9 @@
           "sec_description": "PUT (NVDA) NVIDIA CORPORATION AUG 29 25 $175 (100 SHS) CLOSING TRANSACTION",
           "sec_symbol": "NVDA",
           "cusip": null,
-          "description": "You Bought - Short-term gain: $1,756.52",
+          "description": "Bought - Short-term gain: $1,756.52",
           "quantity": "10.000000",
-          "price_per_unit": "1.18000",
+          "price_per_unit": "1.1800",
           "amount": "-1186.74"
         },
         {
@@ -1307,9 +1317,9 @@
           "sec_description": "PUT (COIN) COINBASE GLOBAL INC SEP 05 25 $300 (100 SHS) OPENING TRANSACTION",
           "sec_symbol": "COIN",
           "cusip": null,
-          "description": "You Sold",
+          "description": "Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "4.80000",
+          "price_per_unit": "4.8000",
           "amount": "4793.26"
         },
         {
@@ -1318,9 +1328,9 @@
           "sec_description": "PUT (TSM) TAIWAN SEMICONDUCTOR SEP 12 25 $230 (100 SHS) OPENING TRANSACTION",
           "sec_symbol": "TSM",
           "cusip": null,
-          "description": "You Sold",
+          "description": "Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "4.50000",
+          "price_per_unit": "4.5000",
           "amount": "4493.26"
         },
         {
@@ -1329,9 +1339,9 @@
           "sec_description": "CALL (MP) MP MATERIALS CORP SEP 05 25 $77 (100 SHS) OPENING TRANSACTION",
           "sec_symbol": "MP",
           "cusip": null,
-          "description": "You Sold",
+          "description": "Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "1.10000",
+          "price_per_unit": "1.1000",
           "amount": "1093.26"
         },
         {
@@ -1340,23 +1350,25 @@
           "sec_description": "PUT (CRWV) COREWEAVE INC COM CL SEP 05 25 $101 (100 SHS) OPENING TRANSACTION",
           "sec_symbol": "CRWV",
           "cusip": null,
-          "description": "You Sold",
+          "description": "Sold",
           "quantity": "-10.000000",
-          "price_per_unit": "2.43000",
+          "price_per_unit": "2.4300",
           "amount": "2423.26"
         }
-      ],
-      "account_type": "brokerage"
+      ]
     },
+
     {
       "account_number": "Z27-375656",
-      "account_name": "Cash Management Account",
-      "account_holder_name": "Kernan Family",
+      "account_name": "FIDELITY® CASH MANAGEMENT ACCOUNT RICHARD M KERNAN AND PEGGY E KERNAN - WITH RIGHTS OF SURVIVORSHIP TOD",
+      "account_holder_name": "RICHARD M KERNAN AND PEGGY E KERNAN",
+      "account_type": "cash_management",
+
       "securities_bought_sold": [
         {
           "settlement_date": "2025-08-20",
           "sec_description": "FIMM MONEY MARKET PORTFOLIO: CL I REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
-          "sec_symbol": null,
+          "sec_symbol": "FMPXX",
           "cusip": "316175207",
           "description": "You Sold",
           "quantity": "-3907.060000",
@@ -1368,7 +1380,7 @@
         {
           "settlement_date": "2025-08-29",
           "sec_description": "FIMM MONEY MARKET PORTFOLIO: CL I REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
-          "sec_symbol": null,
+          "sec_symbol": "FMPXX",
           "cusip": "316175207",
           "description": "You Sold",
           "quantity": "-13180.480000",
@@ -1378,6 +1390,7 @@
           "amount": "13180.48"
         }
       ],
+
       "dividends_interest_income": [
         {
           "settlement_date": "2025-08-29",
@@ -1396,7 +1409,7 @@
           "cusip": "316175207",
           "description": "Reinvestment",
           "quantity": "163.230000",
-          "price_per_unit": "1.00000",
+          "price_per_unit": "1.0000",
           "amount": "-163.23"
         },
         {
@@ -1410,8 +1423,11 @@
           "amount": "163.23"
         }
       ],
+
       "other_activity_in": [],
+
       "other_activity_out": [],
+
       "deposits": [
         {
           "date": "2025-08-14",
@@ -1432,6 +1448,7 @@
           "amount": "4458.89"
         }
       ],
+
       "withdrawals": [
         {
           "date": "2025-08-01",
@@ -1452,9 +1469,13 @@
           "amount": "-13584.73"
         }
       ],
+
       "exchanges_in": [],
+
       "exchanges_out": [],
+
       "fees_charges": [],
+
       "billpay": [
         {
           "post_date": "2025-08-29",
@@ -1464,6 +1485,7 @@
           "ytd_payments": "61534.00"
         }
       ],
+
       "core_fund_activity": [
         {
           "settlement_date": "2025-08-01",
@@ -1473,7 +1495,7 @@
           "sec_symbol": null,
           "quantity": "-2339.780000",
           "price_per_unit": "1.0000",
-          "amount": "2339.78",
+          "amount": "-2339.78",
           "balance": "19207.56"
         },
         {
@@ -1484,7 +1506,7 @@
           "sec_symbol": null,
           "quantity": "470.110000",
           "price_per_unit": "1.0000",
-          "amount": "-470.11",
+          "amount": "470.11",
           "balance": "19677.67"
         },
         {
@@ -1495,7 +1517,7 @@
           "sec_symbol": null,
           "quantity": "-10000.000000",
           "price_per_unit": "1.0000",
-          "amount": "10000.00",
+          "amount": "-10000.00",
           "balance": "9677.67"
         },
         {
@@ -1506,7 +1528,7 @@
           "sec_symbol": null,
           "quantity": "-9677.670000",
           "price_per_unit": "1.0000",
-          "amount": "9677.67",
+          "amount": "-9677.67",
           "balance": "0.00"
         },
         {
@@ -1517,7 +1539,7 @@
           "sec_symbol": null,
           "quantity": "470.110000",
           "price_per_unit": "1.0000",
-          "amount": "-470.11",
+          "amount": "470.11",
           "balance": "470.11"
         },
         {
@@ -1528,12 +1550,12 @@
           "sec_symbol": null,
           "quantity": "-470.110000",
           "price_per_unit": "1.0000",
-          "amount": "470.11",
+          "amount": "-470.11",
           "balance": "0.00"
         }
       ],
-      "trades_pending_settlement": [],
-      "account_type": "cash_management"
+
+      "trades_pending_settlement": []
     }
   ]
 }

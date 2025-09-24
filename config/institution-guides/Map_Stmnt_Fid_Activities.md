@@ -7,29 +7,43 @@
 **Updated:** 09/22/25 6:13PM ET - Clarified bond redemption pricing, dividend reinvestment dual-entry, and null handling based on agent feedback
 **Updated:** 09/22/25 8:02PM ET - Enhanced bond redemption section with specific examples and clarified normal null price behavior
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
+**Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced transaction lifecycle tracking
 **Purpose:** Navigation guide for locating and extracting account activity data from Fidelity statements
 
 ## ⚙️ Extraction vs Classification Philosophy
 
 **IMPORTANT:** This guide focuses on **pure transcription** from PDF statements. The extractor should capture data exactly as shown without interpretation or classification.
 
-**Transaction Classification:** Happens automatically in the loader using the configuration-driven mapping system (`/config/data-mappings.json`):
-- **Transaction types:** dividend vs interest vs trade categorization
-- **Security classification:** call vs put options identification
-- **Lifecycle tracking:** opening/closing transactions and assignments
-- **Tax categories:** municipal bonds vs regular interest separation
+**Transaction Classification:** Happens automatically in the loader using a sophisticated three-table configuration-driven mapping system:
+- **Transaction types:** dividend vs interest vs trade categorization with precise subtypes
+- **Options lifecycle:** Enhanced tracking of opening/closing transactions with call/put identification
+- **Complex conditions:** Support for compound matching rules (e.g., specific descriptions in specific sections)
+- **Tax categorization:** Accurate municipal bond vs dividend classification for proper tax treatment
+- **Multiple field updates:** Single transaction can trigger multiple classification actions simultaneously
 
-**Extractor Responsibility:** Accurate data capture from PDF
-**Loader Responsibility:** Data classification and categorization
+**System Architecture:**
+- **map_rules:** Master rule definitions with business context and processing order
+- **map_conditions:** Complex trigger logic supporting AND/OR compound conditions for transaction pattern matching
+- **map_actions:** Multiple field updates per rule enabling comprehensive transaction classification
 
-**New Patterns:** When encountering new transaction types, add patterns to `/config/data-mappings.json` rather than modifying extraction logic.
+**Extractor Responsibility:** Accurate transaction data capture from PDF exactly as shown
+**Loader Responsibility:** Transaction classification using configurable database-driven rules with user-friendly management interface
+
+**New Transaction Patterns:** When encountering unknown transaction types, the loader can accommodate new classification rules through a user-friendly CSV interface without code changes. Unknown patterns receive generic classification and are flagged for potential rule creation.
 
 ### Transaction Description Handling
-Extract transaction descriptions exactly as shown in the PDF. Do not attempt to standardize or categorize - the mapping system handles:
-- "Muni Exempt Int" → interest/muni_exempt classification
-- "Dividend Received" → dividend/received classification
-- "CLOSING TRANSACTION" → closing_transaction subtype
-- "ASSIGNED PUTS" → assignment subtype
+Extract transaction descriptions exactly as shown in the PDF. Do not attempt to standardize or categorize - the advanced mapping system handles complex transaction patterns:
+
+**Enhanced Transaction Classification Examples:**
+- "OPENING TRANSACTION - BUY 5 CALL (AAPL)" → opening_transaction subtype + call classification + options tracking
+- "CLOSING TRANSACTION - SELL PUT" → closing_transaction subtype + put classification for P&L matching
+- "Muni Exempt Int" in dividends_interest_income section → interest/muni_exempt (tax-free municipal bond classification)
+- "ASSIGNED CALLS" → assignment subtype + call classification for tax reporting
+- "Dividend Received" → dividend/received classification with qualified dividend determination
+- "Interest Earned" → interest/deposit classification separate from dividend income
+
+**Complex Rule Matching:**
+The system now supports compound conditions like "description contains X AND section equals Y" enabling precise classification of transactions that appear in unexpected statement sections for accurate tax categorization.
 
 ## Claude's Role as Financial Activity Transcriber
 

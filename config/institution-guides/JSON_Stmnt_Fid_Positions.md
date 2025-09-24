@@ -3,9 +3,11 @@
 **Created:** 09/22/25 1:35PM ET
 **Updated:** 09/22/25 6:04PM ET - Corrected est_yield format to percentage (e.g., 4.880) not decimal (0.0488)
 **Updated:** 09/22/25 8:55PM ET - Added doc_md5_hash field to extraction_metadata for duplicate prevention
+**Updated:** 09/24/25 11:44AM - Updated metadata attribute names: document_id→json_output_id, file_path→source_pdf_filepath, file_hash→json_output_md5_hash
 **Updated:** 09/23/25 2:32PM - Added required account_type field to account-level metadata for loader compatibility
 **Updated:** 09/23/25 2:37PM - Aligned data type rules with activities specification for consistency
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
+**Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced options and security classification
 **Purpose:** Formal specification for JSON output from Fidelity statement extraction
 **Related:** [Map_Stmnt_Fid_Positions.md](./Map_Stmnt_Fid_Positions.md)
 
@@ -13,16 +15,30 @@
 
 **IMPORTANT:** This guide focuses on **pure transcription** from PDF statements. The extractor should capture data exactly as shown without interpretation or classification.
 
-**Transaction Classification:** Happens automatically in the loader using the configuration-driven mapping system (`/config/data-mappings.json`):
-- **Transaction types:** dividend vs interest vs trade categorization
-- **Security classification:** call vs put options identification
-- **Lifecycle tracking:** opening/closing transactions and assignments
-- **Tax categories:** municipal bonds vs regular interest separation
+**Security and Position Classification:** Happens automatically in the loader using a sophisticated three-table configuration-driven mapping system:
+- **Security types:** Enhanced classification of stocks, bonds, ETFs, mutual funds, and options
+- **Options identification:** Precise call vs put classification with strike prices and expiration tracking
+- **Bond categorization:** Municipal vs corporate bonds with proper tax treatment identification
+- **Investment types:** ETFs, mutual funds, and complex instruments properly categorized
+- **Multiple classification:** Single security can receive multiple classification attributes simultaneously
 
-**Extractor Responsibility:** Accurate data capture from PDF
-**Loader Responsibility:** Data classification and categorization
+**System Architecture:**
+- **map_rules:** Master rule definitions with business context and processing order
+- **map_conditions:** Complex trigger logic supporting AND/OR compound conditions for security pattern matching
+- **map_actions:** Multiple field updates per rule enabling comprehensive security classification
 
-**New Patterns:** When encountering new transaction types, add patterns to `/config/data-mappings.json` rather than modifying extraction logic.
+**Extractor Responsibility:** Accurate position data capture from PDF exactly as shown
+**Loader Responsibility:** Security classification and categorization using configurable database-driven rules
+
+**New Security Patterns:** When encountering unknown security types or patterns, the loader can accommodate new classification rules without code changes. Unknown securities receive generic classification and are flagged for potential rule creation.
+
+### Security Description Handling
+Extract security descriptions, CUSIPs, and symbols exactly as shown in the PDF. Do not attempt to standardize or categorize - the advanced mapping system handles complex security patterns:
+
+**Enhanced Security Classification Examples:**
+- "AAPL Apr 21 '25 $150 Call" → option type + call classification + expiration tracking
+- "GA ST ATLANTA ARPT REV BDS" → bond type + municipal classification for tax-free treatment
+- "VANGUARD TOTAL STK MKT ETF" → ETF classification with proper investment category
 
 ## Overview
 
@@ -54,10 +70,10 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
 ```json
 {
   "extraction_metadata": {
-    "document_id": "generated_uuid",
-    "file_path": "/path/to/statement.pdf",
-    "file_hash": "sha256_hash_of_file",
-    "doc_md5_hash": "md5_hash_of_file",
+    "json_output_id": "fid_stmnt_2025-08_kernbrok_kerncma_holdings",
+    "source_pdf_filepath": "/path/to/statement.pdf",
+    "json_output_md5_hash": "calculated_from_json_content",
+    "doc_md5_hash": "md5_hash_of_source_pdf",
     "extraction_type": "holdings",
     "extraction_timestamp": "2024-09-22T13:35:00Z",
     "extractor_version": "1.0",

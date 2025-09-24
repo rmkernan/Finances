@@ -1,7 +1,7 @@
 # CLAUDE.md - Financial Data Management System
 
 **Created:** 09/19/25 2:53PM ET
-**Updated:** 09/23/25 - Added configuration-driven mapping system documentation
+**Updated:** 09/23/25 - Added configuration-driven mapping system documentation and enhanced duplicate detection with JSON hash tracking
 **Purpose:** Streamlined context document focusing on project understanding and navigation
 
 ## 🎯 What This System Does

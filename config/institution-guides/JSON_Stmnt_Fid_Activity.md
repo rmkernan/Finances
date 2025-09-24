@@ -2,9 +2,11 @@
 
 **Created:** 09/22/25 3:15PM ET
 **Updated:** 09/22/25 8:55PM ET - Added doc_md5_hash field to extraction_metadata for duplicate prevention
+**Updated:** 09/24/25 11:44AM - Updated metadata attribute names: document_id→json_output_id, file_path→source_pdf_filepath, file_hash→json_output_md5_hash
 **Updated:** 09/23/25 2:32PM - Added required account_type field to account-level metadata for loader compatibility
 **Updated:** 09/23/25 2:35PM - Aligned data type rules and extraction_type with positions specification for consistency
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
+**Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced options tracking
 **Purpose:** Formal specification for JSON output from Fidelity statement activity extraction
 **Related:** [Map_Stmnt_Fid_Activity.md](./Map_Stmnt_Fid_Activity.md)
 
@@ -12,23 +14,38 @@
 
 **IMPORTANT:** This guide focuses on **pure transcription** from PDF statements. The extractor should capture data exactly as shown without interpretation or classification.
 
-**Transaction Classification:** Happens automatically in the loader using the configuration-driven mapping system (`/config/data-mappings.json`):
-- **Transaction types:** dividend vs interest vs trade categorization
-- **Security classification:** call vs put options identification
-- **Lifecycle tracking:** opening/closing transactions and assignments
-- **Tax categories:** municipal bonds vs regular interest separation
+**Transaction Classification:** Happens automatically in the loader using a sophisticated three-table configuration-driven mapping system:
+- **Transaction types:** dividend vs interest vs trade categorization with precise subtypes
+- **Options tracking:** Enhanced call vs put identification with lifecycle stages (opening/closing/assignment)
+- **Compound conditions:** Complex rule matching (e.g., "Muni Exempt Int" in dividend section → municipal interest)
+- **Tax categories:** Municipal bonds properly separated from regular dividends for accurate tax reporting
+- **Multiple actions:** Single transaction can trigger multiple field updates simultaneously
 
-**Extractor Responsibility:** Accurate data capture from PDF
-**Loader Responsibility:** Data classification and categorization
+**System Architecture:**
+- **map_rules:** Master rule definitions with business context and processing order
+- **map_conditions:** Complex trigger logic supporting AND/OR compound conditions
+- **map_actions:** Multiple field updates per rule for comprehensive classification
 
-**New Patterns:** When encountering new transaction types, add patterns to `/config/data-mappings.json` rather than modifying extraction logic.
+**Extractor Responsibility:** Accurate data capture from PDF exactly as shown
+**Loader Responsibility:** Data classification using configurable database-driven rules
+
+**New Patterns:** When encountering unknown transaction types, the loader can accommodate new classification rules without code changes. Unknown patterns receive generic classification and are flagged for potential rule creation.
 
 ### Transaction Description Handling
-Extract transaction descriptions exactly as shown in the PDF. Do not attempt to standardize or categorize - the mapping system handles:
-- "Muni Exempt Int" → interest/muni_exempt classification
+Extract transaction descriptions exactly as shown in the PDF. Do not attempt to standardize or categorize - the advanced mapping system handles complex patterns:
+
+**Enhanced Options Classification:**
+- "OPENING TRANSACTION - BUY CALL" → opening_transaction subtype + call classification
+- "CLOSING TRANSACTION - SELL PUT" → closing_transaction subtype + put classification
+- "ASSIGNED CALLS" → assignment subtype + call classification for tax reporting
+
+**Municipal Bond Tax Treatment:**
+- "Muni Exempt Int" in dividends_interest_income section → interest/muni_exempt (tax-free classification)
 - "Dividend Received" → dividend/received classification
-- "CLOSING TRANSACTION" → closing_transaction subtype
-- "ASSIGNED PUTS" → assignment subtype
+- "Interest Earned" → interest/deposit classification
+
+**Complex Transaction Matching:**
+The system can now match complex conditions like "description contains X AND section equals Y" for precise classification, enabling accurate tax categorization of securities that appear in unexpected statement sections.
 
 ## Overview
 
@@ -60,10 +77,10 @@ Example: `a3b5c7d9e1f3_activity_20240922_151500.json`
 ```json
 {
   "extraction_metadata": {
-    "document_id": "generated_uuid",
-    "file_path": "/path/to/statement.pdf",
-    "file_hash": "sha256_hash_of_file",
-    "doc_md5_hash": "md5_hash_of_file",
+    "json_output_id": "fid_stmnt_2025-08_kernbrok_kerncma_activities",
+    "source_pdf_filepath": "/path/to/statement.pdf",
+    "json_output_md5_hash": "calculated_from_json_content",
+    "doc_md5_hash": "md5_hash_of_source_pdf",
     "extraction_type": "activities",
     "extraction_timestamp": "2024-09-22T15:15:00Z",
     "extractor_version": "1.0",

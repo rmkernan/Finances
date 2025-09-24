@@ -15,6 +15,9 @@
 **Updated:** 09/23/25 3:08PM - Added critical Step 2: Account Resolution & Database Setup to ensure complete account metadata before extraction
 **Updated:** 09/23/25 3:33PM - Updated account resolution to use account-mappings.json as definitive source of truth with anti-overwrite protections
 **Updated:** 09/23/25 7:29PM - Added automatic transaction classification section and updated workflow documentation for configuration-driven mapping system
+**Updated:** 09/24/25 10:25AM - Updated transaction classification section to reflect new three-table mapping system and enhanced options tracking
+**Updated:** 09/24/25 10:35AM - Added comprehensive mapping system integration with post-extraction analysis workflow and intelligent rule recommendation process
+**Updated:** 09/24/25 11:16AM - Restructured workflow with parallel processing optimizations, reducing execution time from ~45 to ~15 seconds
 **Purpose:** Guide Claude through orchestrating document processing from inbox using specialized extraction agents
 **Usage:** User invokes this when ready to process financial documents
 
@@ -79,48 +82,94 @@ with open('documents/1inbox/[filename].pdf', 'rb') as file:
 
 ## 🗺️ Automatic Transaction Classification
 
-The enhanced loader now automatically classifies transactions using the configuration-driven mapping system:
+The enhanced loader automatically classifies transactions using a configuration-driven mapping system:
 
 ### What Happens Automatically
 - **Transaction Types:** Dividends vs interest vs trades properly categorized
 - **Security Classification:** Options identified as calls/puts with lifecycle tracking
 - **Tax Categories:** Municipal bonds separated from regular dividends for tax reporting
-- **Options Lifecycle:** Opening, closing, and assignment transactions properly tagged
+- **Options Lifecycle:** Opening, closing, and assignment transactions properly tagged with enhanced put/call identification
 
 ### Key Benefits for Document Processing
-- **No Manual Intervention:** Known patterns are classified automatically
+- **No Manual Intervention:** Known patterns are classified automatically via database mapping rules
 - **Consistent Results:** Same transaction types always get same classification
 - **Tax Accuracy:** Municipal interest properly separated from dividend income
-- **Options Tracking:** Foundation for matching opening/closing pairs
+- **Options Tracking:** Foundation for matching opening/closing pairs with enhanced put/call identification
 
 ### When Manual Review Needed
-- **New Transaction Types:** Descriptions not in mapping configuration
+- **New Transaction Types:** Descriptions not covered by existing classification rules
 - **Unusual Securities:** Complex instruments not covered by existing patterns
 - **Data Quality Issues:** Malformed or incomplete transaction data
 
-### Adding New Patterns
-If you encounter new transaction types during processing:
-1. Note the exact description and security name patterns
-2. Add to `/config/data-mappings.json` following existing examples
-3. Run `python3 scripts/load_data_mappings.py` to reload mappings
-4. Re-process the document to apply new classifications
+### Mapping System Integration
 
-### Step 1: Stage & Rename Documents
+**Your Role in System Improvement:**
+After extraction agents complete their work, you play a crucial role in maintaining and improving the classification system by analyzing their reports and recommending mapping rule enhancements.
 
-For each document:
-1. **Generate MD5 hash** for early duplicate detection:
-   ```bash
-   md5 /Users/richkernan/Projects/Finances/documents/1inbox/[filename].pdf
-   ```
-2. **Check for existing documents** with same hash in processed folder:
-   ```bash
-   # Search for hash in processed JSON extraction files
-   grep -r "[hash_value]" /Users/richkernan/Projects/Finances/documents/4extractions/*.json
-   ```
-3. **Extract account information** from PDF content
-4. **Look up accounts in mappings** at /Users/richkernan/Projects/Finances/config/account-mappings.json
-5. **Match accounts against source of truth** - The mappings file contains complete metadata for all known accounts
-6. **Use mapped names** for filename generation
+**Mapping System Files:**
+- **Current rules:** `/config/mapping-rules.csv` - Human-readable rule definitions
+- **Update script:** `python3 scripts/update_mapping_rules.py` - Applies CSV changes to database
+- **View current rules:** Read the CSV to understand existing classification patterns
+
+### Post-Extraction Analysis Process
+
+After each extraction, you must:
+
+1. **Read Sub-Agent Reports** - Look for "Unknown transaction patterns" and "New security patterns" sections
+2. **Review Current Mapping Rules** - Read `/config/mapping-rules.csv` to avoid duplicates
+3. **Analyze Gaps** - Compare reported patterns against existing rules
+4. **Propose Specific Rules** - Suggest exact CSV additions with business justification
+5. **Present Recommendations** - Show user before/after comparison
+
+**Example Analysis Flow:**
+```
+Sub-agent reported: "Found transaction description 'CRYPTO DIVIDEND' not seen before"
+
+My analysis:
+- Checked current rules: No crypto-related dividend patterns exist
+- Gap identified: Cryptocurrency dividend transactions not classified
+- Recommendation: Add rule "Crypto Dividend Detection"
+  - Trigger: activities.description contains "CRYPTO DIVIDEND"
+  - Actions: SET activities.type = "dividend"; SET activities.subtype = "crypto"
+  - Problem solved: Cryptocurrency dividends properly classified for tax reporting
+
+Would you like me to add this rule to the mapping system?
+```
+
+### Handling New Patterns
+When sub-agents encounter unknown patterns:
+1. **Document precisely** - Note exact descriptions and security names
+2. **Cross-reference** against current mapping rules
+3. **Identify gaps** - Determine what classification rules are missing
+4. **Recommend solutions** - Propose specific mapping rule additions
+5. **Implement improvements** - Update mapping system with user approval
+6. **Verify results** - Confirm new rules work as expected
+
+### Step 1: Parallel Assessment & Staging
+
+**Estimated Time:** ~10-15 seconds (parallel) vs ~45 seconds (sequential)
+
+For each document, run all validation checks in parallel:
+
+```bash
+# Run all checks simultaneously using multiple Bash tool calls in single message:
+# 1. Generate MD5 hash
+md5 /Users/richkernan/Projects/Finances/documents/1inbox/[filename].pdf
+
+# 2. Check for duplicate hash in extractions (parallel)
+grep -r "[hash_value]" /Users/richkernan/Projects/Finances/documents/4extractions/*.json 2>/dev/null || echo "No hash duplicates"
+
+# 3. Check for similar processed files (parallel)
+ls -la /Users/richkernan/Projects/Finances/documents/3processed/[similar_pattern]*.pdf 2>/dev/null || echo "No processed duplicates"
+
+# 4. Verify database accounts exist (parallel)
+psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "SELECT a.account_number, a.account_type, i.institution_name FROM accounts a JOIN institutions i ON a.institution_id = i.id WHERE a.account_number IN ('[account1]', '[account2]');"
+```
+
+Then:
+1. **Extract account information** from PDF content (already done in Quick Assessment)
+2. **Look up accounts in mappings** at /Users/richkernan/Projects/Finances/config/account-mappings.json
+3. **Use mapped names** for filename generation and staging
 
 **Account Matching Rules:**
 - **Exact match:** Account number found in mappings → Use existing metadata, proceed with staging
@@ -138,75 +187,9 @@ If unknown accounts found:
 mv /Users/richkernan/Projects/Finances/documents/1inbox/Statement12312024.pdf /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
 ```
 
-### Step 2: Account Resolution & Database Setup
+### Step 2: Present Findings & Get User Direction
 
-**CRITICAL STEP:** Use account-mappings.json as source of truth to ensure all accounts exist in database.
-
-For each account found in the document:
-
-1. **Load account mappings file:**
-   ```bash
-   # Load the comprehensive mappings file
-   cat /Users/richkernan/Projects/Finances/config/account-mappings.json
-   ```
-
-2. **Match accounts against mappings:**
-   - **Exact match:** Account number found in mappings → Use existing metadata
-   - **Minor discrepancies:** Account matches but names differ slightly → Use mappings data (do NOT overwrite)
-   - **Unknown account:** Account not in mappings → Stop and ask user
-
-3. **For matched accounts, check if they exist in database:**
-   ```bash
-   # Check if account already exists in database
-   psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "
-   SELECT a.account_number, a.account_type, a.account_holder_name, i.institution_name
-   FROM accounts a
-   JOIN institutions i ON a.institution_id = i.id
-   WHERE a.account_number = 'Z40-394067';"
-   ```
-
-4. **Create missing database records using mappings data:**
-   ```bash
-   # Create entity first (if needed)
-   # Create institution (if needed)
-   # Create account using mappings metadata
-   psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "
-   INSERT INTO accounts (entity_id, institution_id, account_number, account_type, account_holder_name, account_name, is_tax_deferred, is_tax_free)
-   VALUES ('[entity_uuid]', '[institution_uuid]', 'Z40-394067', 'brokerage', 'MILTON PRESCHOOL INC', 'Brokerage Account', false, false);"
-   ```
-
-5. **For unknown accounts, ask user:**
-   ```
-   Found Fidelity statement with unknown account Z99-888777 for "NEW COMPANY INC".
-   This account is not in the account-mappings.json file.
-
-   To add this account, I need:
-   - Entity information (if new): name, type, tax_id
-   - Account details: account_type, account_name, tax treatment
-
-   Should I add this account to the mappings file?
-   ```
-
-**Key Principles:**
-- **Mappings file is source of truth** - Never overwrite existing mappings data
-- **Database follows mappings** - Create database records using mappings metadata
-- **Ask when uncertain** - If account not in mappings or data conflicts, ask user
-- **Preserve user edits** - Minor discrepancies in PDF vs mappings favor mappings
-
-### Step 3: Duplicate Check & Present Findings
-
-With accounts verified in database and properly named files, check for duplicates:
-```bash
-# Primary duplicate check: Search for MD5 hash in extraction JSONs
-grep -r "doc_md5_hash.*[hash_value]" /Users/richkernan/Projects/Finances/documents/4extractions/*.json
-
-# Secondary check: Look for similar filenames in processed folder
-ls -la /Users/richkernan/Projects/Finances/documents/3processed/Fid_Stmnt_2024-08*.pdf
-
-# Hash match found: Definite duplicate
-# Filename match but different hash: Likely amended document
-# No matches: Safe to process
-```
+**All validation completed in Step 1.** Now present findings and ask what to do next:
 
 For amended documents:
 ```python
@@ -253,7 +236,7 @@ Some options:
 What would you like me to do?
 ```
 
-### Step 4: Delegate to Sub-Agents
+### Step 3: Delegate to Sub-Agents
 
 **Prerequisites before invoking any sub-agent:**
 1. **Verify the PDF is readable and supported** (Fidelity statements currently)
