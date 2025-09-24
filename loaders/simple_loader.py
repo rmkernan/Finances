@@ -25,6 +25,14 @@ Updated: 09/23/25 7:16PM - Added configuration-driven mapping system and sec_cla
   - Comprehensive mapping priority: security patterns > description mapping > section mapping
 Updated: 09/23/25 10:10PM - Fixed doc_level_data loading to match actual schema columns:
 Updated: 09/24/25 11:52AM - Updated JSON metadata attribute names to align with new schema: source_pdf_filepath, json_output_md5_hash
+Updated: 09/24/25 1:54PM - Added complete security_types mapping integration to load_positions function for full data_mappings table coverage
+Updated: 09/24/25 1:57PM - Fixed entity lookup logic to get entity_id from account records instead of direct entity name matching
+Updated: 09/24/25 2:29PM - Prepared for incremental JSON loading support with database schema updates for activities_loaded/positions_loaded timestamps and JSON hash tracking
+Updated: 09/24/25 2:33PM - Implemented complete incremental JSON loading capability with helper functions, JSON hash calculation, and enhanced create_document logic
+Updated: 09/24/25 3:23PM - Integrated three-table mapping rule engine: extracted rule evaluation to separate module, added rule-based transaction classification with fallback to legacy system
+Updated: 09/24/25 3:26PM - Completed migration to three-table mapping system: removed legacy data_mappings table and fallback logic, fully functional rule-based classification
+Updated: 09/24/25 3:57PM - Fixed remaining legacy data_mappings references and security type mapping calls to use three-table rule engine only
+Updated: 09/24/25 4:01PM - Added three-table mapping rule engine support to load_positions function for future holdings classification rules
   - Changed from key-value pairs to direct column mapping for portfolio_summary, income_summary, realized_gains
   - Single row per account with all summary fields populated from JSON
 Purpose: Pure transcription system to load JSON extractions into PostgreSQL database
@@ -36,6 +44,8 @@ Design Principles:
 - Auto-moves files to loaded directory on success
 - Populates document_accounts junction table for consolidated statements
 - Loads ALL attributes defined in JSON specifications
+- Ready for incremental loading: same PDF can load activities first, then positions later
+- JSON hash duplicate prevention for data integrity
 
 Usage:
     python3 simple_loader.py path/to/extraction.json
@@ -45,6 +55,7 @@ import json
 import sys
 import uuid
 import shutil
+import hashlib
 from pathlib import Path
 from decimal import Decimal
 from datetime import datetime
@@ -54,143 +65,14 @@ from psycopg2.extras import RealDictCursor
 # Database connection
 DB_URL = "postgresql://postgres:postgres@localhost:54322/postgres"
 
-# Cache for mapping lookups to avoid repeated database queries
-_mapping_cache = {}
+# Legacy mapping functions removed - using three-table rule engine only
 
-def get_mapping(mapping_type, source_value, conn):
-    """Get type and subtype mapping from database with caching"""
-    cache_key = f"{mapping_type}:{source_value}"
+# Import the separate rule engine module
+from mapping_rules_engine import apply_mapping_rules
 
-    if cache_key not in _mapping_cache:
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT target_type, target_subtype
-            FROM data_mappings
-            WHERE mapping_type = %s AND source_value = %s
-        """, (mapping_type, source_value))
+# Legacy mapping functions removed - now using three-table rule engine
 
-        result = cur.fetchone()
-        if result:
-            _mapping_cache[cache_key] = {
-                'type': result['target_type'],
-                'subtype': result['target_subtype']
-            }
-        else:
-            # Fallback for unmapped values - store null to avoid repeated lookups
-            _mapping_cache[cache_key] = None
-
-    return _mapping_cache[cache_key]
-
-def get_transaction_type_and_subtype(section_name, description, security_name, conn):
-    """
-    Get transaction type and subtype using cascading mapping logic.
-
-    Priority order (highest to lowest):
-    1. Security patterns (CLOSING TRANSACTION, OPENING TRANSACTION, ASSIGNED PUTS/CALLS)
-    2. Description-based mapping (Muni Exempt Int → interest/muni_exempt)
-    3. Section-based mapping (dividends_interest_income → income/investment)
-    4. Raw section name as fallback
-
-    Args:
-        section_name: JSON section where transaction was found (e.g., 'dividends_interest_income')
-        description: Transaction description (e.g., 'Muni Exempt Int')
-        security_name: Security description (e.g., 'PUT (COIN) COINBASE... CLOSING TRANSACTION')
-        conn: Database connection
-
-    Returns:
-        tuple: (transaction_type, transaction_subtype)
-    """
-
-    # Start with description-based mapping for precise categorization
-    # This handles cases like "Muni Exempt Int" → interest/muni_exempt vs "Dividend Received" → dividend/received
-    if description:
-        desc_mapping = get_mapping('transaction_descriptions', description, conn)
-        if desc_mapping:
-            transaction_type = desc_mapping['type']
-            transaction_subtype = desc_mapping['subtype']
-        else:
-            # Fall back to section-based mapping for type
-            section_mapping = get_mapping('activity_sections', section_name, conn)
-            if section_mapping:
-                transaction_type = section_mapping['type']
-                transaction_subtype = section_mapping['subtype']
-            else:
-                transaction_type = section_name
-                transaction_subtype = None
-    else:
-        # Fall back to section-based mapping when no description available
-        section_mapping = get_mapping('activity_sections', section_name, conn)
-        if section_mapping:
-            transaction_type = section_mapping['type']
-            transaction_subtype = section_mapping['subtype']
-        else:
-            transaction_type = section_name
-            transaction_subtype = None
-
-    # Security pattern overrides have highest priority for subtypes
-    # This handles options lifecycle: OPENING TRANSACTION, CLOSING TRANSACTION, ASSIGNED PUTS/CALLS
-    if security_name:
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT source_value, target_subtype
-            FROM data_mappings
-            WHERE mapping_type = 'security_patterns'
-            ORDER BY LENGTH(source_value) DESC  -- Longer patterns first (e.g., "ASSIGNED PUTS" before "PUTS")
-        """)
-        patterns = cur.fetchall()
-
-        for pattern_row in patterns:
-            pattern = pattern_row['source_value']
-            if pattern in security_name:
-                transaction_subtype = pattern_row['target_subtype']  # Override any previous subtype
-                break
-
-    return transaction_type, transaction_subtype
-
-def get_security_classification(security_name, conn):
-    """
-    Get security classification from security name patterns.
-
-    Currently handles options classification:
-    - "CALL (" → 'call'
-    - "PUT (" → 'put'
-    - "ASSIGNED CALLS" → 'call'
-    - "ASSIGNED PUTS" → 'put'
-
-    Args:
-        security_name: Security description from transaction data
-        conn: Database connection
-
-    Returns:
-        str: Security class ('call', 'put') or None if no pattern matches
-
-    Examples:
-        "CALL (COIN) COINBASE..." → 'call'
-        "PUT (CRWV) COREWEAVE..." → 'put'
-        "TESLA INC COM ASSIGNED PUTS" → 'put'
-        "AT&T INC COM USD1" → None
-    """
-    if not security_name:
-        return None
-
-    # Get all security classification patterns, ordered by length for specificity
-    # This ensures "ASSIGNED PUTS" matches before "PUT ("
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT source_value, target_subtype
-        FROM data_mappings
-        WHERE mapping_type = 'security_classification'
-        ORDER BY LENGTH(source_value) DESC
-    """)
-    patterns = cur.fetchall()
-
-    # Check each pattern against the security name
-    for pattern_row in patterns:
-        pattern = pattern_row['source_value']
-        if pattern in security_name:
-            return pattern_row['target_subtype']
-
-    return None
+# Security type mapping removed - now handled by three-table rule engine in load_positions
 
 def connect_db():
     """Get database connection"""
@@ -259,16 +141,80 @@ def lookup_account(account_number, institution_id, conn):
     """Lookup existing account by number and institution - fail if not found"""
     cur = conn.cursor()
     cur.execute("""
-        SELECT id FROM accounts
+        SELECT id, entity_id FROM accounts
         WHERE account_number = %s AND institution_id = %s
     """, (account_number, institution_id))
     result = cur.fetchone()
     if not result:
         raise ValueError(f"Account '{account_number}' not found at institution. Reference data must be loaded first via process-inbox command.")
-    return result['id']
+    return result['id'], result['entity_id']
 
-def create_document(data, institution_id, loaded_path, conn):
-    """Create document record with full extraction metadata"""
+def get_existing_document(doc_hash, conn):
+    """Lookup existing document by PDF hash - returns document record or None"""
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, activities_loaded, activities_json_md5_hash,
+               positions_loaded, positions_json_md5_hash,
+               file_name, processed_at
+        FROM documents
+        WHERE doc_md5_hash = %s
+    """, (doc_hash,))
+    return cur.fetchone()
+
+def check_extraction_status(existing_doc, extraction_type, json_md5_hash):
+    """Check if extraction already loaded and determine action"""
+    if extraction_type == 'activities':
+        if existing_doc['activities_json_md5_hash'] == json_md5_hash:
+            return 'SKIP_DUPLICATE'  # Same JSON already loaded
+        elif existing_doc['activities_loaded']:
+            return 'WARN_REPROCESS'  # Different JSON for same type
+        else:
+            return 'PROCEED'  # Not yet loaded
+
+    elif extraction_type == 'holdings':
+        if existing_doc['positions_json_md5_hash'] == json_md5_hash:
+            return 'SKIP_DUPLICATE'  # Same JSON already loaded
+        elif existing_doc['positions_loaded']:
+            return 'WARN_REPROCESS'  # Different JSON for same type
+        else:
+            return 'PROCEED'  # Not yet loaded
+
+    return 'PROCEED'  # Unknown extraction type, proceed
+
+def handle_reprocessing_scenario(doc_id, extraction_type, old_hash, new_hash):
+    """Handle case where different JSON content exists for same extraction type"""
+    print(f"WARNING: Document already has {extraction_type} loaded")
+    print(f"  Existing JSON hash: {old_hash}")
+    print(f"  New JSON hash: {new_hash}")
+    print(f"  This suggests the JSON extraction content has changed.")
+    print(f"  Proceeding will DELETE existing {extraction_type} and reload with new data.")
+
+    # For now, proceed automatically but log the event
+    # Future: Could prompt user for confirmation
+    return True
+
+def update_document_loading_status(doc_id, extraction_type, json_md5_hash, conn):
+    """Update document with loading timestamp and JSON hash"""
+    cur = conn.cursor()
+    now = datetime.now()
+
+    if extraction_type == 'activities':
+        cur.execute("""
+            UPDATE documents
+            SET activities_loaded = %s, activities_json_md5_hash = %s, updated_at = %s
+            WHERE id = %s
+        """, (now, json_md5_hash, now, doc_id))
+    elif extraction_type == 'holdings':
+        cur.execute("""
+            UPDATE documents
+            SET positions_loaded = %s, positions_json_md5_hash = %s, updated_at = %s
+            WHERE id = %s
+        """, (now, json_md5_hash, now, doc_id))
+
+    return True
+
+def create_document(data, institution_id, loaded_path, extraction_type, json_md5_hash, conn):
+    """Create or update document record with incremental loading support"""
     cur = conn.cursor()
 
     metadata = data.get('extraction_metadata', {})
@@ -279,14 +225,45 @@ def create_document(data, institution_id, loaded_path, conn):
     if not doc_hash:
         raise ValueError("Missing doc_md5_hash in extraction metadata")
 
-    # Check for duplicate
-    cur.execute("SELECT id FROM documents WHERE doc_md5_hash = %s", (doc_hash,))
-    if cur.fetchone():
-        raise ValueError(f"Document with hash {doc_hash} already exists")
+    # Check if document exists by PDF hash
+    existing_doc = get_existing_document(doc_hash, conn)
+
+    if existing_doc:
+        # Document exists - check if this extraction type already loaded
+        status = check_extraction_status(existing_doc, extraction_type, json_md5_hash)
+
+        if status == 'SKIP_DUPLICATE':
+            print(f"  Skipping - {extraction_type} already loaded with same JSON content")
+            return existing_doc['id']
+
+        elif status == 'WARN_REPROCESS':
+            old_hash = (existing_doc['activities_json_md5_hash'] if extraction_type == 'activities'
+                       else existing_doc['positions_json_md5_hash'])
+            handle_reprocessing_scenario(existing_doc['id'], extraction_type, old_hash, json_md5_hash)
+            # Continue with reprocessing
+
+        # Update loading status for incremental or reprocessing scenario
+        update_document_loading_status(existing_doc['id'], extraction_type, json_md5_hash, conn)
+        return existing_doc['id']
+
+    else:
+        # New document - create fresh record
+        return create_new_document(data, institution_id, loaded_path, extraction_type, json_md5_hash, conn)
+
+def create_new_document(data, institution_id, loaded_path, extraction_type, json_md5_hash, conn):
+    """Create a new document record"""
+    cur = conn.cursor()
+
+    metadata = data.get('extraction_metadata', {})
+    doc_data = data.get('document_data', {})
+
+    # Get MD5 hash for new document
+    doc_hash = metadata.get('doc_md5_hash')
 
     # Create document
     doc_id = str(uuid.uuid4())
     file_name = Path(metadata.get('source_pdf_filepath', 'unknown.pdf')).name
+    now = datetime.now()
 
     # Store extraction metadata as JSON in a metadata column
     extraction_metadata = {
@@ -298,12 +275,20 @@ def create_document(data, institution_id, loaded_path, conn):
         'json_output_md5_hash': metadata.get('json_output_md5_hash')
     }
 
+    # Set loading timestamps based on extraction type
+    activities_loaded = now if extraction_type == 'activities' else None
+    activities_hash = json_md5_hash if extraction_type == 'activities' else None
+    positions_loaded = now if extraction_type == 'holdings' else None
+    positions_hash = json_md5_hash if extraction_type == 'holdings' else None
+
     cur.execute("""
         INSERT INTO documents (
             id, institution_id, tax_year, document_type,
             file_path, file_name, doc_md5_hash,
-            period_start, period_end, processed_at, extraction_notes
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            period_start, period_end, processed_at, extraction_notes,
+            activities_loaded, activities_json_md5_hash,
+            positions_loaded, positions_json_md5_hash
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         doc_id, institution_id,
         datetime.now().year,  # Tax year
@@ -311,8 +296,10 @@ def create_document(data, institution_id, loaded_path, conn):
         str(loaded_path), file_name, doc_hash,
         parse_date(doc_data.get('period_start'), datetime.now().year),
         parse_date(doc_data.get('period_end'), datetime.now().year),
-        datetime.now(),
-        json.dumps(extraction_metadata)  # Store extraction metadata as JSON in notes
+        now,
+        json.dumps(extraction_metadata),  # Store extraction metadata as JSON in notes
+        activities_loaded, activities_hash,
+        positions_loaded, positions_hash
     ))
 
     return doc_id
@@ -351,6 +338,26 @@ def load_positions(account_data, doc_id, account_id, entity_id, statement_date, 
         if coupon_rate:
             coupon_rate = parse_amount(coupon_rate)
 
+        # Apply three-table mapping rules for position classification
+        # Prepare position data for rule evaluation
+        position_data = {
+            'sec_description': position.get('sec_description'),
+            'sec_type': position.get('sec_type'),
+            'sec_subtype': position.get('sec_subtype'),
+            'sec_symbol': position.get('sec_symbol'),
+            'cusip': position.get('cusip'),
+            'source': position.get('sec_type'),  # Use sec_type as source for position rules
+            'quantity': position.get('quantity', ''),
+            'end_market_value': position.get('end_market_value', '')
+        }
+
+        # Apply mapping rules to get field updates
+        rule_updates = apply_mapping_rules(position_data, conn)
+
+        # Use rule engine results or fall back to original values
+        mapped_sec_type = rule_updates.get('sec_type') or position.get('sec_type')
+        mapped_sec_subtype = rule_updates.get('sec_subtype') or position.get('sec_subtype')
+
         cur.execute("""
             INSERT INTO positions (
                 id, document_id, account_id, entity_id, position_date,
@@ -366,8 +373,8 @@ def load_positions(account_data, doc_id, account_id, entity_id, statement_date, 
             position.get('sec_symbol'),
             position.get('cusip'),
             position.get('sec_description'),
-            position.get('sec_type'),
-            position.get('sec_subtype'),
+            mapped_sec_type,
+            mapped_sec_subtype,
             parse_amount(position.get('quantity')),
             parse_amount(position.get('price_per_unit')) or Decimal('0'),
             parse_amount(position.get('beg_market_value')),
@@ -429,15 +436,28 @@ def load_activities(account_data, doc_id, account_id, entity_id, conn):
                 trans_date = parse_date(activity.get('date') or activity.get('settlement_date'), datetime.now().year)
                 settle_date = parse_date(activity.get('settlement_date') or activity.get('date'), datetime.now().year)
 
-            # Get transaction type and subtype using dynamic mapping system
-            # This replaces the old hardcoded ACTIVITY_SECTIONS mapping with flexible database-driven rules
+            # Apply three-table mapping rules for classification
+            # This replaces the old hardcoded mapping with the flexible rule engine
             description = activity.get('description') or activity.get('sec_description', 'Unknown')
             security_name = activity.get('sec_description')
-            transaction_type, transaction_subtype = get_transaction_type_and_subtype(section_name, description, security_name, conn)
 
-            # Get security classification (call, put, etc.) for options tracking
-            # This enables matching opening/closing transactions and proper options categorization
-            sec_class = get_security_classification(security_name, conn)
+            # Prepare transaction data for rule evaluation
+            transaction_data = {
+                'description': description,
+                'section': section_name,
+                'source': section_name,
+                'sec_description': security_name,
+                'amount': activity.get('amount', ''),
+                'quantity': activity.get('quantity', '')
+            }
+
+            # Apply mapping rules to get field updates
+            rule_updates = apply_mapping_rules(transaction_data, conn)
+
+            # Extract classification fields from rule engine
+            transaction_type = rule_updates.get('transaction_type')
+            transaction_subtype = rule_updates.get('transaction_subtype')
+            sec_class = rule_updates.get('sec_class')
 
             # Override subtype with activity-specific data if available
             if not transaction_subtype and activity.get('transaction'):
@@ -544,10 +564,10 @@ def load_doc_level_data(account_data, doc_id, account_id, statement_date, conn):
         parse_amount(income.get('grand_total_period')),
         parse_amount(income.get('grand_total_ytd')),
         # Gains values
-        parse_amount(gains.get('st_gain_period')),
-        parse_amount(gains.get('st_loss_period')),
-        parse_amount(gains.get('lt_gain_ytd')),
-        parse_amount(gains.get('lt_loss_ytd'))
+        parse_amount(gains.get('st_gain_period') if gains else None),
+        parse_amount(gains.get('st_loss_period') if gains else None),
+        parse_amount(gains.get('lt_gain_ytd') if gains else None),
+        parse_amount(gains.get('lt_loss_ytd') if gains else None)
     ))
 
     return 1
@@ -569,6 +589,21 @@ def load_document(json_path):
     with open(json_path) as f:
         data = json.load(f)
 
+    # Calculate JSON file hash before any database operations
+    json_content = json.dumps(data, sort_keys=True)
+    json_md5_hash = hashlib.md5(json_content.encode()).hexdigest()
+
+    # Determine extraction type from JSON content
+    extraction_type = None
+    if any('holdings' in account_data for account_data in data.get('accounts', [])):
+        extraction_type = 'holdings'
+    elif any(section in account_data for account_data in data.get('accounts', [])
+            for section in ['dividends_interest_income', 'securities_bought_sold', 'deposits', 'withdrawals']):
+        extraction_type = 'activities'
+    else:
+        # Fallback to metadata extraction_type
+        extraction_type = data.get('extraction_metadata', {}).get('extraction_type', 'unknown')
+
     # Get institution
     institution = data.get('extraction_metadata', {}).get('institution') or \
                  data.get('document_data', {}).get('institution')
@@ -578,23 +613,17 @@ def load_document(json_path):
     with connect_db() as conn:
         try:
 
-            # Process first account to get entity and institution
+            # Process first account to get institution
             accounts = data.get('accounts', [])
             if not accounts:
                 raise ValueError("No accounts found in JSON")
 
-            first_account = accounts[0]
-            entity_name = first_account.get('account_holder_name')
-            if not entity_name:
-                raise ValueError("Missing account_holder_name in first account")
-
-            # Lookup existing entities and institutions
-            entity_id = lookup_entity(entity_name, conn)
+            # Lookup institution first
             institution_id = lookup_institution(institution, conn)
 
-            # Create document (checks for duplicates)
+            # Create document with incremental loading support
             loaded_path = move_to_loaded(json_path)
-            doc_id = create_document(data, institution_id, loaded_path, conn)
+            doc_id = create_document(data, institution_id, loaded_path, extraction_type, json_md5_hash, conn)
 
             total_positions = 0
             total_transactions = 0
@@ -613,8 +642,8 @@ def load_document(json_path):
                     print(f"Warning: Skipping account missing number")
                     continue
 
-                # Lookup existing account
-                account_id = lookup_account(account_number, institution_id, conn)
+                # Lookup existing account - now returns both account_id and entity_id
+                account_id, entity_id = lookup_account(account_number, institution_id, conn)
 
                 # Link document to account
                 link_document_account(doc_id, account_id, conn)

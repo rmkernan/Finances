@@ -72,7 +72,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
   "extraction_metadata": {
     "json_output_id": "fid_stmnt_2025-08_kernbrok_kerncma_holdings",
     "source_pdf_filepath": "/path/to/statement.pdf",
-    "json_output_md5_hash": "calculated_from_json_content",
+    "json_output_md5_hash": "[CALCULATE: Use hashlib.md5() on final JSON content]",
     "doc_md5_hash": "md5_hash_of_source_pdf",
     "extraction_type": "holdings",
     "extraction_timestamp": "2024-09-22T13:35:00Z",

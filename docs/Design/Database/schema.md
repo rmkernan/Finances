@@ -23,6 +23,9 @@
 **Updated:** 09/23/25 10:07PM - Renamed positions columns to match JSON: agency_rating→agency_ratings, next_call→next_call_date
 **Updated:** 09/24/25 9:50AM - Added three-table mapping system (map_rules, map_conditions, map_actions) with CSV management workflow
 **Updated:** 09/24/25 11:52AM - Updated JSON metadata column names: source_json_hash→json_output_md5_hash, added json_output_id column to documents table
+**Updated:** 09/24/25 2:26PM - Added incremental JSON loading support: activities_loaded, activities_json_md5_hash, positions_loaded, positions_json_md5_hash columns to documents table
+**Updated:** 09/24/25 2:43PM - Removed deprecated json_output_id and json_output_md5_hash columns from documents table (superseded by incremental loading columns)
+**Updated:** 09/24/25 3:26PM - Completed three-table mapping system migration: deprecated data_mappings table, loader now uses map_rules/map_conditions/map_actions exclusively
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -71,13 +74,17 @@ The system follows a standardized workflow for converting financial documents in
    - Entity association through account ownership
    - Transaction-level duplicate patterns
 
-4. Database Insert with Duplicate Prevention
-   - Documents table: Insert with doc_md5_hash (UNIQUE constraint prevents duplicates)
+4. Database Insert with Incremental Loading Support
+   - Documents table: Insert with doc_md5_hash (UNIQUE constraint prevents PDF duplicates)
+   - Check if document already exists (same PDF hash)
+   - If new: Create document record, proceed with data loading
+   - If exists: Check JSON hash for specific data type (activities/positions)
+     - If JSON hash matches: Skip loading (duplicate JSON content)
+     - If JSON hash differs: Warn and proceed (reprocessing scenario)
+     - If data type not yet loaded: Proceed with incremental loading
+   - Update appropriate timestamp (activities_loaded/positions_loaded) and JSON hash
    - Document_accounts: Link to relevant accounts
-   - Positions: Point-in-time holdings snapshots
-   - Doc_level_data: Aggregated income and gains/losses
-   - Transactions: Individual transaction records
-   - If insert fails due to hash conflict: Handle as duplicate
+   - Load data: Positions and/or Transactions based on extraction type
 
 5. Post-Processing
    Move to /documents/processed/ with extraction JSON saved
@@ -404,8 +411,11 @@ Rules are applied in `application_order` sequence:
 | `processed_by`             | TEXT        | DEFAULT 'claude'                                                | Processing agent identifier                           |
 | `extraction_notes`         | TEXT        |                                                                 | Claude's notes about the extraction                   |
 | `extraction_json_path`     | TEXT        |                                                                 | Path to JSON file with full extraction data           |
-| `json_output_id`           | TEXT        |                                                                 | Unique identifier for JSON extraction output          |
-| `json_output_md5_hash`     | VARCHAR(32) |                                                                 | MD5 hash of the JSON extraction file content          |
+| **Incremental Loading**    |             |                                                                 |                                                       |
+| `activities_loaded`        | TIMESTAMPTZ |                                                                 | Timestamp when activities/transactions were loaded    |
+| `activities_json_md5_hash` | VARCHAR(32) |                                                                 | MD5 hash of activities JSON file for duplicate prevention |
+| `positions_loaded`         | TIMESTAMPTZ |                                                                 | Timestamp when holdings/positions were loaded         |
+| `positions_json_md5_hash`  | VARCHAR(32) |                                                                 | MD5 hash of positions JSON file for duplicate prevention |
 | **Archival Support**       |             |                                                                 |                                                       |
 | `is_archived`              | BOOLEAN     | DEFAULT FALSE                                                   | True if document is archived (soft delete)            |
 | **Audit Trail**            |             |                                                                 |                                                       |
@@ -557,7 +567,6 @@ This junction table is **absolutely essential** for the document-centric archite
 | `updated_at`              | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Last modification timestamp                               |
 | `processed_by`            | TEXT          | DEFAULT 'claude'                                                  | Processing agent identifier                               |
 | `source_file`             | VARCHAR(255)  |                                                                   | JSON extraction filename that created this record         |
-| `json_output_md5_hash`    | VARCHAR(32)   |                                                                   | MD5 hash of activities JSON that created this transaction |
 | `Comment`                 |               |                                                                   |                                                           |
 |---------------------------|---------------|-------------------------------------------------------------------|-----------------------------------------------------------|
 | Auto-generated unique identifier | FK to entities table | FK to documents table | FK to accounts table |
@@ -689,7 +698,6 @@ ORDER BY net_amount DESC;
 | created_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                                       |
 | updated_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                                       |
 | source_file                       | -                    | -                       | VARCHAR(255)  | JSON extraction filename that created this record   |
-| json_output_md5_hash              | -                    | -                       | VARCHAR(32)   | MD5 hash of holdings JSON that created this position |
 
 **Unique Constraints:**
 - UNIQUE(document_id, account_id, position_date, sec_ticker, cusip) - Prevents duplicate positions from same document

@@ -6,6 +6,8 @@
 **Updated:** 09/23/25 8:15PM - Fixed JSON hash design - moved hash tracking from documents to transactions/positions tables
 **Updated:** 09/24/25 9:50AM - Added configuration-driven mapping system documentation with three-table design and CSV rule management
 **Updated:** 09/24/25 11:52AM - Updated JSON metadata attribute names throughout: source_json_hash→json_output_md5_hash, added json_output_id documentation
+**Updated:** 09/24/25 2:29PM - Added incremental JSON loading support with activities_loaded/positions_loaded timestamps and JSON hash tracking in documents table
+**Updated:** 09/24/25 2:43PM - Removed deprecated json_output_id and json_output_md5_hash columns and references (superseded by incremental loading system)
 **Purpose:** Database-specific context and orientation for Claude when working with the financial database
 
 ## 🚀 Quick Start - Connection Details
@@ -108,13 +110,17 @@ transactions + positions (actual financial data)
 
 ## 🔑 Key Design Principles
 
-### 1. Duplicate Prevention Strategy
+### 1. Duplicate Prevention & Incremental Loading Strategy
 - **Stage 1:** MD5 hash generated during document staging (`md5sum` command)
 - **Stage 2:** Database UNIQUE constraint on `doc_md5_hash` column (PDF level)
-- **Stage 3:** JSON content hash in `json_output_md5_hash` columns in transactions/positions tables
-- **Stage 4:** Source file tracking in `source_file` columns for audit trail
+- **Stage 3:** Incremental loading support with JSON hash tracking in documents table:
+  - `activities_loaded` timestamp + `activities_json_md5_hash` for activities JSON
+  - `positions_loaded` timestamp + `positions_json_md5_hash` for positions JSON
+  - Enables loading activities first, then positions later (or vice versa)
+- **Stage 4:** JSON content hash in `json_output_md5_hash` columns in transactions/positions tables
+- **Stage 5:** Source file tracking in `source_file` columns for audit trail
 - **Important:** Using MD5, NOT SHA-256 for hashing
-- **Key Design:** Each PDF creates 2 JSONs (activities/holdings) - hash tracking at data level
+- **Key Design:** Same PDF can load both activities and positions incrementally with duplicate prevention
 
 ### 2. Multi-Entity Architecture
 - One document can reference multiple accounts (consolidated statements)
@@ -146,8 +152,6 @@ WHERE table_name = 'tablename';
 
 ### Critical Comments to Know
 - `doc_md5_hash`: "MD5 hash (NOT SHA-256) for PDF duplicate detection"
-- `json_output_md5_hash`: "MD5 hash of JSON extraction file content in documents/transactions/positions tables"
-- `json_output_id`: "Unique identifier for JSON extraction output file"
 - `source_file`: "JSON filename that created this transaction/position record"
 - `doc_level_data` table: "Transcribed summary data from PDF documents - NOT derived/calculated"
 - `document_accounts` table: "Essential junction table for consolidated statements covering multiple accounts"
@@ -277,20 +281,56 @@ WHERE c.match_value ILIKE '%muni%';
 -- (Useful for debugging classification issues)
 ```
 
+### Incremental Loading Status Queries
+
+```sql
+-- Check loading status for all documents
+SELECT
+    file_name,
+    activities_loaded IS NOT NULL as has_activities,
+    positions_loaded IS NOT NULL as has_positions,
+    activities_loaded,
+    positions_loaded
+FROM documents
+ORDER BY created_at DESC;
+
+-- Find documents ready for positions loading (activities already loaded)
+SELECT file_name, activities_loaded, doc_md5_hash
+FROM documents
+WHERE activities_loaded IS NOT NULL
+AND positions_loaded IS NULL;
+
+-- Find documents ready for activities loading (positions already loaded)
+SELECT file_name, positions_loaded, doc_md5_hash
+FROM documents
+WHERE positions_loaded IS NOT NULL
+AND activities_loaded IS NULL;
+
+-- Check for JSON hash conflicts (same JSON loaded multiple times)
+SELECT file_name, activities_json_md5_hash, COUNT(*)
+FROM documents
+WHERE activities_json_md5_hash IS NOT NULL
+GROUP BY file_name, activities_json_md5_hash
+HAVING COUNT(*) > 1;
+```
+
 ### Check for Duplicate Documents
 ```sql
 -- Check PDF document hash
-SELECT id, file_name, period_start, period_end
+SELECT id, file_name, period_start, period_end,
+       activities_loaded, positions_loaded
 FROM documents
 WHERE doc_md5_hash = 'your_pdf_hash_here';
 
--- Check if activities JSON already loaded
-SELECT COUNT(*) FROM transactions
-WHERE json_output_md5_hash = 'your_json_hash_here';
+-- Check if activities already loaded for this document
+SELECT COUNT(*) FROM transactions t
+JOIN documents d ON t.document_id = d.id
+WHERE d.activities_json_md5_hash = 'your_json_hash_here';
 
--- Check if holdings JSON already loaded
-SELECT COUNT(*) FROM positions
-WHERE json_output_md5_hash = 'your_json_hash_here';
+-- Check if holdings already loaded for this document
+SELECT COUNT(*) FROM positions p
+JOIN documents d ON p.document_id = d.id
+WHERE d.positions_json_md5_hash = 'your_json_hash_here';
 
 -- Check by filename for audit trail
 SELECT COUNT(*) FROM transactions WHERE source_file = 'activities.json';

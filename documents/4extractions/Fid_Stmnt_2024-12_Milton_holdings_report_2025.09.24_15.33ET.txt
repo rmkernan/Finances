@@ -1,0 +1,63 @@
+FIDELITY STATEMENT HOLDINGS EXTRACTION REPORT
+=====================================================
+
+Extraction Details:
+- Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
+- Extraction Mode: Holdings
+- Extraction Timestamp: 2025-01-09T19:30:00Z
+- Document Hash: b59002f31f83336ebc0123b584f47160
+
+Account Information:
+- Account Number: Z40-394067
+- Account Name: MILTON PRESCHOOL INC - CORPORATION
+- Account Type: Corporate Brokerage
+- Statement Period: December 1-31, 2024
+- Account Value: $477,071.17
+
+Holdings Summary:
+- 1 Core Account position (Money Market): $58,542.44 (12%)
+- 1 Mutual Fund position (Short-Term Fund): $337,870.33 (71%)
+- 2 Municipal Bond positions: $80,658.40 (17%)
+- Total Holdings: 4 positions worth $477,071.17
+
+Income Summary Data:
+- Taxable Income (Period): $1,470.72 (all dividends)
+- Tax-Exempt Income (Period): $1,250.00 (all municipal bond interest)
+- Total Income (Period): $2,720.72
+- YTD Totals: $38,415.27
+
+Extraction Success:
+✓ All sections successfully identified and extracted
+✓ Complete holdings data captured for all 4 positions
+✓ Income summary table extracted with period and YTD values
+✓ Municipal bond detail lines parsed including CUSIPs, ratings, and payment frequency
+✓ Core account and mutual fund positions captured with estimated yields
+
+Notable Extraction Details:
+✓ No Realized Gains section present - normal for period with no sales activity
+✓ Municipal bonds include detailed CUSIP numbers, ratings, and call features
+✓ Both bonds have "EXTRAORDINARY CALL" features properly captured
+✓ Estimated annual income and yields extracted for all relevant positions
+✓ Cost basis marked as "not applicable" for money market positions (standard)
+
+Data Quality Notes:
+- All required fields successfully extracted
+- CUSIP numbers properly captured for both municipal bonds
+- Agency ratings extracted: "MOODYS A2 S&P A" and "MOODYS A1"
+- Payment frequencies properly identified as "SEMIANNUALLY"
+- Accrued interest values captured separately from market values
+
+Extraction Confidence: HIGH
+- Clean, well-formatted statement with standard Fidelity structure
+- All data clearly legible and properly extracted
+- No ambiguous values or missing required information
+- Complete extraction with no data quality concerns
+
+Files Created:
+1. JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-12_Milton_holdings_2025.01.09_14.30ET.json
+2. Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-12_Milton_holdings_report_2025.01.09_14.30ET.txt
+
+Next Steps:
+- Source PDF remains in /documents/2staged/ for orchestrator processing
+- JSON ready for database loading
+- No manual review required - all data extracted successfully

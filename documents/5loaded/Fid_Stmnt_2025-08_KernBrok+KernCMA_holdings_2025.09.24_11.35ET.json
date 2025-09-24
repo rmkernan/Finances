@@ -1,8 +1,8 @@
 {
   "extraction_metadata": {
-    "document_id": "fid_stmnt_2025-08_kernbrok_kerncma",
-    "file_path": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf",
-    "file_hash": "sha256_placeholder",
+    "json_output_id": "fid_stmnt_2025-08_kernbrok_kerncma",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf",
+    "json_output_md5_hash": "439bf46dfceae5eac5c126d5320549e7",
     "doc_md5_hash": "32967b1d3e40b2c544cc42e0c6f378e5",
     "extraction_type": "holdings",
     "extraction_timestamp": "2025-01-24T19:30:00Z",

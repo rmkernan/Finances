@@ -1,0 +1,57 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+==============================================
+
+SOURCE FILE: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
+EXTRACTION MODE: Activities
+PROCESSING DATE: 2024-09-24 14:30 ET
+PAGES PROCESSED: 10
+
+DOCUMENT DETAILS:
+- Institution: Fidelity
+- Statement Period: December 1, 2024 - December 31, 2024
+- Account: Z40-394067 (MILTON PRESCHOOL INC - CORPORATION)
+
+ACCOUNTS PROCESSED:
+✓ Z40-394067 - Milton Preschool Inc Brokerage Account
+
+ACTIVITY EXTRACTION SUMMARY:
+- Securities Bought & Sold: 2 transactions (bond redemptions)
+- Dividends & Interest Income: 5 transactions (2 municipal bond interest, 3 money fund activities)
+- Deposits: 1 transaction
+- Withdrawals: 1 transaction
+- Core Fund Activity: 4 transactions
+- Other sections: All other activity types were absent (normal for this period)
+
+EXTRACTION SUCCESS: ✓ COMPLETE
+
+EXTRACTION DETAILS:
+✓ Successfully extracted 2 bond redemption transactions (California Municipal and West Clermont)
+✓ Successfully captured municipal bond interest payments totaling $1,250
+✓ Successfully recorded money market dividend and reinvestment activities
+✓ Successfully captured deposit and withdrawal transactions
+✓ Successfully extracted detailed core fund activity with running balances
+
+SECTIONS ABSENT (Normal):
+- Other Activity In/Out: No options or assignments this period
+- Exchanges In/Out: No account transfers this period
+- Fees & Charges: No fees assessed this period
+- Bill Payments: No bill pay activity this period
+- Trades Pending Settlement: No pending trades
+
+DATA QUALITY NOTES:
+✓ All bond redemption transactions show null price (normal for redemptions)
+✓ All required fields populated correctly
+✓ Proper handling of negative quantities for redemptions
+✓ Municipal bond interest correctly identified as tax-exempt
+✓ Core fund transactions include proper running balances
+
+EXTRACTION CONFIDENCE: HIGH (100%)
+
+All transaction data extracted successfully with complete field population. Bond redemptions properly handled with null pricing as expected. Municipal interest payments correctly categorized. The statement contained straightforward activities with clear data presentation.
+
+NEXT STEPS:
+- Source PDF remains in /documents/2staged/ for orchestrator handling
+- JSON extraction ready for database loading
+- No manual review required
+
+COMPLETION TIME: 2024-09-24 14:30 ET

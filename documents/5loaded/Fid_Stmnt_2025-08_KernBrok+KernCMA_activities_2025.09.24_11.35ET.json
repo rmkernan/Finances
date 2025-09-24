@@ -1,8 +1,8 @@
 {
   "extraction_metadata": {
-    "document_id": "fidelity_2025_08_activities",
-    "file_path": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf",
-    "file_hash": "sha256_placeholder",
+    "json_output_id": "fidelity_2025_08_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf",
+    "json_output_md5_hash": "557242c2c76b71cda1712c9140e56a7f",
     "doc_md5_hash": "32967b1d3e40b2c544cc42e0c6f378e5",
     "extraction_type": "activities",
     "extraction_timestamp": "2024-09-24T11:35:00Z",
