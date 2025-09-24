@@ -2,6 +2,8 @@
 
 **Created:** 09/19/25 2:53PM ET
 **Updated:** 09/23/25 - Added configuration-driven mapping system documentation and enhanced duplicate detection with JSON hash tracking
+**Updated:** 09/24/25 5:08PM - Updated database schema path, added Database/CLAUDE.md reference, noted BUILD docs as frontend guides
+**Updated:** 09/24/25 5:15PM - Added document-processing-pipeline.md reference, streamlined process documentation
 **Purpose:** Streamlined context document focusing on project understanding and navigation
 
 ## 🎯 What This System Does
@@ -18,58 +20,29 @@ This is collaborative intelligence - you and the user working together. The user
 
 ## 🗺️ Configuration-Driven Mapping System
 
-**Overview:** Replaced hardcoded transaction classification with flexible, database-driven mapping rules stored in `/config/data-mappings.json`.
+**Overview:** Transaction classification uses database-driven mapping rules (`map_rules`, `map_conditions`, `map_actions` tables) for flexible categorization without code changes.
 
-### Key Benefits
-- **Maintainable:** Update mappings without code changes
-- **Scalable:** Easy to add new transaction types, security patterns, options subtypes
-- **Consistent:** Single source of truth for all classification rules
-- **Auditable:** Track mapping changes over time
+### Key Components
+- **Three-table system:** Rules → Conditions (IF) → Actions (SET)
+- **CSV management:** Edit rules in Excel via `/config/mapping-rules.csv`
+- **Account mappings:** `/config/account-mappings.json` - Entity/institution/account relationships
 
-### Mapping Configuration Location
-- **Primary config:** `/config/data-mappings.json` - All classification rules
-- **Reference data:** `/config/account-mappings.json` - Entity/institution/account mappings
-- **Reload script:** `/scripts/load_data_mappings.py` - Push config changes to database
-
-### Classification Priority (Highest to Lowest)
-1. **Security Patterns:** CLOSING TRANSACTION, OPENING TRANSACTION, ASSIGNED PUTS/CALLS
-2. **Description Mapping:** "Muni Exempt Int" → interest/muni_exempt
-3. **Section Mapping:** dividends_interest_income → income/investment
-4. **Fallback:** Raw section name
-
-### Mapping Categories
-- **`transaction_descriptions`:** Precise transaction categorization (dividends vs interest)
-- **`security_patterns`:** Options lifecycle tracking (opening, closing, assignment)
-- **`security_classification`:** sec_class assignment (call, put) for options matching
-- **`activity_sections`:** Fallback section-based classification
-
-### Options Tracking Support
-- **sec_class column:** Identifies calls vs puts for transaction matching
-- **Enhanced subtypes:** opening_transaction, closing_transaction, assignment
-- **Future capability:** Match opening/closing pairs for P&L analysis
-
-### Adding New Mappings
-1. Update `/config/data-mappings.json` with new patterns
-2. Run `python3 scripts/load_data_mappings.py` to reload database
-3. Run `python3 scripts/fix_transaction_types.py` to update existing data
-4. Test with sample transaction data
-
-### Key Fixes Delivered
-- **CUSIP 380037FU0:** Now correctly classified as interest/muni_exempt (was dividend)
-- **Options tracking:** All calls/puts properly classified with lifecycle stages
-- **Tax accuracy:** Municipal interest separated from dividend income
+### For Details
+See `/docs/Design/Database/CLAUDE.md` for complete mapping system documentation
 
 ## 📂 Essential Navigation
 
 ### For Document Processing
-- **Start here:** `/.claude/commands/process-inbox.md` - Streamlined workflow for processing financial documents with parallel extraction
-- **Institution guides:** `/config/institution-guides/` - Enhanced extraction patterns (Fidelity holdings/activities)
-- **Account mappings:** `/config/account-mappings.json` - Translate account numbers to friendly names
+- **Pipeline overview:** `/docs/processes/document-processing-pipeline.md` - Complete processing system reference
+- **Run command:** `/.claude/commands/process-inbox.md` - Execute document processing workflow
+- **Institution guides:** `/config/institution-guides/` - Extraction patterns per institution
+- **Account mappings:** `/config/account-mappings.json` - Entity/account metadata
 
 ### For Development Work
 - **Requirements:** `/docs/Design/01-Requirements/PRD-overview.md` - Core vision and architecture
-- **Database schema:** `/docs/Design/02-Technical/schema.md` - Enhanced 11-table structure (ready for migration)
-- **Technical design:** `/docs/Design/02-Technical/technical-design.md` - Implementation details
+- **Database schema:** `/docs/Design/Database/schema.md` - Complete 12-table structure (implemented and loaded with data)
+- **Database context:** `/docs/Design/Database/CLAUDE.md` - Database operations and query guide
+- **Frontend workflows:** `/docs/Design/01-Requirements/BUILD-*.md` - Individual workflow implementation guides
 
 ### For System Operations
 - **Commands:** `/.claude/commands/` - Specific workflows (process-inbox, etc.)
@@ -91,14 +64,14 @@ This is collaborative intelligence - you and the user working together. The user
 ## 🚀 Current Status
 
 ### Environment
-- **Database:** PostgreSQL via LOCAL Supabase at localhost:54322 (🆕 Fresh clean slate - ready for baseline migration)
+- **Database:** PostgreSQL via LOCAL Supabase at localhost:54322 (loaded with financial data)
 - **Documents:** Process through `/documents/1inbox/` → `/documents/2staged/` → `/documents/4extractions/` → `/documents/3processed/`
 - **Platform:** MacBook Air development environment
 
 ### Key Project Constraints
 - **LOCAL ONLY** - Never connect to cloud databases
 - **Tax year focus** - Calendar years, currently processing 2024-2025 documents
-- **Phase 1 scope** - Document processing and extraction (database loading next)
+- **Frontend phase** - Building read-only dashboard and reporting interface
 
 ## 🚨 When to STOP and ASK
 
@@ -205,7 +178,10 @@ When you catch yourself over-engineering, tell the user: *"I notice I'm adding c
 
 ---
 
-**Get Started:** Run `/process-inbox` to begin document processing, or ask "What would you like me to help with?" for other tasks.
+**Get Started:**
+- **Document processing:** Run `/process-inbox` to process new documents
+- **Frontend development:** Start with `/docs/Design/01-Requirements/BUILD-dashboards.md`
+- **Database queries:** See `/docs/Design/Database/CLAUDE.md` for query examples
 
 ## 🔄 Recent Improvements (09/22/25)
 
@@ -216,6 +192,6 @@ When you catch yourself over-engineering, tell the user: *"I notice I'm adding c
 - **Comprehensive testing** - successfully processed 3 statements with 8 extractions
 
 ### Current State
-- **Clean database** - completely wiped and ready for baseline migration
-- **No existing data** - fresh start for implementing enhanced schema
-- **Ready for next phase** - database migration and data loading development
+- **Database** - 12-table schema implemented and loaded with financial data
+- **Document processing** - Working extraction pipeline with multiple statements processed
+- **Ready for frontend** - Beginning dashboard implementation with BUILD-*.md guides

@@ -1,6 +1,7 @@
 # Database Backup Command
 
 **Created:** 09/17/25 3:27PM ET
+**Updated:** 09/24/25 4:40PM - Switched to Docker container method for all backups (more reliable) and added dual backup locations
 **Purpose:** Simple, reliable backup and restore procedures for local Supabase database
 
 ## Overview
@@ -29,43 +30,55 @@ This command provides consistent database backup procedures for the Finances pro
 ### Create Data Backup (Financial Records Only)
 ```bash
 cd /Users/richkernan/Projects/Finances
-TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+TIMESTAMP=$(date +"%Y.%m.%d_%H.%M")
 mkdir -p backups
-supabase db dump --data-only --local -f backups/data-backup-$TIMESTAMP.sql
+mkdir -p "/Users/richkernan/Desktop/Finance_DB_Backups"
+docker exec supabase_db_Finances pg_dump -U postgres --data-only postgres > backups/data-backup-$TIMESTAMP.sql
+cp backups/data-backup-$TIMESTAMP.sql "/Users/richkernan/Desktop/Finance_DB_Backups/"
 echo "✅ Data backup saved: backups/data-backup-$TIMESTAMP.sql"
+echo "✅ Copy saved to: /Users/richkernan/Desktop/Finance_DB_Backups/data-backup-$TIMESTAMP.sql"
 ls -lh backups/data-backup-$TIMESTAMP.sql
 ```
 
 ### Create Schema Backup (Structure Only)
 ```bash
 cd /Users/richkernan/Projects/Finances
-TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+TIMESTAMP=$(date +"%Y.%m.%d_%H.%M")
 mkdir -p backups
-supabase db dump --local -f backups/schema-backup-$TIMESTAMP.sql --data-only=false
+mkdir -p "/Users/richkernan/Desktop/Finance_DB_Backups"
+docker exec supabase_db_Finances pg_dump -U postgres --schema-only postgres > backups/schema-backup-$TIMESTAMP.sql
+cp backups/schema-backup-$TIMESTAMP.sql "/Users/richkernan/Desktop/Finance_DB_Backups/"
 echo "✅ Schema backup saved: backups/schema-backup-$TIMESTAMP.sql"
+echo "✅ Copy saved to: /Users/richkernan/Desktop/Finance_DB_Backups/schema-backup-$TIMESTAMP.sql"
 ls -lh backups/schema-backup-$TIMESTAMP.sql
 ```
 
 ### Create Full Backup (Complete Database)
 ```bash
 cd /Users/richkernan/Projects/Finances
-TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+TIMESTAMP=$(date +"%Y.%m.%d_%H.%M")
 mkdir -p backups
-# Method 1: Supabase CLI (Recommended)
-supabase db dump --local -f backups/full-backup-$TIMESTAMP.sql
+mkdir -p "/Users/richkernan/Desktop/Finance_DB_Backups"
+# Direct container backup - most reliable method
+docker exec supabase_db_Finances pg_dump -U postgres postgres > backups/full-backup-$TIMESTAMP.sql
+cp backups/full-backup-$TIMESTAMP.sql "/Users/richkernan/Desktop/Finance_DB_Backups/"
 echo "✅ Full backup saved: backups/full-backup-$TIMESTAMP.sql"
+echo "✅ Copy saved to: /Users/richkernan/Desktop/Finance_DB_Backups/full-backup-$TIMESTAMP.sql"
 ls -lh backups/full-backup-$TIMESTAMP.sql
 ```
 
-### Alternative: Docker Container Backup (Most Reliable)
+### Alternative: Supabase CLI Backup (If Docker Issues)
 ```bash
 cd /Users/richkernan/Projects/Finances
-TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+TIMESTAMP=$(date +"%Y.%m.%d_%H.%M")
 mkdir -p backups
-# Direct container backup - most reliable for complex schemas
-docker exec supabase_db_Finances pg_dump -U postgres postgres > backups/container-backup-$TIMESTAMP.sql
-echo "✅ Container backup saved: backups/container-backup-$TIMESTAMP.sql"
-ls -lh backups/container-backup-$TIMESTAMP.sql
+mkdir -p "/Users/richkernan/Desktop/Finance_DB_Backups"
+# Fallback method if Docker container access has issues
+supabase db dump --local -f backups/cli-backup-$TIMESTAMP.sql
+cp backups/cli-backup-$TIMESTAMP.sql "/Users/richkernan/Desktop/Finance_DB_Backups/"
+echo "✅ CLI backup saved: backups/cli-backup-$TIMESTAMP.sql"
+echo "✅ Copy saved to: /Users/richkernan/Desktop/Finance_DB_Backups/cli-backup-$TIMESTAMP.sql"
+ls -lh backups/cli-backup-$TIMESTAMP.sql
 ```
 
 ## Restore Procedures
@@ -107,10 +120,15 @@ docker exec -i supabase_db_Finances psql -U postgres -d postgres < backups/full-
 
 ```
 backups/
-├── data-backup-20250917-152700.sql     # Data only
-├── schema-backup-20250917-152730.sql   # Schema only
-├── full-backup-20250917-152800.sql     # Complete backup
-└── README.md                           # Backup inventory (optional)
+├── data-backup-2025.09.17_15.27.sql     # Data only
+├── schema-backup-2025.09.17_15.27.sql   # Schema only
+├── full-backup-2025.09.17_15.28.sql     # Complete backup
+└── README.md                            # Backup inventory (optional)
+
+/Users/richkernan/Desktop/Finance_DB_Backups/
+├── data-backup-2025.09.17_15.27.sql     # Mirror copy
+├── schema-backup-2025.09.17_15.27.sql   # Mirror copy
+└── full-backup-2025.09.17_15.28.sql     # Mirror copy
 ```
 
 ## Claude Instructions
