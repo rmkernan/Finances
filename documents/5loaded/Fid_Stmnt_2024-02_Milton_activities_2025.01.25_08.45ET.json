@@ -1,0 +1,102 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2024-02_milton_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-02_Milton.pdf",
+    "json_output_md5_hash": "0ac80ca2271fe00dc79d9145a93a2178",
+    "doc_md5_hash": "242fe88002e168563016e9ea81ee649f",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.01.25_08.45ET",
+    "extractor_version": "1.0",
+    "pages_processed": 5,
+    "extraction_notes": [
+      "Simple statement with minimal activity - only dividend reinvestments, one deposit, and core fund activity"
+    ]
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2024-02-29",
+    "period_start": "2024-02-01",
+    "period_end": "2024-02-29"
+  },
+  "accounts": [
+    {
+      "account_number": "Z40-394067",
+      "account_name": "MILTON PRESCHOOL INC - CORPORATION",
+      "account_holder_name": "MILTON PRESCHOOL INC",
+      "account_type": "brokerage",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2024-02-29",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": "SPAXX",
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "0.01"
+        },
+        {
+          "settlement_date": "2024-02-29",
+          "sec_description": "FIMM TREASURY ONLY PORTFOLIO: CL I",
+          "sec_symbol": "FSIXX",
+          "cusip": "233809300",
+          "description": "Reinvestment",
+          "quantity": "3258.550000",
+          "price_per_unit": "1.00000",
+          "amount": "-3258.55"
+        },
+        {
+          "settlement_date": "2024-02-29",
+          "sec_description": "FIMM TREASURY ONLY PORTFOLIO: CL I",
+          "sec_symbol": "FSIXX",
+          "cusip": "233809300",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "3258.55"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [
+        {
+          "date": "2024-02-29",
+          "reference": null,
+          "description": "Deposit Reliantincom Payments",
+          "amount": "657.53"
+        }
+      ],
+      "withdrawals": [],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2024-02-29",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "657.530000",
+          "price_per_unit": "1.0000",
+          "amount": "657.53",
+          "balance": "659.56"
+        },
+        {
+          "settlement_date": "2024-02-29",
+          "account_type": "CASH",
+          "transaction": "Reinvestment",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET REINVEST @ $1.000",
+          "sec_symbol": "SPAXX",
+          "quantity": "0.010000",
+          "price_per_unit": "1.0000",
+          "amount": "0.01",
+          "balance": "659.57"
+        }
+      ],
+      "trades_pending_settlement": []
+    }
+  ]
+}

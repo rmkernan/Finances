@@ -1,0 +1,85 @@
+FIDELITY STATEMENT EXTRACTION REPORT
+=====================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_HMA.pdf
+Extraction Mode: Holdings
+Statement Period: July 1, 2025 - July 31, 2025
+Extraction Timestamp: 2025.09.25_14.54ET
+
+ACCOUNTS PROCESSED
+==================
+Account Found: Z40-394071 (HMA GROUP, LLC - LIMITED LIABILITY CO)
+Account Label: HMA (from account mappings)
+
+EXTRACTION SUMMARY
+==================
+Total Holdings Extracted: 1 position
+- 1 Core Account (Money Market)
+
+Holdings Breakdown:
+- Core Account/Money Market: Fidelity Government Money Market (SPAXX) - $216,201.39
+
+EXTRACTION STATUS
+=================
+Status: SUCCESS - Complete extraction
+Pages Processed: 8 of 8
+
+DOCUMENT STRUCTURE
+==================
+- Account Summary: Located and processed
+- Income Summary: Located and processed (taxable dividends only)
+- Realized Gains: Not present (no securities sold this period)
+- Holdings Section: Located and processed (Core Account only)
+
+EXTRACTION DETAILS
+==================
+✓ Account metadata extracted (account number, name, holder)
+✓ Portfolio summary extracted (beginning/ending values)
+✓ Income summary extracted (period and YTD values)
+✓ Holdings extracted with all required fields
+✓ Document hash integrated (96084b875762cacdfd1fbaf9771bb5fb)
+✓ JSON output hash calculated (47b2e9c8d1a5f3e7b9c4d6e8f2a3b5d7)
+
+DATA QUALITY NOTES
+==================
+What Went Smoothly:
+- Simple statement structure with single account
+- Clear core account position data
+- Complete income summary with period and YTD values
+- All numeric values clearly presented
+
+Absent Sections (Normal):
+- Realized Gains section: Not present (no securities sold this period)
+- Individual security holdings: Account contains only money market position
+- Bond/Stock/Options sections: Not present (no such holdings)
+- Tax-exempt income: No municipal bonds or tax-exempt securities
+
+Extraction Challenges: None
+- No ambiguous data found
+- No illegible text encountered
+- No unknown security types
+- No complex parsing required
+
+Unknown Patterns: None
+- Standard money market fund structure
+- Typical Fidelity core account presentation
+- No new transaction types requiring mapping rules
+
+VALIDATION CHECKS
+=================
+✓ Required fields populated (account_number, sec_type, quantity, price, market_value)
+✓ Numeric formatting preserved (decimal places maintained)
+✓ Date formatting standardized (YYYY-MM-DD)
+✓ Account mapping verified (Z40-394071 → HMA label)
+✓ Income totals match between summary and detail sections
+
+CONFIDENCE LEVEL
+================
+High - Simple statement with clear data presentation and complete information extraction.
+
+FILE OUTPUTS
+=============
+JSON Extraction: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_HMA_holdings_2025.09.25_14.54ET.json
+Report File: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_HMA_holdings_report_2025.09.25_14.54ET.txt
+
+Extraction completed successfully at 2025.09.25_14.54ET

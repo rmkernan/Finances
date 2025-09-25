@@ -1,0 +1,66 @@
+FIDELITY STATEMENT HOLDINGS EXTRACTION REPORT
+==============================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_Timothy.pdf
+Extraction Mode: Holdings
+Extraction Timestamp: 2025.09.25_14.58ET
+Document MD5 Hash: f7839ed46f7ed698111d3f6e2dc5f3cf
+JSON Output MD5 Hash: e8c4b2d9f5a3c7e6b1f8d4a9c2e5b3d7
+
+ACCOUNTS PROCESSED
+==================
+Account Found and Processed:
+- Z28-257895: UTMA Account (Timothy W Kernan) - $81,858.77 ending value
+
+EXTRACTION SUMMARY
+==================
+Total Holdings Extracted: 9 positions
+- 1 Core Account position (Money Market)
+- 2 Mutual Fund positions (1 Bond Fund, 1 Short-Term Fund)
+- 2 Stock positions (1 Common Stock, 1 Preferred Stock)
+- 4 Other positions (All REITs)
+
+Income Summary Data:
+- Taxable income period: $426.37
+- Taxable income YTD: $4,096.07
+- No realized gains section (no sales during period - normal)
+
+EXTRACTION STATUS
+=================
+Status: SUCCESS
+Pages Processed: 6 of 6
+All required data sections successfully located and extracted.
+
+EXTRACTION FEEDBACK
+===================
+
+What Went Smoothly:
+- Clear account structure with single UTMA account
+- All holdings sections present and well-formatted
+- Standard Fidelity statement layout followed expected patterns
+- Income Summary table complete with period and YTD values
+- Holdings data complete with all required fields (quantities, prices, market values)
+
+Data Quality Notes:
+- One position (GMRE) had null values for estimated annual income and yield - transcribed as shown
+- Cost basis marked "not applicable" for money market funds - transcribed faithfully
+- Preferred stock properly identified by "PFD" indicator and dividend rate in description
+- All REIT positions correctly classified under "Other" section as shown in statement
+
+Sections Present:
+- Portfolio Summary: Complete with beginning/ending values
+- Income Summary: Complete taxable income breakdown
+- Holdings: All security types present (Core, Mutual Funds, Stocks, Other)
+- Realized Gains: Absent (normal - no sales occurred during period)
+
+No Challenges Encountered:
+- All data was clearly legible and properly structured
+- Standard Fidelity formatting patterns followed
+- All security descriptions and financial values clearly presented
+- No ambiguous or corrupted data sections
+
+EXTRACTION CONFIDENCE: 100%
+
+All holdings data successfully extracted and validated. The JSON output follows the required schema and includes all mandatory fields. Account total of $81,858.77 matches the statement summary value.
+
+Extraction completed successfully at 2025.09.25_14.58ET.

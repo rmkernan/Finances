@@ -1,9 +1,29 @@
 # API & Data Contracts
 
 **Created:** 09/24/25 9:28PM
+**Updated:** 09/25/25 1:03AM - Reference generated types as source of truth
 **Purpose:** Type definitions and data contracts for frontend-backend communication
 
-## Core Type Definitions
+## ⚠️ IMPORTANT: Type Source Update
+
+**Generated types are now the source of truth:**
+```typescript
+// All database types are auto-generated from Supabase schema
+import { Database } from '@/types/supabase'
+
+// Access types like:
+type Entity = Database['public']['Tables']['entities']['Row']
+type Account = Database['public']['Tables']['accounts']['Row']
+type Transaction = Database['public']['Tables']['transactions']['Row']
+```
+
+**To regenerate types after schema changes:**
+```bash
+cd /Users/richkernan/Projects/Finances/frontend/wealth-manager
+npx supabase gen types typescript --local > src/types/supabase.ts
+```
+
+## Core Type Definitions (Reference Only - See src/types/supabase.ts)
 
 ### Entity Types
 ```typescript

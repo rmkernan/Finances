@@ -1,0 +1,182 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-07_timothy_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_Timothy.pdf",
+    "json_output_md5_hash": "9cbe981e39bf328d943fbeb32fd2c590",
+    "doc_md5_hash": "3db8b733d9dcf818af7f2f01e5f9c474",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_12.29ET",
+    "extractor_version": "1.0",
+    "pages_processed": 6,
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-07-31",
+    "period_start": "2025-07-01",
+    "period_end": "2025-07-31"
+  },
+  "accounts": [
+    {
+      "account_number": "Z28-257895",
+      "account_name": "RICHARD M KERNAN CUSTODIAN FOR TIMOTHY W KERNAN A MINOR",
+      "account_holder_name": "RICHARD M KERNAN CUSTODIAN FOR TIMOTHY W KERNAN A MINOR UNDER THE LAWS OF GEORGIA",
+      "account_type": "custodial",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-07-09",
+          "sec_description": "GLOBAL MED REIT INC COM NEW",
+          "sec_symbol": null,
+          "cusip": "37954A204",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "93.75"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "sec_description": "INNOVATIVE INDL PPTYS INC COM",
+          "sec_symbol": null,
+          "cusip": "45781V101",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "142.50"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "sec_description": "NEWLAKE CAPITAL PARTNERS INC COM",
+          "sec_symbol": null,
+          "cusip": "651495103",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "266.60"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "sec_description": "REALTY INCOME CORP COM",
+          "sec_symbol": null,
+          "cusip": "756109104",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "26.90"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY FLOATING RATE HIGH INCOME",
+          "sec_symbol": null,
+          "cusip": "315916783",
+          "description": "Reinvestment",
+          "quantity": "27.166000",
+          "price_per_unit": "9.1600",
+          "amount": "-248.84"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY FLOATING RATE HIGH INCOME",
+          "sec_symbol": null,
+          "cusip": "315916783",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "248.84"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "24.14"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Reinvestment",
+          "quantity": "7.520000",
+          "price_per_unit": "1.0000",
+          "amount": "-7.52"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "7.52"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [
+        {
+          "date": "2025-07-28",
+          "reference": "",
+          "description": "DEBIT UNIVERSITY OF UGA BANNER",
+          "amount": "-724.00"
+        }
+      ],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-07-09",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": null,
+          "quantity": "93.750000",
+          "price_per_unit": "1.0000",
+          "amount": "93.75",
+          "balance": "7051.58"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": null,
+          "quantity": "436.000000",
+          "price_per_unit": "1.0000",
+          "amount": "436.00",
+          "balance": "7487.58"
+        },
+        {
+          "settlement_date": "2025-07-28",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": null,
+          "quantity": "-724.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-724.00",
+          "balance": "6763.58"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "Reinvestment",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET REINVEST @ $1.000",
+          "sec_symbol": null,
+          "quantity": "24.140000",
+          "price_per_unit": "1.0000",
+          "amount": "24.14",
+          "balance": "6787.72"
+        }
+      ],
+      "trades_pending_settlement": []
+    }
+  ]
+}

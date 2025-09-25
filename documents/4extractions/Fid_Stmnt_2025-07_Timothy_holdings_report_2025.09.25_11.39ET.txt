@@ -1,0 +1,86 @@
+FIDELITY STATEMENT HOLDINGS EXTRACTION REPORT
+=====================================================
+
+Extraction Details:
+- Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_Timothy.pdf
+- Extraction Mode: HOLDINGS
+- Statement Period: July 1, 2025 - July 31, 2025
+- Pages Processed: 6 of 10 (Holdings sections on pages 3-4)
+- Extraction Timestamp: 2025.09.25_11.39ET
+
+Account Information:
+- Account Number: Z28-257895
+- Account Name: RICHARD M KERNAN CUSTODIAN FOR TIMOTHY W KERNAN A MINOR UNDER THE LAWS OF GEORGIA
+- Account Type: UTMA (Custodial Account)
+- Account Value: $79,924.58
+
+EXTRACTION RESULTS:
+==================
+
+SUCCESS - Holdings extraction completed successfully.
+
+SUMMARY COUNTS:
+- Core Account positions: 1 (Money Market fund)
+- Mutual Fund positions: 2 (1 Bond fund, 1 Short-term fund)
+- Stock positions: 2 (1 Common stock, 1 Preferred stock)
+- Other positions: 4 (All REITs)
+- Total positions extracted: 9
+
+Holdings Breakdown by Value:
+- Mutual Funds: $43,227 (54% of account)
+- Other (REITs): $17,508 (22% of account)
+- Stocks: $12,402 (16% of account)
+- Core Account: $6,788 (8% of account)
+
+Income Summary Extracted:
+- Total taxable income (period): $810.25
+- Total taxable income (YTD): $3,669.70
+- Dividends (period): $810.25
+- Interest (YTD): $328.12
+
+EXTRACTION NOTES:
+================
+
+What Went Smoothly:
+- All holdings sections were clearly structured and complete
+- Security symbols were consistently formatted in parentheses
+- Price and quantity data was cleanly presented
+- Income summary table was well-organized
+- All required fields were present and legible
+
+Sections Absent (Normal):
+- Realized Gains section: Not present - indicates no securities were sold during this period, which is normal for a custodial account
+- Bond holdings: None present in this account
+- Options holdings: None present in this account
+- Exchange Traded Products: None present in this account
+
+Data Quality Assessment:
+- All numeric values were clearly presented with proper decimal precision
+- Beginning and ending market values reconcile with account summary
+- Cost basis information available for all applicable positions
+- Estimated annual income and yield percentages provided for all holdings
+- No "unavailable" values encountered
+
+Securities Classification Applied:
+- REIT securities properly identified and classified as "Other" type with "REIT" subtype
+- Preferred stock correctly identified from description containing "PFD" and percentage rate
+- Money market funds appropriately categorized by type (Core Account vs Short-Term Funds)
+- All security symbols extracted from parenthetical notation
+
+Extraction Confidence Level: HIGH
+- Complete data extraction achieved
+- All holdings properly categorized
+- Financial totals reconcile
+- No data quality concerns identified
+
+Processing Notes:
+- Statement covers July 2025 period
+- Account experienced net decrease of $1,562.80 during period
+- Portfolio diversified across multiple asset classes
+- High-yielding securities consistent with income-focused strategy appropriate for custodial account
+
+File Outputs:
+- JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_Timothy_holdings_2025.09.25_11.39ET.json
+- Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_Timothy_holdings_report_2025.09.25_11.39ET.txt
+
+Extraction completed successfully with no issues requiring manual review.

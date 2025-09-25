@@ -1,0 +1,67 @@
+FIDELITY STATEMENT HOLDINGS EXTRACTION REPORT
+================================================
+
+Source Document: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-03_Milton.pdf
+Extraction Mode: Holdings
+Document Hash: 920c8b264d0d0a7c4941c9fb71dc64d5
+Extraction Timestamp: 2025-01-25 09:30 ET
+
+ACCOUNT PROCESSING SUMMARY
+==========================
+Accounts Found: 1
+- Z40-394067 (Milton Preschool Inc - Corporation)
+
+HOLDINGS EXTRACTION SUMMARY
+============================
+Total Positions Extracted: 6
+- 1 Core Account position (Money Market)
+- 1 Mutual Fund position (Short-Term Fund)
+- 4 Municipal Bond positions
+
+Position Details by Type:
+- Core Account: 1 position (SPAXX - Fidelity Government Money Market)
+- Mutual Funds: 1 position (FSIXX - Treasury Only Portfolio)
+- Bonds: 4 municipal bonds with maturities ranging from May 2024 to Sept 2025
+
+EXTRACTION STATUS: SUCCESS
+===========================
+
+DOCUMENT SECTIONS PROCESSED:
+- Account Summary: ✓ Complete
+- Portfolio Summary: ✓ Complete
+- Income Summary: ✓ Complete (taxable dividends only)
+- Holdings: ✓ All positions extracted
+- Realized Gains: Not present (normal - no sales occurred)
+
+DATA QUALITY NOTES:
+===================
+
+EXTRACTION FEEDBACK:
+What went smoothly:
+- Clear statement structure with well-organized holdings sections
+- All bond detail lines contained complete CUSIP and rating information
+- Municipal bond classification straightforward with standard 5% coupons
+- Core account and mutual fund data clearly presented
+- All numeric values preserved with proper decimal precision
+
+No challenges encountered:
+- All securities followed standard Fidelity formatting patterns
+- Bond detail lines parsed successfully using existing mapping guidance
+- No unusual security types or transaction patterns found
+- All data located using the standard mapping document guidance
+
+ABSENT SECTIONS (NORMAL):
+- Realized Gains section: Not present - no securities sales during March 2024 period
+- Stock holdings: None in this account
+- Options holdings: None in this account
+- Exchange Traded Products: None in this account
+
+EXTRACTION CONFIDENCE: HIGH (100%)
+===================================
+All holdings successfully extracted with complete required fields and proper data formatting. Municipal bonds contain full CUSIP, maturity date, coupon rate, and rating information as required.
+
+OUTPUT FILES:
+- JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-03_Milton_holdings_2025.01.25_09.30ET.json
+- Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-03_Milton_holdings_report_2025.01.25_09.30ET.txt
+
+EXTRACTION COMPLETED: 2025-01-25 09:30 ET

@@ -1,0 +1,72 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+=================================================
+
+EXTRACTION DETAILS:
+- Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_HMA.pdf
+- Extraction Mode: Activities
+- Statement Period: July 1, 2025 - July 31, 2025
+- Accounts Processed: Z40-394071 (HMA GROUP, LLC)
+- Pages Analyzed: 8 of 8
+- Extraction Status: SUCCESS
+- Completion Time: 2025.09.25_14.22ET
+
+SUMMARY COUNTS:
+- Total Income Transactions: 1 dividend
+- Total Deposits: 1 transaction ($36,044.13)
+- Total Withdrawals: 1 transaction (-$3,000.00)
+- Total Core Fund Activity: 3 transactions (buy/sell/reinvestment)
+- Total Securities Bought/Sold: 0 trades
+- Total Other Activities: 0 transactions
+- Total Fees/Charges: 0 transactions
+
+ACCOUNT DETAILS:
+Account Z40-394071 (HMA GROUP, LLC - LIMITED LIABILITY CO):
+- Single money market fund holding (SPAXX)
+- Primary activity: Core fund transactions
+- Statement period net change: $33,693.89
+
+EXTRACTION FEEDBACK:
+
+What Went Smoothly:
+- Clean, straightforward statement with minimal complexity
+- All activity sections clearly labeled and easily parsed
+- Money market fund transactions followed standard Fidelity format
+- Dividend income properly identified with CUSIP
+- Core fund activity detail section provided complete transaction history
+- All amounts and dates extracted accurately
+
+Challenges Encountered:
+None - this was a straightforward extraction with standard money market fund activity only.
+
+Sections That Were Absent:
+- Securities Bought & Sold: No securities trades during this period
+- Other Activity In/Out: No options or special transactions
+- Exchanges In/Out: No account transfers
+- Fees and Charges: No account fees charged
+- Bill Payments: No bill payment activity (account type doesn't typically have this feature)
+
+This absence of activity sections is normal for a simple corporate brokerage account holding only money market funds.
+
+DATA QUALITY:
+- All required fields populated correctly
+- Numeric values preserved with proper decimal precision
+- Date formatting consistent (YYYY-MM-DD)
+- Account identification matches expected format
+- Transaction amounts properly signed (deposits positive, withdrawals negative)
+- Core fund balances reconcile across transactions
+
+EXTRACTION CONFIDENCE: HIGH
+All data successfully extracted with no ambiguities or missing information. Simple statement structure with standard Fidelity formatting throughout.
+
+VALIDATION NOTES:
+- Account number Z40-394071 matches expected HMA Group LLC account from mappings (filename_label: "HMA")
+- Statement period July 2025 consistent throughout document
+- Beginning balance ($182,507.50) + net activity ($33,693.89) = ending balance ($216,201.39) ✓
+- Core fund activity running balances consistent: 218,551.63 → 215,551.63 → 216,201.39 ✓
+
+FILES GENERATED:
+- Extraction JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_HMA_activities_2025.09.25_14.22ET.json
+- This Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_HMA_activities_report_2025.09.25_14.22ET.txt
+
+NEXT STEPS:
+Ready for database loading via load-extractions command.

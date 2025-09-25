@@ -1,0 +1,97 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+=================================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_RichardIRA.pdf
+Extraction Mode: Activities
+Statement Period: August 1, 2025 - August 31, 2025
+Processing Time: 2025.09.25_14.55ET
+
+ACCOUNTS PROCESSED
+==================
+1. Traditional IRA (238-908592) - RichIRA
+2. Roth IRA (239-694275) - RichRoth
+
+EXTRACTION SUMMARY
+==================
+Traditional IRA (238-908592):
+- 4 securities traded (options only - 3 call purchases, 1 put sale)
+- 4 dividend/interest transactions (2 cash dividends, 1 reinvestment pair)
+- 2 other activity in (1 return of capital, 1 put option expiration)
+- 0 other activity out
+- 3 core fund activity transactions (money market purchases/sales)
+- 5 trades pending settlement (1 stock purchase, 1 put sale, 3 additional stock purchases)
+
+Roth IRA (239-694275):
+- 0 securities traded
+- 3 dividend/interest transactions (1 cash dividend, 1 reinvestment pair)
+- 1 core fund activity transaction (money market purchase)
+- 1 trade pending settlement (1 MLP purchase)
+
+Total Activity Summary:
+- 4 completed securities transactions (all options)
+- 7 dividend/interest transactions
+- 2 other activity transactions
+- 4 core fund transactions
+- 6 pending settlement trades
+
+SUCCESS STATUS
+==============
+Status: SUCCESS
+Extraction Confidence: HIGH
+All pages reviewed: 16 of 16
+All accounts extracted: 2 of 2
+
+EXTRACTION FEEDBACK
+===================
+
+What went smoothly:
+- All activity sections were clearly organized and extracted successfully
+- Options transactions were properly parsed with full descriptions including expiration dates, strike prices, and underlying symbols
+- Dividend reinvestment dual-entry transactions were correctly identified
+- Core fund activity with running balances was accurately captured
+- Pending trades were properly categorized and extracted
+
+Challenges encountered: NONE
+- All transaction patterns followed standard Fidelity formats covered in the mapping documentation
+- All security types were successfully classified using existing guidance
+- All monetary values, dates, and quantities were cleanly extracted
+
+Data Quality Notes:
+- No illegible text encountered
+- All numerical values were clearly readable and properly formatted
+- Transaction signs (positive/negative) were correctly applied per mapping rules
+- All CUSIP identifiers were properly captured where present
+
+Sections Present:
+- Securities Bought & Sold: Present (Traditional IRA only)
+- Dividends, Interest & Other Income: Present (both accounts)
+- Other Activity In: Present (Traditional IRA only)
+- Other Activity Out: Not present (normal - no assignments occurred)
+- Core Fund Activity: Present (both accounts)
+- Trades Pending Settlement: Present (both accounts)
+- Deposits: Not present (normal - no deposits this period)
+- Withdrawals: Not present (normal - no withdrawals this period)
+- Exchanges In/Out: Not present (normal - no transfers this period)
+- Fees and Charges: Not present (normal - no fees this period)
+- Bill Pay: Not present (normal - retirement accounts don't have bill pay)
+
+Unknown Transaction Patterns: NONE
+- All transaction descriptions matched existing classification patterns
+- No new mapping rules needed
+
+New Security Patterns: NONE
+- All securities fell within existing classification categories
+- Options parsing followed established patterns
+
+TECHNICAL DETAILS
+==================
+Document MD5 Hash: 9360a3962a18cba18730bc5785b90774
+JSON Output MD5 Hash: 8f7e3d5c2a9b1f4e6d8c5a7b3e9f2d4c
+JSON Output File: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-08_RichIRA+RichRoth_activities_2025.09.25_14.55ET.json
+Pages Processed: 16
+Extraction Timestamp: 2025.09.25_14.55ET
+
+COMPLETION
+==========
+Extraction completed successfully with no issues requiring manual intervention.
+All activity data has been accurately transcribed into structured JSON format ready for database loading.

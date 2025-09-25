@@ -1,0 +1,74 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-08_hma_holdings",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_HMA.pdf",
+    "json_output_md5_hash": "58bfd0dd7f138406263e94a0cf85563e",
+    "doc_md5_hash": "d92e90493dbe4ed36ba8fd2088cfb493",
+    "extraction_type": "holdings",
+    "extraction_timestamp": "2025.09.25_12.27ET",
+    "extractor_version": "1.0",
+    "pages_processed": 4,
+    "extraction_notes": [
+      "Simple statement with single Core Account holding"
+    ]
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-08-31",
+    "period_start": "2025-08-01",
+    "period_end": "2025-08-31"
+  },
+  "accounts": [
+    {
+      "account_number": "Z40-394071",
+      "account_name": "HMA GROUP, LLC - LIMITED LIABILITY CO",
+      "account_holder_name": "HMA GROUP, LLC",
+      "account_type": "brokerage",
+      "portfolio_summary": {
+        "beginning_value": "216201.39",
+        "ending_value": "117891.83",
+        "net_account_value": "117891.83"
+      },
+      "income_summary": {
+        "taxable_total_period": "426.66",
+        "taxable_total_ytd": "4107.71",
+        "divs_taxable_period": "426.66",
+        "divs_taxable_ytd": "4107.71",
+        "stcg_taxable_period": "0.00",
+        "stcg_taxable_ytd": "0.00",
+        "int_taxable_period": "0.00",
+        "int_taxable_ytd": "0.00",
+        "ltcg_taxable_period": "0.00",
+        "ltcg_taxable_ytd": "0.00",
+        "tax_exempt_total_period": "0.00",
+        "tax_exempt_total_ytd": "0.00",
+        "divs_tax_exempt_period": "0.00",
+        "divs_tax_exempt_ytd": "0.00",
+        "int_tax_exempt_period": "0.00",
+        "int_tax_exempt_ytd": "0.00",
+        "roc_period": "0.00",
+        "roc_ytd": "0.00",
+        "grand_total_period": "426.66",
+        "grand_total_ytd": "4107.71"
+      },
+      "realized_gains": null,
+      "holdings": [
+        {
+          "sec_type": "Core Account",
+          "sec_subtype": "Money Market",
+          "sec_symbol": "SPAXX",
+          "cusip": "31617H102",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "beg_market_value": "216201.39",
+          "quantity": "117891.830000",
+          "price_per_unit": "1.0000",
+          "end_market_value": "117891.83",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "4977.04",
+          "est_yield": "4.220"
+        }
+      ]
+    }
+  ]
+}

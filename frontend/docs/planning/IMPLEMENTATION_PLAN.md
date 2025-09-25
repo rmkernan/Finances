@@ -2,7 +2,203 @@
 
 **Created:** 09/24/25 9:30PM
 **Updated:** 09/24/25 9:40PM - Added quality assurance protocol with git commit strategy and testing requirements
+**Updated:** 09/25/25 1:15AM - Enhanced quality checkpoints, added Week 2 chart requirements
+**Updated:** 09/25/25 8:57AM - Added KISS principles and anti-patterns to avoid
+**Updated:** 09/25/25 9:07AM - Added specific anti-patterns based on Day 6 learnings
+**Updated:** 09/25/25 9:57AM - Added comprehensive documentation standards with file headers and strategic commenting
+**Updated:** 09/25/25 10:00AM - Aligned documentation format with automated quality reminders
+**Updated:** 09/25/25 10:24AM - Added mandatory build verification and pre-creation checks based on Day 9 learnings
+**Updated:** 09/25/25 4:06PM - Added Week 4+ user-driven feature implementation plan with 21 prioritized features from comprehensive page-by-page review
+**Updated:** 09/25/25 6:37PM - Marked Days 1-2 and Days 3-5 as complete with detailed implementation results
 **Purpose:** Step-by-step coding tasks for building core infrastructure and dashboard functionality
+
+## ⚠️ CRITICAL QUALITY REQUIREMENTS
+
+**MANDATORY after creating EACH component:**
+```bash
+# 1. Run quality checks FIRST
+npm run quality      # Must pass with ZERO errors/warnings
+
+# 2. Verify BUILD works (NEW - CRITICAL!)
+npm run build        # Must complete without errors
+
+# 3. Verify dev server
+npm run dev          # Must compile without errors
+
+# 4. Test in browser
+# - Check for console errors
+# - Verify component renders correctly
+# - Test interactions work
+
+# 5. ONLY commit after passing ALL checks
+git add -A
+git commit -m "Component: [name] - quality verified"
+```
+
+**BEFORE Creating New Files:**
+```bash
+# Verify project structure
+find . -name "page.tsx" | head -5    # Check where pages live
+find . -name "layout.tsx" | head -5   # Check layout locations
+
+# Verify database schema
+grep -n "table_name:" src/types/supabase.ts  # Check exact fields
+```
+
+## 📝 Documentation Standards
+
+**MANDATORY File Headers (Compatible with Auto-Reminders):**
+
+**For NEW files:**
+```typescript
+// Created: [MM/DD/YY HH:MM AM/PM]
+// Purpose: [Clear one-line description of what this file does]
+//
+// Context:
+// - Used by: [List parent components/pages that use this]
+// - Uses: [List key dependencies or child components]
+// - Data source: [Database tables or APIs this interacts with]
+```
+
+**For EXISTING files (significant changes):**
+```typescript
+// Created: [Original date - PRESERVE]
+// Updated: [MM/DD/YY HH:MM AM/PM] - [Brief description of changes]
+// Purpose: [Original purpose - PRESERVE]
+//
+// Context: [Update if relationships changed]
+```
+
+**Note:** Use `//` comments for headers to match the automated reminder format. This ensures consistency with the quality reminders you receive.
+
+**When to Update Headers:**
+- ✅ ADD timestamp: Significant logic changes, new features, bug fixes
+- ❌ SKIP timestamp: Minor edits, typo fixes, formatting, import changes
+- ✅ PRESERVE history: Never delete previous "Updated:" entries
+
+**Strategic Code Comments:**
+```typescript
+// ❗ IMPORTANT: Positions table may be empty for bank accounts
+// This uses hybrid calculation strategy (see balanceCalculations.ts)
+const balance = calculateAccountBalance(account)
+
+// 🔄 This effect runs when entityId changes
+// Fetches fresh data and invalidates cache
+useEffect(() => {
+  // Detailed explanation for complex logic
+}, [entityId])
+
+// 🚨 TODO: Add pagination when accounts exceed 100
+// Currently limited to 500 for performance
+```
+
+**Comment Guidelines:**
+- **WHY over WHAT**: Explain reasoning, not obvious code
+- **Gotchas**: Flag non-obvious behavior or edge cases
+- **TODOs**: Mark future improvements with context
+- **Dependencies**: Note relationships between files
+- **Business Logic**: Explain financial calculations
+
+**Use Emoji Markers for Scanning:**
+- ❗ IMPORTANT: Critical information
+- 🚨 TODO/FIXME: Future work needed
+- 🔄 Side Effects: State changes, API calls
+- 💡 Optimization: Performance considerations
+- 🐛 Bug Workaround: Temporary fixes
+
+**TypeScript Requirements:**
+- NO `any` types - use proper typing or generics
+- Unused vars must be prefixed with underscore
+- All props must have interfaces
+- All hooks must have return types
+
+## 🚫 Preventing `any` Type Errors
+
+### Common Recharts/Chart Types:
+```typescript
+// ❌ WRONG - Will cause eslint error
+const CustomTooltip = ({ active, payload, label }: any) => {
+
+// ✅ CORRECT - Properly typed
+import { TooltipProps } from 'recharts'
+const CustomTooltip = ({
+  active,
+  payload,
+  label
+}: TooltipProps<number, string>) => {
+
+// For payload items:
+interface ChartDataPoint {
+  value: number
+  name: string
+  // add other fields as needed
+}
+const data = payload?.[0] as { value: number; name: string }
+```
+
+### Event Handler Types:
+```typescript
+// ❌ WRONG
+const handleClick = (data: any) => {
+
+// ✅ CORRECT
+const handleClick = (data: { activeLabel?: string; activePayload?: Array<{value: number}> }) => {
+
+// Or use specific Recharts types
+import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart'
+const handleClick = (data: CategoricalChartState) => {
+```
+
+### Array Mapping Types:
+```typescript
+// ❌ WRONG
+data.map((item: any) => item.value)
+
+// ✅ CORRECT
+interface DataItem {
+  value: number
+  label: string
+}
+data.map((item: DataItem) => item.value)
+```
+
+### Quick Type Escape Hatches (Use Sparingly):
+```typescript
+// When you truly don't know the type yet:
+unknown  // Safer than any, requires type checking
+
+// For objects with dynamic keys:
+Record<string, unknown>
+
+// For Recharts props that are complex:
+type ChartProps = Parameters<typeof BarChart>[0]
+```
+
+### How to Find the Right Type:
+1. **Hover in VS Code** - Often shows the inferred type
+2. **Check Recharts docs** - They have TypeScript definitions
+3. **Use typeof** - `type MyType = typeof someVariable`
+4. **Check node_modules** - `@types/recharts` has all types
+
+## 🎯 KISS Principles (Keep It Simple, Stupid!)
+
+**Core Philosophy:**
+- **Less is more** - Prefer 100 lines of clear code over 50 lines of clever code
+- **No premature optimization** - Make it work first, optimize only when proven necessary
+- **Avoid abstraction layers** - Direct database queries are fine
+- **Small files** - Target < 200 lines per file, split if growing
+- **Single responsibility** - Each component/hook does ONE thing well
+- **No over-engineering** - We're building a dashboard, not a framework
+
+**Red Flags to Avoid:**
+- Complex inheritance hierarchies
+- Abstract factory patterns
+- Multiple layers of wrappers
+- Premature generalization
+- Configuration over convention
+- Infinite scroll before proving pagination need
+- Filter state persistence without user request
+- Mobile-specific views before desktop works perfectly
 
 ## Overview
 This document provides the exact sequence of files to create and commands to run. Follow this order to avoid dependency issues.
@@ -832,14 +1028,156 @@ export default function EntityPage() {
 
 ---
 
-## Next Steps
+## Week 4+ Implementation Plan - Feature-Driven Development
 
-Once core infrastructure is complete:
-1. Add charts (Recharts integration)
-2. Build transaction tables
-3. Implement filtering and search
-4. Add export functionality
-5. Begin AI assistant integration
+**Source:** Comprehensive page-by-page feature capture session (09/25/25)
+**Approach:** User-driven requirements vs. assumed features
+
+### Week 4: Core Feature Implementation (12 Days)
+
+#### Days 1-2: Critical Fixes 🔴 ✅ COMPLETE
+**Goal:** Address data accuracy and risk management issues
+
+1. **Options Expiration Indicators** - positions tables ✅
+   - ✅ Implemented red/yellow/green badges for 30/15/7 day expiration warnings
+   - ✅ Added CALL/PUT type indicators with underlying ticker extraction
+   - ✅ Created reusable OptionsBadge and ExpirationDisplay components
+   - ✅ Enhanced visual distinction for options vs regular securities
+   - **Files:** `src/components/ui/OptionsBadge.tsx`, `src/components/ui/ExpirationDisplay.tsx`, updated positions tables
+
+2. **Date Display Fix** - account positions ✅
+   - ✅ Fixed hardcoded "July 30th" → dynamic end-of-month dates
+   - ✅ Implemented proper month-end logic with leap year handling
+   - ✅ Added data load vs statement date distinction
+   - ✅ Compact date formatting for space efficiency
+   - **Files:** Updated `src/lib/utils.ts`, `src/components/portfolio/PositionDateIndicator.tsx`
+
+#### Days 3-5: Foundation Layer 🟠 ✅ COMPLETE
+**Goal:** Enable all subsequent table and interaction enhancements
+
+3. **Universal Table Features** - system-wide ✅
+   - ✅ Created base sortable table component with TypeScript generics
+   - ✅ Implemented expandable row functionality with toggle states
+   - ✅ Applied to HoldingsTable with enhanced sorting and expansion
+   - ✅ Established reusable patterns for all future table implementations
+   - **Files:** `src/components/ui/UniversalTable.tsx`, refactored `HoldingsTable.tsx`
+
+4. **Edit Functionality Core** - accounts, entities, institutions ✅
+   - ✅ Created universal EditModal component with form validation
+   - ✅ Documented `_screen` database field strategy for data integrity
+   - ✅ Implemented account editing with Supabase integration
+   - ✅ Established patterns extensible to entities and institutions
+   - **Files:** `src/components/ui/EditModal.tsx`, `/docs/database-schema-screen-fields.md`
+
+5. **Navigation Enhancement** - top metrics bar ✅
+   - ✅ Made entity/accounts/institutions counts clickable with navigation
+   - ✅ Added hover states and accessibility improvements
+   - ✅ Maintains dashboard styling while adding interactivity
+   - **Files:** Updated dashboard metrics component with click handlers
+
+6. **Accounts Landing Page Layout** - consistency ✅
+   - ✅ Verified existing implementation already excellently organized by institution
+   - ✅ Maintained high-quality filter system and table functionality
+   - ✅ Applied universal table patterns where beneficial
+   - **Files:** Quality verification confirmed - no changes needed
+
+#### Days 6-8: Interactive Features 🟠
+**Goal:** Dynamic filtering and expandable content
+
+7. **Dynamic Portfolio Summary** - dashboard
+   - Add dropdowns for entity/institution filtering
+   - Support up to 2 simultaneous selection criteria
+   - **Files:** Update dashboard summary component, add filter controls
+
+8. **Interactive Recent Activity** - dashboard
+   - Make items clickable → navigate to specific transactions
+   - Add expandable detail view with multiple items support
+   - **Files:** Update recent activity component, add transaction detail expansion
+
+9. **Enhanced Transactions Table** - all locations
+   - Default to previous full month instead of current
+   - Add account column for transaction context
+   - Implement clickable expandable rows
+   - **Files:** Update transaction table components, add account context
+
+#### Days 9-10: Portfolio Analysis 🟠
+**Goal:** Advanced holdings management and multi-account tracking
+
+10. **Interactive Portfolio Holdings** - entity pages
+    - Clickable expandable rows for detail view
+    - Change "Attribute Type" → "Class" (use sec_class DB field)
+    - Visual distinction for options vs other securities
+    - **Files:** Update holdings table, add options styling
+
+11. **Multi-Account Holdings Display** - consolidated view
+    - Show which account(s) contain each holding
+    - Multiple accounts visible when row expanded
+    - **Files:** Update holdings query logic, add account breakdown component
+
+12. **Account Overview Tab Design** - account detail pages
+    - Design content based on available data
+    - Include income summary tables matching source statements
+    - Default to most recent month with date controls
+    - **Files:** Create account overview component, income summary tables
+
+#### Days 11-12: Advanced Controls 🟠
+**Goal:** Historical analysis and document workflow
+
+13. **Dynamic As-Of Date Control** - positions and summaries
+    - Dropdown for last 24 months (data months only)
+    - Both dropdown and date range picker options
+    - **Files:** Create date picker component, update data queries
+
+14. **Enhanced Document Table** - document management
+    - PDF preview popup (new scrollable window)
+    - Adapt KRK_Scraper PDF viewer component
+    - **Files:** Create PDF viewer component, update document table
+
+15. **Institution Detail Navigation** - institutions page
+    - Make cards clickable → navigate to detail pages
+    - Add toggle for "six more accounts" expansion
+    - **Files:** Update institution cards, add detail pages
+
+### Week 5+: Polish & Consistency 🟡
+
+16. **Enhanced Account Breakdown** - entity pages consistency
+17. **Collapsible All Accounts Section** - dashboard navigation
+18. **Dynamic Entity Overview Cards** - filtering capabilities
+19. **Visual Enhancement** - institution/account type icons
+20. **SEO-Friendly URLs** - name-based routing
+21. **URL-Friendly Entity Pages** - bookmarkable URLs
+
+### Implementation Strategy
+
+**Daily Workflow:**
+```bash
+# Start of day
+git status && git pull origin main
+
+# Before each feature
+npm run quality && npm run build && npm run dev
+
+# End of feature
+git add . && git commit -m "Feature: [name] - [brief description]"
+```
+
+**Quality Gates:**
+- Every component must pass: `npm run quality && npm run build`
+- Manual browser testing for each feature
+- No console errors or warnings permitted
+- Responsive design verification
+
+**Dependencies Managed:**
+- Universal tables → all subsequent table features
+- Edit functionality → dynamic content management
+- Date controls → historical analysis features
+- PDF viewer → document workflow improvements
+
+This plan prioritizes:
+1. **Risk Management** (options expiration) - immediate business value
+2. **Data Accuracy** (date fixes) - system integrity
+3. **User Experience** (consistent tables, navigation) - daily workflow efficiency
+4. **Advanced Features** (dynamic summaries, expandable content) - power user capabilities
 
 ## Quality Assurance Protocol
 

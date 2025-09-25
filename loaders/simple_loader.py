@@ -33,6 +33,7 @@ Updated: 09/24/25 3:23PM - Integrated three-table mapping rule engine: extracted
 Updated: 09/24/25 3:26PM - Completed migration to three-table mapping system: removed legacy data_mappings table and fallback logic, fully functional rule-based classification
 Updated: 09/24/25 3:57PM - Fixed remaining legacy data_mappings references and security type mapping calls to use three-table rule engine only
 Updated: 09/24/25 4:01PM - Added three-table mapping rule engine support to load_positions function for future holdings classification rules
+Updated: 09/25/25 5:35PM - Fixed mapping rules engine integration: added transaction field support for core_fund_activity patterns
   - Changed from key-value pairs to direct column mapping for portfolio_summary, income_summary, realized_gains
   - Single row per account with all summary fields populated from JSON
 Purpose: Pure transcription system to load JSON extractions into PostgreSQL database
@@ -181,17 +182,8 @@ def check_extraction_status(existing_doc, extraction_type, json_md5_hash):
 
     return 'PROCEED'  # Unknown extraction type, proceed
 
-def handle_reprocessing_scenario(doc_id, extraction_type, old_hash, new_hash):
-    """Handle case where different JSON content exists for same extraction type"""
-    print(f"WARNING: Document already has {extraction_type} loaded")
-    print(f"  Existing JSON hash: {old_hash}")
-    print(f"  New JSON hash: {new_hash}")
-    print(f"  This suggests the JSON extraction content has changed.")
-    print(f"  Proceeding will DELETE existing {extraction_type} and reload with new data.")
-
-    # For now, proceed automatically but log the event
-    # Future: Could prompt user for confirmation
-    return True
+# handle_reprocessing_scenario() function removed - fail-fast approach never auto-reprocesses
+# Financial data conflicts must be resolved manually before reloading
 
 def update_document_loading_status(doc_id, extraction_type, json_md5_hash, conn):
     """Update document with loading timestamp and JSON hash"""
@@ -214,7 +206,21 @@ def update_document_loading_status(doc_id, extraction_type, json_md5_hash, conn)
     return True
 
 def create_document(data, institution_id, loaded_path, extraction_type, json_md5_hash, conn):
-    """Create or update document record with incremental loading support"""
+    """
+    FAIL-FAST document validation and loading strategy.
+
+    Design Philosophy:
+    - Document records should be created during /process-inbox, not /load-extractions
+    - Never autonomously overwrite existing financial data
+    - Fail immediately with clear error messages when workflow is incorrect
+    - Only proceed when: document exists AND extraction type not yet loaded
+
+    This approach ensures:
+    1. Data safety - no accidental overwrites
+    2. Workflow integrity - catches process-inbox skips
+    3. Error transparency - clear guidance for resolution
+    4. Simplicity - eliminates complex conflict resolution logic
+    """
     cur = conn.cursor()
 
     metadata = data.get('extraction_metadata', {})
@@ -233,76 +239,46 @@ def create_document(data, institution_id, loaded_path, extraction_type, json_md5
         status = check_extraction_status(existing_doc, extraction_type, json_md5_hash)
 
         if status == 'SKIP_DUPLICATE':
-            print(f"  Skipping - {extraction_type} already loaded with same JSON content")
+            print(f"  Skipping - {extraction_type} already loaded with identical JSON content")
             return existing_doc['id']
 
         elif status == 'WARN_REPROCESS':
+            # FAIL-FAST: Never automatically reprocess financial data
             old_hash = (existing_doc['activities_json_md5_hash'] if extraction_type == 'activities'
                        else existing_doc['positions_json_md5_hash'])
-            handle_reprocessing_scenario(existing_doc['id'], extraction_type, old_hash, json_md5_hash)
-            # Continue with reprocessing
+            raise ValueError(
+                f"DUPLICATE DATA CONFLICT:\n"
+                f"  Document: {existing_doc['file_name']}\n"
+                f"  Extraction type: {extraction_type}\n"
+                f"  Already loaded: {existing_doc['processed_at']}\n"
+                f"  Existing hash: {old_hash}\n"
+                f"  New hash: {json_md5_hash}\n\n"
+                f"This means {extraction_type} data already exists but with different content.\n"
+                f"Resolution required: Determine if this is a duplicate extraction, \n"
+                f"corrected data, or extraction bug before proceeding.\n\n"
+                f"To reprocess: Delete existing {extraction_type} data first, then reload."
+            )
 
-        # Update loading status for incremental or reprocessing scenario
+        # PROCEED: Document exists, extraction type not yet loaded
         update_document_loading_status(existing_doc['id'], extraction_type, json_md5_hash, conn)
         return existing_doc['id']
 
     else:
-        # New document - create fresh record
-        return create_new_document(data, institution_id, loaded_path, extraction_type, json_md5_hash, conn)
+        # FAIL-FAST: Document should exist from process-inbox step
+        file_name = Path(metadata.get('source_pdf_filepath', 'unknown.pdf')).name
+        raise ValueError(
+            f"MISSING DOCUMENT RECORD:\n"
+            f"  PDF file: {file_name}\n"
+            f"  PDF hash: {doc_hash}\n\n"
+            f"Document record not found in database. This indicates the PDF was not\n"
+            f"processed through /process-inbox workflow first.\n\n"
+            f"Resolution required: Run /process-inbox command to create document\n"
+            f"structure before loading extractions.\n\n"
+            f"Workflow: /process-inbox → /load-extractions"
+        )
 
-def create_new_document(data, institution_id, loaded_path, extraction_type, json_md5_hash, conn):
-    """Create a new document record"""
-    cur = conn.cursor()
-
-    metadata = data.get('extraction_metadata', {})
-    doc_data = data.get('document_data', {})
-
-    # Get MD5 hash for new document
-    doc_hash = metadata.get('doc_md5_hash')
-
-    # Create document
-    doc_id = str(uuid.uuid4())
-    file_name = Path(metadata.get('source_pdf_filepath', 'unknown.pdf')).name
-    now = datetime.now()
-
-    # Store extraction metadata as JSON in a metadata column
-    extraction_metadata = {
-        'extraction_type': metadata.get('extraction_type'),
-        'extraction_timestamp': metadata.get('extraction_timestamp'),
-        'extractor_version': metadata.get('extractor_version'),
-        'pages_processed': metadata.get('pages_processed'),
-        'extraction_notes': metadata.get('extraction_notes', []),
-        'json_output_md5_hash': metadata.get('json_output_md5_hash')
-    }
-
-    # Set loading timestamps based on extraction type
-    activities_loaded = now if extraction_type == 'activities' else None
-    activities_hash = json_md5_hash if extraction_type == 'activities' else None
-    positions_loaded = now if extraction_type == 'holdings' else None
-    positions_hash = json_md5_hash if extraction_type == 'holdings' else None
-
-    cur.execute("""
-        INSERT INTO documents (
-            id, institution_id, tax_year, document_type,
-            file_path, file_name, doc_md5_hash,
-            period_start, period_end, processed_at, extraction_notes,
-            activities_loaded, activities_json_md5_hash,
-            positions_loaded, positions_json_md5_hash
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """, (
-        doc_id, institution_id,
-        datetime.now().year,  # Tax year
-        'statement',  # Document type
-        str(loaded_path), file_name, doc_hash,
-        parse_date(doc_data.get('period_start'), datetime.now().year),
-        parse_date(doc_data.get('period_end'), datetime.now().year),
-        now,
-        json.dumps(extraction_metadata),  # Store extraction metadata as JSON in notes
-        activities_loaded, activities_hash,
-        positions_loaded, positions_hash
-    ))
-
-    return doc_id
+# create_new_document() function removed - no longer needed with fail-fast approach
+# Document creation now handled exclusively by /process-inbox workflow
 
 def link_document_account(doc_id, account_id, conn):
     """Link document to account in junction table"""
@@ -418,6 +394,10 @@ def load_activities(account_data, doc_id, account_id, entity_id, conn):
     for section_name in activity_sections:
         activities = account_data.get(section_name, [])
 
+        # Handle None values - convert to empty list
+        if activities is None:
+            activities = []
+
         for activity in activities:
             transaction_id = str(uuid.uuid4())
 
@@ -444,6 +424,7 @@ def load_activities(account_data, doc_id, account_id, entity_id, conn):
             # Prepare transaction data for rule evaluation
             transaction_data = {
                 'description': description,
+                'transaction': activity.get('transaction', ''),
                 'section': section_name,
                 'source': section_name,
                 'sec_description': security_name,
@@ -453,6 +434,7 @@ def load_activities(account_data, doc_id, account_id, entity_id, conn):
 
             # Apply mapping rules to get field updates
             rule_updates = apply_mapping_rules(transaction_data, conn)
+
 
             # Extract classification fields from rule engine
             transaction_type = rule_updates.get('transaction_type')

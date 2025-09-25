@@ -3,6 +3,7 @@
 Mapping Rules Engine - Transaction Classification System
 
 Created: 09/24/25 3:21PM
+Updated: 09/25/25 5:05PM - Added Custom Rules category to rule query filter, added activities.transaction field support
 Purpose: Reusable rule evaluation engine for transaction/position classification
 
 This module provides rule-based classification for financial transactions and positions
@@ -33,6 +34,7 @@ def get_field_value(field_name, transaction_data):
     """Extract field value from transaction data using activities.* notation"""
     field_mapping = {
         'activities.description': transaction_data.get('description', ''),
+        'activities.transaction': transaction_data.get('transaction', ''),
         'activities.section': transaction_data.get('section', ''),
         'activities.source': transaction_data.get('source', ''),
         'activities.security': transaction_data.get('sec_description', ''),
@@ -146,7 +148,6 @@ def apply_mapping_rules(transaction_data, conn):
     cur.execute("""
         SELECT id, rule_name
         FROM map_rules
-        WHERE rule_category IN ('Transaction Types', 'Options Lifecycle', 'Security Identification', 'Section Fallbacks')
         ORDER BY application_order
     """)
 

@@ -1,0 +1,973 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-07_kernbrok_kerncma_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_KernBrok+KernCMA.pdf",
+    "json_output_md5_hash": "fe79cd03fa84d0a2f56901e539d4b17d",
+    "doc_md5_hash": "e884e535f5b8a8135e2ea130e076b6e1",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_08.45ET",
+    "extractor_version": "1.0",
+    "pages_processed": 32,
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-07-31",
+    "period_start": "2025-07-01",
+    "period_end": "2025-07-31"
+  },
+  "accounts": [
+    {
+      "account_number": "Z24-527872",
+      "account_name": "INDIVIDUAL - JOINT WROS - TOD",
+      "account_holder_name": "RICHARD MICHAEL KERNAN - JOINT WROS - TOD",
+      "account_type": "brokerage",
+      "securities_bought_sold": [
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "ATLANTA GA ARPT REV GEN BDS SER. 2022A 05.00000% 07/01/2025 REDEMPTION PAYOUT #REOR R6006189150000",
+          "sec_symbol": null,
+          "cusip": "04780MA66",
+          "description": "Redeemed",
+          "quantity": "-10000.000000",
+          "price_per_unit": null,
+          "cost_basis": "10000.00",
+          "transaction_cost": "0.00",
+          "amount": "10000.00"
+        },
+        {
+          "settlement_date": "2025-07-02",
+          "sec_description": "CALL (TSLA) TESLA INC COM JUL 18 25 $300 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "7580119EY",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "15.2500",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "7621.62"
+        },
+        {
+          "settlement_date": "2025-07-02",
+          "sec_description": "PUT (TSLA) TESLA INC COM AUG 15 25 $300 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "7347879NJ",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "24.4100",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "12201.62"
+        },
+        {
+          "settlement_date": "2025-07-08",
+          "sec_description": "CALL (TSLA) TESLA INC COM JUL 18 25 $300 (100 SHS) CLOSING TRANSACTION",
+          "sec_symbol": "7580119EY",
+          "cusip": null,
+          "description": "You Bought Short-term gain: $2,978.24",
+          "quantity": "5.000000",
+          "price_per_unit": "9.2800",
+          "cost_basis": "7621.62",
+          "transaction_cost": "3.38",
+          "amount": "-4643.38"
+        },
+        {
+          "settlement_date": "2025-07-08",
+          "sec_description": "PUT (TSLA) TESLA INC COM JUL 18 25 $295 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "7580119FZ",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "10.8400",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "5416.62"
+        },
+        {
+          "settlement_date": "2025-07-08",
+          "sec_description": "TESLA INC COM",
+          "sec_symbol": "88160R101",
+          "cusip": null,
+          "description": "You Bought",
+          "quantity": "500.000000",
+          "price_per_unit": "295.3387",
+          "cost_basis": null,
+          "transaction_cost": "0.00",
+          "amount": "-147669.35"
+        },
+        {
+          "settlement_date": "2025-07-10",
+          "sec_description": "PUT (CRWV) COREWEAVE INC COM CL AUG 15 25 $135 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "7914329NL",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "19.0500",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "9521.62"
+        },
+        {
+          "settlement_date": "2025-07-10",
+          "sec_description": "PUT (CRWV) COREWEAVE INC COM CL AUG 15 25 $155 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "7915829GG",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "33.1900",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "16591.62"
+        },
+        {
+          "settlement_date": "2025-07-22",
+          "sec_description": "PUT (META) META PLATFORMS INC AUG 01 25 $712.5 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "8004479AY",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "25.0000",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "12496.62"
+        },
+        {
+          "settlement_date": "2025-07-22",
+          "sec_description": "PUT (MSFT) MICROSOFT CORP AUG 01 25 $490 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "7946929CY",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "4.1300",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "2061.62"
+        },
+        {
+          "settlement_date": "2025-07-22",
+          "sec_description": "PUT (TSLA) TESLA INC COM AUG 01 25 $305 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "7948139BB",
+          "cusip": null,
+          "description": "You Sold",
+          "quantity": "-5.000000",
+          "price_per_unit": "5.2400",
+          "cost_basis": null,
+          "transaction_cost": "3.38",
+          "amount": "2616.62"
+        }
+      ],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "ATLANTA GA ARPT REV GEN BDS SER. 2022A 05.00000% 07/01/2025",
+          "sec_symbol": null,
+          "cusip": "04780MA66",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "250.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "AUGUSTA GA DEV AUTH REV BDS AU HEALTH 04.00000% 07/01/2038 SYS INC AU HEALTH SYSTEM, INC. PROJ SER. 2018",
+          "sec_symbol": null,
+          "cusip": "05115CAR5",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "1000.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "BROWARD CNTY FLA SCH BRD CTFS PARTN COPS 05.00000% 07/01/2028 SER. A",
+          "sec_symbol": null,
+          "cusip": "115065YY4",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "875.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "CARROLL CITY-CNTY HOSP AUTH GA REV 05.00000% 07/01/2027 ANTIC CTF REV ANTIC CTFS TANNER MED CTR SER. 2016",
+          "sec_symbol": null,
+          "cusip": "144709HK1",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "125.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "CLARKE CNTY GA HOSP AUTH REV CTFS ANTIC 05.00000% 07/01/2029 CFTS PIEDMONT HEALTHCARE INC SER. 2016 A",
+          "sec_symbol": null,
+          "cusip": "181685JC3",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "750.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "CRISP CNTY GA HOSP AUTH REV ANTIC CTFS 05.00000% 07/01/2027 CRISP REGIONAL HOSP SER. 2021",
+          "sec_symbol": null,
+          "cusip": "226688CY3",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "750.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "DAHLONEGA GA DOWNTOWN DEV AUTH 05.00000% 07/01/2028 REV REF BDS SER. 2017",
+          "sec_symbol": null,
+          "cusip": "23378RFD3",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "750.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "HILLSBOROUGH CNTY FLA SCH BRD CTFS 05.00000% 07/01/2026 PARTN REF COPS MASTER LEASE PROGRAM SER.2015A",
+          "sec_symbol": null,
+          "cusip": "43232VSU6",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "625.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "KNOX CNTY TENN HEALTH EDL &HS G FAC 05.00000% 01/01/2026 BRD HOSP REV REV BDS COVENANT HEALTH SER. 2016 A",
+          "sec_symbol": null,
+          "cusip": "499527BV0",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "625.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "MUNICIPAL ELEC AUTH GA BDS PLT VOGTLE 05.00000% 01/01/2029 UNITS 3 & 4 PROJ P SER. 2019 B",
+          "sec_symbol": null,
+          "cusip": "6262072E3",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "625.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "MUNICIPAL ELEC AUTH GA GEN RESOLUTION 05.00000% 01/01/2026 PROJS SUB BDS SER. 2020 A",
+          "sec_symbol": null,
+          "cusip": "6262075L4",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "250.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "NUVEEN CR STRATEGIES INCOME FD COM SHS",
+          "sec_symbol": "67073D102",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "54.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "NUVEEN MUNICIPAL CREDIT INC FD COM SH BEN INT",
+          "sec_symbol": "67070X101",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "182.85"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "PIMCO DYNAMIC INCOME FD COM USD0.00001",
+          "sec_symbol": "72201Y101",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "110.25"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "RICHMOND CNTY GA HOSP AUTH REV ANTIC 05.00000% 01/01/2028 CTFS REV ANTIC CTFS PIEDMONT HEALTHCARE INC SER. 2016",
+          "sec_symbol": null,
+          "cusip": "764603BM7",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "625.00"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "SYNOVUS FINL CORP 5.875 PFD SER E 8.41700%",
+          "sec_symbol": "87161C709",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "238.26"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "TENNESSEE HSG DEV AGY RESIDENTIAL FIN 05.40000% 07/01/2053 PROG REV BDS SER. 2023-3A",
+          "sec_symbol": null,
+          "cusip": "88046KGV2",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "270.00"
+        },
+        {
+          "settlement_date": "2025-07-10",
+          "sec_description": "OMEGA FLEX INC COM USD0.01",
+          "sec_symbol": "682095104",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "170.00"
+        },
+        {
+          "settlement_date": "2025-07-11",
+          "sec_description": "TIDAL TR II YIELDMAX TSLA OP",
+          "sec_symbol": "88636J444",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "146.01"
+        },
+        {
+          "settlement_date": "2025-07-11",
+          "sec_description": "TIDAL TR II YIELDMAX TSLA OP",
+          "sec_symbol": "88636J444",
+          "cusip": null,
+          "description": "Dividend Adjustment",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "-146.01"
+        },
+        {
+          "settlement_date": "2025-07-11",
+          "sec_description": "TIDAL TR II YIELDMAX TSLA OP SUBSTITUTE PAYMENT",
+          "sec_symbol": "88636J444",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "140.58"
+        },
+        {
+          "settlement_date": "2025-07-11",
+          "sec_description": "TIDAL TR II YIELDMAX TSLA OP",
+          "sec_symbol": "88636J444",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "5.43"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "sec_description": "COBB CNTY GA DEV AUTH LEASE REV REV 05.00000% 07/15/2027 REF BDS KSU SPORTS AND REC PARK REAL ESTATE FOUNDATION",
+          "sec_symbol": null,
+          "cusip": "19078VAG3",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "125.00"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "sec_description": "NEWLAKE CAPITAL PARTNERS INC COM",
+          "sec_symbol": "651495103",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "150.50"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "sec_description": "WP CAREY INC COM",
+          "sec_symbol": "92936U109",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "35.10"
+        },
+        {
+          "settlement_date": "2025-07-17",
+          "sec_description": "CAMDEN PROPERTY TRUST SBI USD0.01",
+          "sec_symbol": "133131102",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "210.00"
+        },
+        {
+          "settlement_date": "2025-07-17",
+          "sec_description": "FMC CORP COM NEW",
+          "sec_symbol": "302491303",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "116.00"
+        },
+        {
+          "settlement_date": "2025-07-22",
+          "sec_description": "PROSPECT CAP CORP COM",
+          "sec_symbol": "74348T102",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "4.50"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "ANNALY CAPITAL MANAGEMENT INC COM NEW",
+          "sec_symbol": "035710839",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "382.78"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "BLACKROCK CR ALLOCATION INCOME COM",
+          "sec_symbol": "092508100",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "83.90"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": "31617H102",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "1698.39"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY TAX-FREE BOND",
+          "sec_symbol": "316128503",
+          "cusip": null,
+          "description": "Reinvestment",
+          "quantity": "263.037000",
+          "price_per_unit": "10.6700",
+          "amount": "-2806.60"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY TAX-FREE BOND",
+          "sec_symbol": "316128503",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "2806.60"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I",
+          "sec_symbol": "316176106",
+          "cusip": null,
+          "description": "Reinvestment",
+          "quantity": "5143.140000",
+          "price_per_unit": "1.0000",
+          "amount": "-5143.14"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I",
+          "sec_symbol": "316176106",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "5143.14"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "MFS MUN INCOME TR SH BEN INT",
+          "sec_symbol": "552738106",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "24.00"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "RLJ LODGING TR CUM CONV PFD A",
+          "sec_symbol": "74965L200",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "243.75"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "TORTOISE SUSTAINABLE AND SOCIAL IMPACT TERM FUND",
+          "sec_symbol": "27901F109",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "90.00"
+        }
+      ],
+      "other_activity_in": [
+        {
+          "settlement_date": "2025-07-18",
+          "sec_description": "PUT (TSLA) TESLA INC COM JUL 18 25 $295 (100 SHS)",
+          "sec_symbol": "7580119FZ",
+          "cusip": null,
+          "description": "Expired",
+          "quantity": "5.000000",
+          "cost_basis": "5416.62",
+          "amount": "0.00"
+        }
+      ],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [
+        {
+          "date": "2025-07-01",
+          "reference": "WD82442383",
+          "description": "Wire Tfr To Bank WD82442383 COINBASE INC CROSS RIVER BANK ******7024",
+          "amount": "-10000.00"
+        },
+        {
+          "date": "2025-07-07",
+          "reference": "ED79304689",
+          "description": "Money Line Paid EFT FUNDS PAID ED79304689 /WEB JPMORGAN CHASE BANK, NA ******1981",
+          "amount": "-10000.00"
+        },
+        {
+          "date": "2025-07-09",
+          "reference": "WD82619193",
+          "description": "Wire Tfr To Bank WD82619193 COINBASE INC CROSS RIVER BANK ******7024",
+          "amount": "-100000.00"
+        },
+        {
+          "date": "2025-07-25",
+          "reference": "WD83015198",
+          "description": "Wire Tfr To Bank WD83015198 COINBASE INC CROSS RIVER BANK ******7024",
+          "amount": "-150000.00"
+        }
+      ],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-07-01",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-10000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-10000.00",
+          "balance": "657226.06"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "18105.360000",
+          "price_per_unit": "1.0000",
+          "amount": "18105.36",
+          "balance": "675331.42"
+        },
+        {
+          "settlement_date": "2025-07-02",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "19823.240000",
+          "price_per_unit": "1.0000",
+          "amount": "19823.24",
+          "balance": "695154.66"
+        },
+        {
+          "settlement_date": "2025-07-03",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-2215.430000",
+          "price_per_unit": "1.0000",
+          "amount": "-2215.43",
+          "balance": "692939.23"
+        },
+        {
+          "settlement_date": "2025-07-07",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-10000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-10000.00",
+          "balance": "682939.23"
+        },
+        {
+          "settlement_date": "2025-07-08",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-146896.110000",
+          "price_per_unit": "1.0000",
+          "amount": "-146896.11",
+          "balance": "536043.12"
+        },
+        {
+          "settlement_date": "2025-07-09",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-100000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-100000.00",
+          "balance": "436043.12"
+        },
+        {
+          "settlement_date": "2025-07-10",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "26283.240000",
+          "price_per_unit": "1.0000",
+          "amount": "26283.24",
+          "balance": "462326.36"
+        },
+        {
+          "settlement_date": "2025-07-11",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-42.690000",
+          "price_per_unit": "1.0000",
+          "amount": "-42.69",
+          "balance": "462283.67"
+        },
+        {
+          "settlement_date": "2025-07-15",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "310.600000",
+          "price_per_unit": "1.0000",
+          "amount": "310.60",
+          "balance": "462594.27"
+        },
+        {
+          "settlement_date": "2025-07-17",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "326.000000",
+          "price_per_unit": "1.0000",
+          "amount": "326.00",
+          "balance": "462920.27"
+        },
+        {
+          "settlement_date": "2025-07-18",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-604.070000",
+          "price_per_unit": "1.0000",
+          "amount": "-604.07",
+          "balance": "462316.20"
+        },
+        {
+          "settlement_date": "2025-07-22",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "17179.360000",
+          "price_per_unit": "1.0000",
+          "amount": "17179.36",
+          "balance": "479495.56"
+        },
+        {
+          "settlement_date": "2025-07-25",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-150000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-150000.00",
+          "balance": "329495.56"
+        },
+        {
+          "settlement_date": "2025-07-25",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-3039.520000",
+          "price_per_unit": "1.0000",
+          "amount": "-3039.52",
+          "balance": "326456.04"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "560.310000",
+          "price_per_unit": "1.0000",
+          "amount": "560.31",
+          "balance": "327016.35"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "Reinvestment",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET REINVEST @ $1.000",
+          "sec_symbol": "SPAXX",
+          "quantity": "1698.390000",
+          "price_per_unit": "1.0000",
+          "amount": "1698.39",
+          "balance": "328714.74"
+        }
+      ],
+      "trades_pending_settlement": []
+    },
+    {
+      "account_number": "Z27-375656",
+      "account_name": "CASH MANAGEMENT ACCOUNT - JOINT WROS - TOD",
+      "account_holder_name": "RICHARD MICHAEL KERNAN - JOINT WROS - TOD",
+      "account_type": "cash_management",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-07-01",
+          "sec_description": "IOWA FIN AUTH SINGLE FAMILY MTG REV BDS 05.20000% 01/01/2053 SER. 2023 G",
+          "sec_symbol": null,
+          "cusip": "4624677J4",
+          "description": "Muni Exempt Int",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "650.00"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FDIC INSURED DEPOSIT",
+          "sec_symbol": "FDIC99375",
+          "cusip": null,
+          "description": "Interest Earned",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "12.48"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIMM MONEY MARKET PORTFOLIO: CL I",
+          "sec_symbol": "316175207",
+          "cusip": null,
+          "description": "Reinvestment",
+          "quantity": "167.540000",
+          "price_per_unit": "1.0000",
+          "amount": "-167.54"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIMM MONEY MARKET PORTFOLIO: CL I",
+          "sec_symbol": "316175207",
+          "cusip": null,
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "167.54"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [
+        {
+          "date": "2025-07-02",
+          "reference": null,
+          "description": "Deposit Crabapple Pr Direct Dep",
+          "amount": "470.10"
+        },
+        {
+          "date": "2025-07-17",
+          "reference": null,
+          "description": "Deposit Crabapple Pr Direct Dep",
+          "amount": "470.11"
+        },
+        {
+          "date": "2025-07-21",
+          "reference": "Er03812293",
+          "description": "Eft Funds Received Er03812293 /web Synovus Bank ******0179",
+          "amount": "19000.00"
+        },
+        {
+          "date": "2025-07-31",
+          "reference": "If8#46",
+          "description": "Deposit Broad Street If8#46",
+          "amount": "3657.50"
+        },
+        {
+          "date": "2025-07-31",
+          "reference": null,
+          "description": "Deposit Crabapple Pr Payroll",
+          "amount": "470.11"
+        },
+        {
+          "date": "2025-07-31",
+          "reference": null,
+          "description": "Deposit Cws Inv Cash Disb",
+          "amount": "4458.91"
+        }
+      ],
+      "withdrawals": [
+        {
+          "date": "2025-07-01",
+          "reference": null,
+          "description": "DEBIT ROUNDPOINT MTG PAYMENTS",
+          "amount": "-2339.78"
+        }
+      ],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [
+        {
+          "post_date": "2025-07-21",
+          "payee": "CHASE CARD SERVICES",
+          "payee_account": "************5793",
+          "amount": "-10000.00",
+          "ytd_payments": "43402.00"
+        },
+        {
+          "post_date": "2025-07-24",
+          "payee": "CITIBANK",
+          "payee_account": "************1191",
+          "amount": "-88.11",
+          "ytd_payments": "4129.01"
+        }
+      ],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-07-01",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FDIC INSURED DEPOSIT AT CITIBANK NOT COVERED BY SIPC @ 1",
+          "sec_symbol": "QPCTQ",
+          "quantity": "-2339.780000",
+          "price_per_unit": "1.0000",
+          "amount": "-2339.78",
+          "balance": "2446.24"
+        },
+        {
+          "settlement_date": "2025-07-01",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FDIC INSURED DEPOSIT AT CITIBANK NOT COVERED BY SIPC MORNING TRADE @ 1",
+          "sec_symbol": "QPCTQ",
+          "quantity": "650.000000",
+          "price_per_unit": "1.0000",
+          "amount": "650.00",
+          "balance": "3096.24"
+        },
+        {
+          "settlement_date": "2025-07-02",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FDIC INSURED DEPOSIT AT CITIBANK NOT COVERED BY SIPC @ 1",
+          "sec_symbol": "QPCTQ",
+          "quantity": "470.100000",
+          "price_per_unit": "1.0000",
+          "amount": "470.10",
+          "balance": "3566.34"
+        },
+        {
+          "settlement_date": "2025-07-17",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FDIC INSURED DEPOSIT AT CITIBANK NOT COVERED BY SIPC @ 1",
+          "sec_symbol": "QPCTQ",
+          "quantity": "470.110000",
+          "price_per_unit": "1.0000",
+          "amount": "470.11",
+          "balance": "4036.45"
+        },
+        {
+          "settlement_date": "2025-07-21",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FDIC INSURED DEPOSIT AT CITIBANK NOT COVERED BY SIPC @ 1",
+          "sec_symbol": "QPCTQ",
+          "quantity": "9000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "9000.00",
+          "balance": "13036.45"
+        },
+        {
+          "settlement_date": "2025-07-24",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FDIC INSURED DEPOSIT AT CITIBANK NOT COVERED BY SIPC @ 1",
+          "sec_symbol": "QPCTQ",
+          "quantity": "-88.110000",
+          "price_per_unit": "1.0000",
+          "amount": "-88.11",
+          "balance": "12948.34"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FDIC INSURED DEPOSIT AT CITIBANK NOT COVERED BY SIPC @ 1",
+          "sec_symbol": "QPCTQ",
+          "quantity": "8599.000000",
+          "price_per_unit": "1.0000",
+          "amount": "8599.00",
+          "balance": "21547.34"
+        }
+      ],
+      "trades_pending_settlement": []
+    }
+  ]
+}

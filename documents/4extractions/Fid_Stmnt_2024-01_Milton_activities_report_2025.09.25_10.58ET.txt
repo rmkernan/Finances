@@ -1,0 +1,98 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+===============================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-01_Milton.pdf
+Extraction Mode: Activities
+Statement Period: January 1, 2024 - January 31, 2024
+Extraction Timestamp: 2025.01.25_14.32ET
+
+ACCOUNTS PROCESSED
+==================
+Account Z40-394067: MILTON PRESCHOOL INC - CORPORATION
+- Account Type: Brokerage
+- Account Holder: MILTON PRESCHOOL INC
+
+EXTRACTION SUMMARY COUNTS
+==========================
+Securities Bought & Sold: 1 transaction
+- 1 sale (fund redemption)
+
+Dividends, Interest & Other Income: 3 transactions
+- 1 money market dividend
+- 1 fund dividend received
+- 1 dividend reinvestment
+
+Withdrawals: 1 transaction
+- 1 wire transfer ($200,000)
+
+Core Fund Activity: 2 transactions
+- 1 money market sale
+- 1 money market purchase
+
+Other Activity Sections: No transactions
+- No Other Activity In/Out
+- No Deposits
+- No Exchanges In/Out
+- No Fees and Charges
+- No Bill Payments
+- No Trades Pending Settlement
+
+EXTRACTION STATUS
+=================
+Status: SUCCESSFUL
+Pages Processed: 5 of 5
+All required data extracted successfully
+
+EXTRACTION FEEDBACK
+===================
+
+What Went Smoothly:
+- Clean statement structure with well-defined activity sections
+- Clear transaction formatting with consistent date and amount fields
+- Standard Fidelity layout with predictable section ordering
+- All activity data located and extracted without issues
+- Fund redemption transaction properly captured with null price (normal for redemptions)
+- Dividend reinvestment dual-entry structure handled correctly (negative reinvestment + positive dividend)
+
+Challenges Encountered: NONE
+- No parsing difficulties encountered
+- No ambiguous data or missing sections
+- Statement format followed standard Fidelity patterns covered in mapping documents
+
+Unknown Transaction Patterns: NONE
+- All transaction descriptions matched known patterns in mapping documents
+- "REDEEMED TO COVER A SETTLED OBLIGATION" is a standard fund liquidation description
+- Dividend reinvestment patterns are well-established in Fidelity statements
+
+New Security Patterns: NONE
+- FIMM TREASURY ONLY PORTFOLIO is a standard money market fund type
+- FIDELITY GOVERNMENT MONEY MARKET is a core position security
+
+Absent Sections (Normal):
+- No Options Activity - account holds no options positions
+- No Short Activity - account has no short positions
+- No Deposits - no cash deposits this period
+- No Fees and Charges - no account fees this period
+- No Exchanges In/Out - no account transfers this period
+- No Bill Payments - this is a brokerage account, not cash management
+- No Trades Pending Settlement - all trades settled within period
+
+DATA VALIDATION
+================
+- All amounts reconcile with statement totals
+- Date formats consistent (MM/DD converted to YYYY-MM-DD)
+- Negative/positive signs properly applied per transaction type
+- Required fields populated for all transaction types
+- Optional fields properly set to null when not applicable
+
+EXTRACTION CONFIDENCE
+=====================
+Confidence Level: HIGH (100%)
+- All data clearly visible and unambiguous in PDF
+- Standard transaction types with established patterns
+- Complete statement with no missing or corrupted pages
+- All activity sections properly identified and processed
+
+Extraction completed successfully at 2025.01.25_14.32ET
+Total processing time: < 1 minute
+No manual review required - all data extracted with high confidence

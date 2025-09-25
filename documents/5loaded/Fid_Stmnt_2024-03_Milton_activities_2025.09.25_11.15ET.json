@@ -1,0 +1,154 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2024-03_milton_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-03_Milton.pdf",
+    "json_output_md5_hash": "16389d97234a04b63758636c05406e4a",
+    "doc_md5_hash": "920c8b264d0d0a7c4941c9fb71dc64d5",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_11.15ET",
+    "extractor_version": "1.0",
+    "pages_processed": 10,
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2024-03-31",
+    "period_start": "2024-03-01",
+    "period_end": "2024-03-31"
+  },
+  "accounts": [
+    {
+      "account_number": "Z40-394067",
+      "account_name": "MILTON PRESCHOOL INC - CORPORATION",
+      "account_holder_name": "MILTON PRESCHOOL INC",
+      "account_type": "brokerage",
+      "securities_bought_sold": [
+        {
+          "settlement_date": "2024-03-05",
+          "sec_description": "COBB CNTY GA DEV AUTH PKG &DI NING 05.00000% 07/15/2024 HALL LEASE REV REF LEASE REV BDS KENNESAW ST UNIV",
+          "sec_symbol": null,
+          "cusip": "19078NAH9",
+          "description": "You Bought",
+          "quantity": "35000.000000",
+          "price_per_unit": "100.57600",
+          "cost_basis": null,
+          "transaction_cost": null,
+          "amount": "-35444.66"
+        },
+        {
+          "settlement_date": "2024-03-05",
+          "sec_description": "COOPERSVILLE AREA MICH PUB SCHS GO 05.00000% 05/01/2024 ULTD TAX REF BDS SER. 2016",
+          "sec_symbol": null,
+          "cusip": "216876LF7",
+          "description": "You Bought",
+          "quantity": "25000.000000",
+          "price_per_unit": "100.23000",
+          "cost_basis": null,
+          "transaction_cost": null,
+          "amount": "-25488.06"
+        },
+        {
+          "settlement_date": "2024-03-05",
+          "sec_description": "FIMM TREASURY ONLY PORTFOLIO: CL I REDEEMED TO COVER A SETTLED OBLIGATION @ 1",
+          "sec_symbol": null,
+          "cusip": "233809300",
+          "description": "You Sold",
+          "quantity": "-142138.930000",
+          "price_per_unit": null,
+          "cost_basis": null,
+          "transaction_cost": null,
+          "amount": "142138.93"
+        },
+        {
+          "settlement_date": "2024-03-05",
+          "sec_description": "SOUTH DAKOTA ST HEALTH & EDL FACS 05.00000% 09/01/2025 AUTH REV BDS MONUMENT HEALTH INC SER. 2020 A",
+          "sec_symbol": null,
+          "cusip": "83755VM35",
+          "description": "You Bought",
+          "quantity": "40000.000000",
+          "price_per_unit": "101.97000",
+          "cost_basis": null,
+          "transaction_cost": null,
+          "amount": "-40810.22"
+        },
+        {
+          "settlement_date": "2024-03-05",
+          "sec_description": "ST PAUL MINN HSG &REDEV AUTH HEALTH 05.00000% 07/01/2025 CARE FAC REV REF BDS HEALTHPARTNERS SYS SER.2015A",
+          "sec_symbol": null,
+          "cusip": "792905CZ2",
+          "description": "You Bought",
+          "quantity": "40000.000000",
+          "price_per_unit": "101.75000",
+          "cost_basis": null,
+          "transaction_cost": null,
+          "amount": "-41055.56"
+        }
+      ],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2024-03-28",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "0.36"
+        },
+        {
+          "settlement_date": "2024-03-28",
+          "sec_description": "FIMM TREASURY ONLY PORTFOLIO: CL I",
+          "sec_symbol": null,
+          "cusip": "233809300",
+          "description": "Reinvestment",
+          "quantity": "2966.800000",
+          "price_per_unit": "1.00000",
+          "amount": "-2966.80"
+        },
+        {
+          "settlement_date": "2024-03-28",
+          "sec_description": "FIMM TREASURY ONLY PORTFOLIO: CL I",
+          "sec_symbol": null,
+          "cusip": "233809300",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "2966.80"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2024-03-05",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": null,
+          "quantity": "-659.570000",
+          "price_per_unit": "1.0000",
+          "amount": "-659.57",
+          "balance": null
+        },
+        {
+          "settlement_date": "2024-03-28",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": null,
+          "quantity": "0.360000",
+          "price_per_unit": "1.0000",
+          "amount": "0.36",
+          "balance": "0.36"
+        }
+      ],
+      "trades_pending_settlement": []
+    }
+  ]
+}

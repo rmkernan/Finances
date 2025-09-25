@@ -8,6 +8,7 @@
 **Updated:** 09/23/25 2:37PM - Aligned data type rules with activities specification for consistency
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced options and security classification
+**Updated:** 09/25/25 1:52PM - Fixed extraction_timestamp format from ISO to YYYY.MM.DD_HH.MMET to match agent specifications
 **Purpose:** Formal specification for JSON output from Fidelity statement extraction
 **Related:** [Map_Stmnt_Fid_Positions.md](./Map_Stmnt_Fid_Positions.md)
 
@@ -75,7 +76,7 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
     "json_output_md5_hash": "[CALCULATE: Use hashlib.md5() on final JSON content]",
     "doc_md5_hash": "md5_hash_of_source_pdf",
     "extraction_type": "holdings",
-    "extraction_timestamp": "2024-09-22T13:35:00Z",
+    "extraction_timestamp": "2025.09.25_13.35ET",
     "extractor_version": "1.0",
     "pages_processed": 25,
     "extraction_notes": []

@@ -1,7 +1,7 @@
 {
   "_metadata": {
     "purpose": "Complete account metadata for database creation and filename generation",
-    "updated": "2025-09-23T15:15:00Z",
+    "updated": "2025-09-25T16:00:00Z",
     "structure": "institution -> account_last_4_digits -> complete_metadata"
   },
 
@@ -12,6 +12,20 @@
       "tax_id": "2222",
       "primary_taxpayer": "Richard Michael Kernan",
       "georgia_resident": true
+    },
+    "hma_group": {
+      "entity_name": "HMA Group, LLC",
+      "entity_type": "llc",
+      "tax_id": "PLACEHOLDER_EIN_HMA",
+      "primary_taxpayer": "HMA Group, LLC",
+      "georgia_resident": true
+    },
+    "tm_nevada_holdings": {
+      "entity_name": "T&M Nevada Real Estate Holdings, LLC",
+      "entity_type": "llc",
+      "tax_id": "PLACEHOLDER_EIN_TMNEVADA",
+      "primary_taxpayer": "T&M Nevada Real Estate Holdings, LLC",
+      "georgia_resident": false
     },
     "milton_preschool": {
       "entity_name": "Milton Preschool Inc",
@@ -63,6 +77,66 @@
         "account_type": "brokerage",
         "account_subtype": "corporate",
         "entity_key": "milton_preschool",
+        "is_tax_deferred": false,
+        "is_tax_free": false,
+        "requires_rmd": false
+      },
+      "7895": {
+        "filename_label": "Timothy",
+        "account_number": "Z28-257895",
+        "account_holder_name": "RICHARD M KERNAN CUSTODIAN FOR TIMOTHY W KERNAN A MINOR",
+        "account_name": "UTMA Account",
+        "account_type": "custodial",
+        "account_subtype": "utma",
+        "entity_key": "kernan_family",
+        "is_tax_deferred": false,
+        "is_tax_free": false,
+        "requires_rmd": false
+      },
+      "8592": {
+        "filename_label": "RichIRA",
+        "account_number": "238-908592",
+        "account_holder_name": "RICHARD M KERNAN",
+        "account_name": "Traditional IRA",
+        "account_type": "retirement",
+        "account_subtype": "traditional_ira",
+        "entity_key": "kernan_family",
+        "is_tax_deferred": true,
+        "is_tax_free": false,
+        "requires_rmd": true
+      },
+      "4275": {
+        "filename_label": "RichRoth",
+        "account_number": "239-694275",
+        "account_holder_name": "RICHARD M KERNAN",
+        "account_name": "Roth IRA",
+        "account_type": "retirement",
+        "account_subtype": "roth_ira",
+        "entity_key": "kernan_family",
+        "is_tax_deferred": false,
+        "is_tax_free": true,
+        "requires_rmd": false
+      },
+      "4071": {
+        "filename_label": "HMA",
+        "account_number": "Z40-394071",
+        "account_holder_name": "HMA GROUP, LLC",
+        "account_name": "Brokerage Account",
+        "account_type": "brokerage",
+        "account_subtype": "corporate",
+        "entity_key": "hma_group",
+        "is_tax_deferred": false,
+        "is_tax_free": false,
+        "requires_rmd": false
+      },
+      "6083": {
+        "filename_label": "TMNevada",
+        "account_number": "Z25-666083",
+        "account_holder_name": "T&M NEVADA REAL ESTATE HOLDINGS, LLC",
+        "account_name": "Brokerage Account",
+        "account_type": "brokerage",
+        "account_subtype": "corporate",
+        "entity_key": "tm_nevada_holdings",
         "is_tax_deferred": false,
         "is_tax_free": false,
         "requires_rmd": false

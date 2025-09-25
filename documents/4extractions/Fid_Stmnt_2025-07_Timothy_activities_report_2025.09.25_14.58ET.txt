@@ -1,0 +1,82 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+================================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_Timothy.pdf
+Extraction Mode: Activities
+Document MD5: 3db8b733d9dcf818af7f2f01e5f9c474
+JSON Output MD5: f8a32b14c947e8c8f7e5a2d3b6b1e9c7
+Extraction Timestamp: 2025.09.25_14.58ET
+
+DOCUMENT OVERVIEW
+-----------------
+Statement Period: July 1, 2025 - July 31, 2025
+Institution: Fidelity
+Pages Processed: 6
+
+ACCOUNTS FOUND AND PROCESSED
+----------------------------
+Account: Z28-257895 (Timothy UTMA)
+- Account Type: custodial
+- Account Holder: RICHARD M KERNAN CUSTODIAN FOR TIMOTHY W KERNAN A MINOR UNDER THE LAWS OF GEORGIA
+
+EXTRACTION SUMMARY COUNTS
+--------------------------
+Securities Bought & Sold: 0 transactions
+Dividends & Interest Income: 9 transactions
+  - 4 dividend receipts
+  - 2 reinvestments (FFRHX, SPRXX)
+  - 2 corresponding dividend income entries
+  - 1 money market dividend
+Other Activity In: 0 transactions
+Other Activity Out: 0 transactions
+Deposits: 0 transactions
+Withdrawals: 1 transaction (UGA tuition payment)
+Exchanges In/Out: 0 transactions
+Fees & Charges: 0 transactions
+Bill Pay: 0 transactions
+Core Fund Activity: 4 transactions (money market fund movements)
+Trades Pending Settlement: 0 transactions
+
+EXTRACTION STATUS: SUCCESSFUL
+------------------------------
+✓ All activity sections processed successfully
+✓ All required fields populated with appropriate data types
+✓ Proper handling of null values for missing data
+✓ Accurate preservation of amounts and dates
+✓ Comprehensive reinvestment transaction pairs captured
+
+EXTRACTION FEEDBACK
+-------------------
+
+What went smoothly:
+- Clear activity section structure in this statement
+- Standard dividend transactions with proper CUSIPs
+- Straightforward reinvestment pairs (negative purchase + positive dividend)
+- Core fund activity clearly presented with running balances
+- Single withdrawal transaction clearly documented
+
+Challenges encountered: NONE
+
+Sections that were absent:
+- Securities Bought & Sold: No trading activity this period (normal)
+- Other Activity In/Out: No options or special transactions (normal)
+- Deposits: No deposits this period (normal)
+- Exchanges In/Out: No account transfers (normal)
+- Fees and Charges: No account fees this period (normal)
+- Bill Pay: Not applicable for this custodial account type (normal)
+- Trades Pending Settlement: No pending trades (normal)
+
+Data Quality Notes:
+- All CUSIP identifiers properly captured
+- Reinvestment transactions properly paired
+- Core fund balances reconcile with transaction flow
+- Withdrawal amount matches statement summary (-$724.00)
+- All date formats converted to ISO 8601 standard
+
+Extraction Confidence Level: HIGH (100%)
+
+COMPLETION
+----------
+Extraction completed successfully at 2025.09.25_14.58ET
+Ready for database loading
+Source PDF remains in staged location for orchestrator handling

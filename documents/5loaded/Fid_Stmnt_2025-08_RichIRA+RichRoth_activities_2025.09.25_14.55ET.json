@@ -1,0 +1,313 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-08_richira_richroth_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_RichardIRA.pdf",
+    "json_output_md5_hash": "74c8a8a96632e7fda4be369f6669d0c5",
+    "doc_md5_hash": "9360a3962a18cba18730bc5785b90774",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_12.22ET",
+    "extractor_version": "1.0",
+    "pages_processed": 16,
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-08-31",
+    "period_start": "2025-08-01",
+    "period_end": "2025-08-31"
+  },
+  "accounts": [
+    {
+      "account_number": "238-908592",
+      "account_name": "TRADITIONAL IRA",
+      "account_holder_name": "RICHARD MICHAEL KERNAN",
+      "account_type": "retirement",
+      "securities_bought_sold": [
+        {
+          "settlement_date": "2025-08-08",
+          "sec_description": "CALL (EPD) ENTERPRISE PRODS DEC 19 25 $32 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": null,
+          "cusip": "7845019EY",
+          "description": "You Bought",
+          "quantity": "1.000000",
+          "price_per_unit": "1.0500",
+          "cost_basis": null,
+          "transaction_cost": "0.67",
+          "amount": "-105.67"
+        },
+        {
+          "settlement_date": "2025-08-08",
+          "sec_description": "CALL (EPD) ENTERPRISE PRODS DEC 19 25 $32 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": null,
+          "cusip": "7845019EY",
+          "description": "You Bought",
+          "quantity": "9.000000",
+          "price_per_unit": "1.0500",
+          "cost_basis": null,
+          "transaction_cost": "6.07",
+          "amount": "-951.07"
+        },
+        {
+          "settlement_date": "2025-08-08",
+          "sec_description": "CALL (FE) FIRSTENERGY CORP COM OCT 17 25 $44 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": null,
+          "cusip": "7727779GG",
+          "description": "You Bought",
+          "quantity": "10.000000",
+          "price_per_unit": "1.1000",
+          "cost_basis": null,
+          "transaction_cost": "6.74",
+          "amount": "-1106.74"
+        },
+        {
+          "settlement_date": "2025-08-08",
+          "sec_description": "PUT (EPD) ENTERPRISE PRODS AUG 15 25 $31.5 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": null,
+          "cusip": "8034379JH",
+          "description": "You Sold",
+          "quantity": "10.000000",
+          "price_per_unit": "0.2900",
+          "cost_basis": null,
+          "transaction_cost": "6.74",
+          "amount": "283.26"
+        }
+      ],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY FLOATING RATE HIGH INCOME",
+          "sec_symbol": null,
+          "cusip": "315916783",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "150.71"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "551.02"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Reinvestment",
+          "quantity": "681.950000",
+          "price_per_unit": "1.0000",
+          "amount": "-681.95"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "681.95"
+        }
+      ],
+      "other_activity_in": [
+        {
+          "settlement_date": "2025-08-14",
+          "sec_description": "ENTERPRISE PRODS PARTNERS L P COM",
+          "sec_symbol": null,
+          "cusip": "293792107",
+          "description": "Return Of Capital",
+          "quantity": null,
+          "cost_basis": null,
+          "amount": "545.00"
+        },
+        {
+          "settlement_date": "2025-08-15",
+          "sec_description": "PUT (EPD) ENTERPRISE PRODS AUG 15 25 $31.5 (100 SHS)",
+          "sec_symbol": null,
+          "cusip": "8034379JH",
+          "description": "Expired",
+          "quantity": "10.000000",
+          "cost_basis": "283.26",
+          "amount": "0.00"
+        }
+      ],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-08-08",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": null,
+          "quantity": "1880.220000",
+          "price_per_unit": "1.0000",
+          "amount": "-1880.22",
+          "balance": "162961.70"
+        },
+        {
+          "settlement_date": "2025-08-14",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": null,
+          "quantity": "545.000000",
+          "price_per_unit": "1.0000",
+          "amount": "545.00",
+          "balance": "163506.70"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": null,
+          "quantity": "701.730000",
+          "price_per_unit": "1.0000",
+          "amount": "701.73",
+          "balance": "164208.43"
+        }
+      ],
+      "trades_pending_settlement": [
+        {
+          "trade_date": "2025-08-29",
+          "settlement_date": "2025-09-02",
+          "sec_description": "DORCHESTER MINERALS LP COM UNIT",
+          "sec_symbol": "DMLP",
+          "cusip": null,
+          "description": "Bought",
+          "quantity": "800.000000",
+          "price_per_unit": "24.9500",
+          "amount": "-19960.00"
+        },
+        {
+          "trade_date": "2025-08-29",
+          "settlement_date": "2025-09-02",
+          "sec_description": "PUT (TSM) TAIWAN SEMICONDUCTOR SEP 12 25 $220 (100 SHS) OPENING TRANSACTION",
+          "sec_symbol": "TSM",
+          "cusip": null,
+          "description": "Sold",
+          "quantity": "10.000000",
+          "price_per_unit": "1.7700",
+          "amount": "1763.26"
+        },
+        {
+          "trade_date": "2025-08-29",
+          "settlement_date": "2025-09-02",
+          "sec_description": "VIANT TECHNOLOGY INC COM CL A",
+          "sec_symbol": "DSP",
+          "cusip": null,
+          "description": "Bought",
+          "quantity": "5.000000",
+          "price_per_unit": "10.3750",
+          "amount": "-51.88"
+        },
+        {
+          "trade_date": "2025-08-29",
+          "settlement_date": "2025-09-02",
+          "sec_description": "VIANT TECHNOLOGY INC COM CL A",
+          "sec_symbol": "DSP",
+          "cusip": null,
+          "description": "Bought",
+          "quantity": "615.000000",
+          "price_per_unit": "10.3800",
+          "amount": "-6383.70"
+        },
+        {
+          "trade_date": "2025-08-29",
+          "settlement_date": "2025-09-02",
+          "sec_description": "VIANT TECHNOLOGY INC COM CL A",
+          "sec_symbol": "DSP",
+          "cusip": null,
+          "description": "Bought",
+          "quantity": "380.000000",
+          "price_per_unit": "10.3900",
+          "amount": "-3948.20"
+        }
+      ]
+    },
+    {
+      "account_number": "239-694275",
+      "account_name": "ROTH IRA",
+      "account_holder_name": "RICHARD MICHAEL KERNAN",
+      "account_type": "retirement",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "85.54"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Reinvestment",
+          "quantity": "3.070000",
+          "price_per_unit": "1.0000",
+          "amount": "-3.07"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "3.07"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-08-29",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": null,
+          "quantity": "85.540000",
+          "price_per_unit": "1.0000",
+          "amount": "85.54",
+          "balance": "25499.14"
+        }
+      ],
+      "trades_pending_settlement": [
+        {
+          "trade_date": "2025-08-29",
+          "settlement_date": "2025-09-02",
+          "sec_description": "MACH NATURAL RESOURCES LP COM UNIT LTD PAR",
+          "sec_symbol": "MNR",
+          "cusip": null,
+          "description": "Bought",
+          "quantity": "1000.000000",
+          "price_per_unit": "14.2738",
+          "amount": "-14273.80"
+        }
+      ]
+    }
+  ]
+}

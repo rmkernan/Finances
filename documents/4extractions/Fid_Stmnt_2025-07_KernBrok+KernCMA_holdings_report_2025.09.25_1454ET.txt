@@ -1,0 +1,87 @@
+FIDELITY HOLDINGS EXTRACTION REPORT
+=====================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_KernBrok+KernCMA.pdf
+Extraction Mode: Holdings
+Statement Period: July 1, 2025 - July 31, 2025
+Extraction Timestamp: 2025-09-25 14:54:00 ET
+
+ACCOUNTS PROCESSED
+==================
+✓ Z24-527872 (KernBrok): FIDELITY ACCOUNT RICHARD M KERNAN AND PEGGY E KERNAN - TOD
+✓ Z27-375656 (KernCMA): FIDELITY CASH MANAGEMENT ACCOUNT - TOD
+
+EXTRACTION SUMMARY COUNTS
+==========================
+
+Account Z24-527872 (KernBrok):
+- Core Account: 1 position (Money Market)
+- Mutual Funds: 6 positions (3 Stock Funds, 1 Bond Fund, 1 Short-Term Fund, 1 ETP)
+- Stocks: 44 positions (40 Common Stock, 4 Preferred Stock)
+- Bonds: 3 positions (1 Corporate, 2 Municipal)
+- Options: 7 positions (All Puts, Short positions)
+- Other: 5 positions (4 REITs, 1 Warrants)
+Total: 66 positions
+
+Account Z27-375656 (KernCMA):
+- Core Account: 1 position (FDIC Insured Deposit)
+- Mutual Funds: 1 position (Short-Term Fund)
+- Bonds: 1 position (Municipal)
+Total: 3 positions
+
+Grand Total: 69 positions across both accounts
+
+SUCCESS STATUS
+==============
+✓ COMPLETE - All holdings successfully extracted from both accounts
+✓ All required fields populated according to JSON schema
+✓ Income summaries and portfolio summaries extracted for both accounts
+✓ Realized gains section extracted for brokerage account (absent for CMA as expected)
+
+EXTRACTION FEEDBACK
+===================
+
+What went smoothly:
+- Clear account structure with two distinct accounts properly identified
+- Standard holdings format followed Fidelity's consistent structure
+- All major security types present and properly categorized
+- Bond detail line parsing worked well for municipal and corporate bonds
+- Options descriptions parsed successfully despite complex formats
+- Short positions properly handled with negative quantities and values
+
+Challenges encountered:
+- Complex multi-line security descriptions handled successfully using concatenation rules
+- Options with "SHT" suffix properly identified as short positions
+- "Unavailable" cost basis values correctly converted to null in JSON
+- ULTA holdings showed both long and short positions which were properly differentiated
+- Some Other holdings had "unknown" cost basis which was preserved as specified
+
+Data quality observations:
+- All accounts from "Accounts Included" section successfully processed
+- Portfolio totals reconcile with individual position sums
+- No missing required fields or illegible data encountered
+- Date formats consistent throughout (using ISO 8601 in JSON)
+- All percentage values properly converted to decimal format
+
+Notable sections:
+- Realized Gains section present for brokerage account with short-term and long-term gains
+- No Realized Gains section for Cash Management Account (normal - cash accounts don't have capital gains)
+- Extensive bond holdings with proper CUSIP, ratings, and call date extraction
+- Options section included complex multi-underlying positions with proper parsing
+
+EXTRACTION CONFIDENCE
+=====================
+High - All data successfully located and extracted using provided mapping guidance. No data quality concerns or missing information identified.
+
+COMPLETION TIME
+===============
+2025-09-25 14:54:00 ET
+
+FILES CREATED
+=============
+✓ /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_KernBrok+KernCMA_holdings_2025.09.25_1454ET.json
+✓ /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_KernBrok+KernCMA_holdings_report_2025.09.25_1454ET.txt
+
+SOURCE PDF STATUS
+=================
+Source PDF left in staging location as instructed - orchestrator will handle file movement after successful extraction.

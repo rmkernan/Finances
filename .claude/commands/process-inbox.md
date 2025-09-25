@@ -18,6 +18,10 @@
 **Updated:** 09/24/25 10:25AM - Updated transaction classification section to reflect new three-table mapping system and enhanced options tracking
 **Updated:** 09/24/25 10:35AM - Added comprehensive mapping system integration with post-extraction analysis workflow and intelligent rule recommendation process
 **Updated:** 09/24/25 11:16AM - Restructured workflow with parallel processing optimizations, reducing execution time from ~45 to ~15 seconds
+**Updated:** 09/25/25 12:54PM - Added critical Step 6: Create Database Document Records to complete workflow before PDF archival
+**Updated:** 09/25/25 12:56PM - Simplified Step 6 to use direct SQL commands instead of separate Python script
+**Updated:** 09/25/25 1:08PM - Expanded Step 6 to include missing reference data loading (entities and accounts) before document creation
+**Updated:** 09/25/25 1:12PM - Added unique constraints for entity_name and institution_name, updated conflict handling to use proper composite keys
 **Purpose:** Guide Claude through orchestrating document processing from inbox using specialized extraction agents
 **Usage:** User invokes this when ready to process financial documents
 
@@ -356,9 +360,91 @@ The partial extraction has been saved. Would you like to:
 3. Keep in inbox for manual review later?
 ```
 
-### Step 6: Clean Up (When Appropriate)
+### Step 6: Create Database Records (Reference Data + Documents)
 
-Only after successful processing:
+**CRITICAL STEP:** Ensure all reference data exists, then create document records before moving PDFs to processed folder.
+
+#### 6A: Load Missing Entities from Config
+
+```sql
+-- Load missing entities from account-mappings.json
+INSERT INTO entities (entity_name, entity_type, tax_id, primary_taxpayer, georgia_resident, created_at, updated_at)
+VALUES
+    ('Kernan Family', 'individual', '2222', 'Richard Michael Kernan', true, NOW(), NOW()),
+    ('HMA Group, LLC', 'llc', 'PLACEHOLDER_EIN_HMA', 'HMA Group, LLC', true, NOW(), NOW()),
+    ('T&M Nevada Real Estate Holdings, LLC', 'llc', 'PLACEHOLDER_EIN_TMNEVADA', 'T&M Nevada Real Estate Holdings, LLC', false, NOW(), NOW()),
+    ('Milton Preschool Inc', 's_corp', 'PLACEHOLDER_EIN_MILTON', 'Milton Preschool Inc', true, NOW(), NOW())
+ON CONFLICT (entity_name) DO NOTHING;
+```
+
+#### 6B: Load Missing Accounts from Config
+
+```sql
+-- Load missing accounts from account-mappings.json
+INSERT INTO accounts (
+    account_number, account_holder_name, account_name, account_type, account_subtype,
+    institution_id, entity_id, is_tax_deferred, is_tax_free, requires_rmd,
+    created_at, updated_at
+)
+SELECT
+    vals.account_number, vals.account_holder_name, vals.account_name,
+    vals.account_type, vals.account_subtype, i.id, e.id,
+    vals.is_tax_deferred, vals.is_tax_free, vals.requires_rmd, NOW(), NOW()
+FROM (VALUES
+    ('Z24-527872', 'RICHARD M KERNAN AND PEGGY E KERNAN', 'Joint Brokerage', 'brokerage', 'joint_taxable', 'Fidelity', 'Kernan Family', false, false, false),
+    ('Z27-375656', 'RICHARD M KERNAN AND PEGGY E KERNAN', 'Cash Management Account', 'cash_management', 'joint_cash', 'Fidelity', 'Kernan Family', false, false, false),
+    ('Z40-394067', 'MILTON PRESCHOOL INC', 'Brokerage Account', 'brokerage', 'corporate', 'Fidelity', 'Milton Preschool Inc', false, false, false),
+    ('Z28-257895', 'RICHARD M KERNAN CUSTODIAN FOR TIMOTHY W KERNAN A MINOR', 'UTMA Account', 'custodial', 'utma', 'Fidelity', 'Kernan Family', false, false, false),
+    ('238-908592', 'RICHARD M KERNAN', 'Traditional IRA', 'retirement', 'traditional_ira', 'Fidelity', 'Kernan Family', true, false, true),
+    ('239-694275', 'RICHARD M KERNAN', 'Roth IRA', 'retirement', 'roth_ira', 'Fidelity', 'Kernan Family', false, true, false),
+    ('Z40-394071', 'HMA GROUP, LLC', 'Brokerage Account', 'brokerage', 'corporate', 'Fidelity', 'HMA Group, LLC', false, false, false),
+    ('Z25-666083', 'T&M NEVADA REAL ESTATE HOLDINGS, LLC', 'Brokerage Account', 'brokerage', 'corporate', 'Fidelity', 'T&M Nevada Real Estate Holdings, LLC', false, false, false)
+) AS vals(account_number, account_holder_name, account_name, account_type, account_subtype, institution_name, entity_name, is_tax_deferred, is_tax_free, requires_rmd)
+JOIN institutions i ON i.institution_name = vals.institution_name
+JOIN entities e ON e.entity_name = vals.entity_name
+ON CONFLICT (institution_id, account_number) DO NOTHING;
+```
+
+#### 6C: Create Document Records
+
+For each processed PDF, create a document record using metadata from extraction JSON files:
+
+```sql
+-- Extract metadata from JSON first, then run INSERT
+-- Example for Fid_Stmnt_2025-07_HMA.pdf:
+INSERT INTO documents (
+    institution_id, tax_year, document_type,
+    period_start, period_end, file_path, file_name,
+    doc_md5_hash, processed_at, processed_by
+) VALUES (
+    '33333333-3333-3333-3333-333333333333',  -- Fidelity institution ID
+    2025, 'statement',
+    '2025-07-01', '2025-07-31',  -- From extraction JSON document_data
+    '/Users/richkernan/Projects/Finances/documents/3processed/',
+    'Fid_Stmnt_2025-07_HMA.pdf',  -- From extraction JSON metadata
+    '96084b875762cacdfd1fbaf9771bb5fb',  -- From extraction JSON doc_md5_hash
+    NOW(),
+    'Claude - process-inbox'
+) ON CONFLICT (doc_md5_hash) DO NOTHING;
+```
+
+**Required metadata sources:**
+- `doc_md5_hash`: From `extraction_metadata.doc_md5_hash` in JSON
+- `file_name`: From `extraction_metadata.source_pdf_filepath` in JSON
+- `period_start/end`: From `document_data.period_start/end` in JSON
+- `tax_year`: Extract year from period_start date
+
+**Key Design Points:**
+- **Reference data first** - Entities and accounts loaded before documents
+- **Uses extraction metadata** - Period dates and PDF hash from JSON files
+- **Database UUID generation** - Let PostgreSQL handle ID generation
+- **Conflict handling** - ON CONFLICT DO NOTHING prevents duplicates
+- **Fail-fast** - Stops on any error to prevent incomplete state
+- **Institution ID** - Hardcoded Fidelity ID from schema (33333333-3333-3333-3333-333333333333)
+
+### Step 7: Clean Up (When Appropriate)
+
+Only after successful processing AND database record creation:
 ```bash
 # Move from staged to processed (already has correct name)
 mv /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-08_Brok+CMA.pdf \

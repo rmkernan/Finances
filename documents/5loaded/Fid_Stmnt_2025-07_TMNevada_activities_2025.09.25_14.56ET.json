@@ -1,0 +1,83 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-07_tmnevada_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_TM_Nevada.pdf",
+    "json_output_md5_hash": "9d164ab7b9d9504f2a9e51f10061c89a",
+    "doc_md5_hash": "e4937fe257a781ea752faca1f21102b7",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_13.56ET",
+    "extractor_version": "1.0",
+    "pages_processed": 4,
+    "extraction_notes": [
+      "Simple statement with money market fund only",
+      "All activity clearly identified and extracted"
+    ]
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-07-31",
+    "period_start": "2025-07-01",
+    "period_end": "2025-07-31"
+  },
+  "accounts": [
+    {
+      "account_number": "Z25-666083",
+      "account_name": "Brokerage Account",
+      "account_holder_name": "T&M NEVADA REAL ESTATE HOLDINGS, LLC",
+      "account_type": "brokerage",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": "SPAXX",
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "149.70"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [
+        {
+          "date": "2025-07-08",
+          "reference": "ED79464759",
+          "description": "EFT FUNDS PAID ED79464759 /WEB JPMORGAN CHASE BANK, NA ******3278",
+          "amount": "-2000.00"
+        }
+      ],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-07-08",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": "SPAXX",
+          "quantity": "2000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-2000.00",
+          "balance": "43962.93"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "Reinvestment",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET REINVEST @ $1.000",
+          "sec_symbol": "SPAXX",
+          "quantity": "149.700000",
+          "price_per_unit": "1.0000",
+          "amount": "149.70",
+          "balance": "44112.63"
+        }
+      ],
+      "trades_pending_settlement": []
+    }
+  ]
+}

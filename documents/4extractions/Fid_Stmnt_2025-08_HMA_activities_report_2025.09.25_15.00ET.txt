@@ -1,0 +1,71 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+==============================================
+
+EXTRACTION DETAILS:
+- Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_HMA.pdf
+- Extraction Mode: Activities
+- Statement Period: August 1, 2025 - August 31, 2025
+- Pages Processed: 4 of 8 (activities sections only)
+- Extraction Timestamp: 2025.09.25_15.00ET
+
+ACCOUNTS PROCESSED:
+- Z40-394071 (HMA GROUP, LLC - Brokerage Account)
+
+EXTRACTION SUMMARY COUNTS:
+- Securities Bought/Sold: 0 transactions
+- Dividends/Interest Income: 1 dividend (money market)
+- Other Activity In/Out: 0 transactions
+- Deposits: 1 cash deposit
+- Withdrawals: 0 transactions
+- Exchanges In: 0 transfers
+- Exchanges Out: 1 transfer (to another account)
+- Fees/Charges: 0 fees
+- Bill Payments: 0 payments
+- Core Fund Activity: 3 transactions (sale, purchase, reinvestment)
+- Trades Pending Settlement: 0 transactions
+
+TOTAL ACTIVITY ITEMS: 6 transactions
+
+SUCCESS STATUS: Complete
+- All activity sections successfully parsed
+- All required fields populated
+- Account properly mapped to HMA filename label
+- JSON output validates against schema
+- MD5 hash calculated and integrated
+
+EXTRACTION FEEDBACK:
+
+What Went Smoothly:
+- Simple statement structure with only money market fund activity
+- Clear activity sections with well-formatted data
+- Standard Fidelity formatting patterns recognized
+- Core fund activity properly captured with running balances
+- Account transfer properly identified and extracted
+
+Challenges/Notes:
+- No actual challenges encountered
+- This is a straightforward money market account with minimal activity
+- All transactions followed standard Fidelity patterns covered in mapping documents
+
+Sections That Were Absent (Normal):
+- No securities trading (securities_bought_sold empty)
+- No options activity (other_activity_in/out empty)
+- No withdrawals (withdrawals empty)
+- No incoming transfers (exchanges_in empty)
+- No fees charged (fees_charges empty)
+- No bill payment activity (billpay empty)
+- No pending trades (trades_pending_settlement empty)
+
+Data Quality Notes:
+- All amounts properly signed (deposits positive, transfers negative)
+- Dates in correct YYYY-MM-DD format
+- Core fund running balances match statement totals
+- Account number Z40-394071 matches HMA Group mapping
+
+EXTRACTION CONFIDENCE LEVEL: 100%
+
+Files Generated:
+- JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-08_HMA_activities_2025.09.25_15.00ET.json
+- Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-08_HMA_activities_report_2025.09.25_15.00ET.txt
+
+READY FOR LOADING: Yes - extraction complete and validated

@@ -1,0 +1,112 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-07_hma_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_HMA.pdf",
+    "json_output_md5_hash": "c8d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2",
+    "doc_md5_hash": "96084b875762cacdfd1fbaf9771bb5fb",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_14.22ET",
+    "extractor_version": "1.0",
+    "pages_processed": 8,
+    "extraction_notes": []
+  },
+
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-07-31",
+    "period_start": "2025-07-01",
+    "period_end": "2025-07-31"
+  },
+
+  "accounts": [
+    {
+      "account_number": "Z40-394071",
+      "account_name": "LIMITED LIABILITY CO",
+      "account_holder_name": "HMA GROUP, LLC",
+      "account_type": "brokerage",
+
+      "securities_bought_sold": [],
+
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": "SPAXX",
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "649.76"
+        }
+      ],
+
+      "other_activity_in": [],
+
+      "other_activity_out": [],
+
+      "deposits": [
+        {
+          "date": "2025-07-21",
+          "reference": null,
+          "description": "Deposit Received",
+          "amount": "36044.13"
+        }
+      ],
+
+      "withdrawals": [
+        {
+          "date": "2025-07-21",
+          "reference": "Money Line Paid",
+          "description": "EFT FUNDS PAID ED80794388 /WEB FIRST CITIZENS BANK & TRUST CO ******0938",
+          "amount": "-3000.00"
+        }
+      ],
+
+      "exchanges_in": [],
+
+      "exchanges_out": [],
+
+      "fees_charges": [],
+
+      "billpay": [],
+
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-07-21",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "36044.130000",
+          "price_per_unit": "1.0000",
+          "amount": "36044.13",
+          "balance": "218551.63"
+        },
+        {
+          "settlement_date": "2025-07-21",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": "SPAXX",
+          "quantity": "-3000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-3000.00",
+          "balance": "215551.63"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "Reinvestment",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET REINVEST @ $1.000",
+          "sec_symbol": "SPAXX",
+          "quantity": "649.760000",
+          "price_per_unit": "1.0000",
+          "amount": "649.76",
+          "balance": "216201.39"
+        }
+      ],
+
+      "trades_pending_settlement": []
+    }
+  ]
+}

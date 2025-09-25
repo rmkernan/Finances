@@ -1,0 +1,77 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-07_tmnevada_holdings",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_TM_Nevada.pdf",
+    "json_output_md5_hash": "b9fbd6ba53f621fc04dbd2a7a2a5dbf3",
+    "doc_md5_hash": "e4937fe257a781ea752faca1f21102b7",
+    "extraction_type": "holdings",
+    "extraction_timestamp": "2025.09.25_12.29ET",
+    "extractor_version": "1.0",
+    "pages_processed": 4,
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-07-31",
+    "period_start": "2025-07-01",
+    "period_end": "2025-07-31"
+  },
+  "accounts": [
+    {
+      "account_number": "Z25-666083",
+      "account_name": "T&M NEVADA REAL ESTATE HOLDINGS, LLC - LIMITED LIABILITY CO",
+      "account_holder_name": "T&M NEVADA REAL ESTATE HOLDINGS, LLC",
+      "account_type": "brokerage",
+      "portfolio_summary": {
+        "beginning_value": "45962.93",
+        "ending_value": "44112.63",
+        "net_account_value": "44112.63"
+      },
+      "income_summary": {
+        "taxable_total_period": "149.70",
+        "taxable_total_ytd": "1046.14",
+        "divs_taxable_period": "149.70",
+        "divs_taxable_ytd": "1046.14",
+        "stcg_taxable_period": null,
+        "stcg_taxable_ytd": null,
+        "int_taxable_period": null,
+        "int_taxable_ytd": null,
+        "ltcg_taxable_period": null,
+        "ltcg_taxable_ytd": null,
+        "tax_exempt_total_period": null,
+        "tax_exempt_total_ytd": null,
+        "divs_tax_exempt_period": null,
+        "divs_tax_exempt_ytd": null,
+        "int_tax_exempt_period": null,
+        "int_tax_exempt_ytd": null,
+        "roc_period": null,
+        "roc_ytd": null,
+        "grand_total_period": "149.70",
+        "grand_total_ytd": "1046.14"
+      },
+      "realized_gains": {
+        "st_gain_period": null,
+        "st_loss_period": null,
+        "lt_gain_ytd": null,
+        "lt_loss_ytd": null
+      },
+      "holdings": [
+        {
+          "sec_type": "Core Account",
+          "sec_subtype": "Money Market",
+          "sec_symbol": "SPAXX",
+          "cusip": "31617H102",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET (SPAXX)",
+          "beg_market_value": "45962.93",
+          "quantity": "44112.630000",
+          "price_per_unit": "1.0000",
+          "end_market_value": "44112.63",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "1900.00",
+          "est_yield": "4.310"
+        }
+      ]
+    }
+  ]
+}

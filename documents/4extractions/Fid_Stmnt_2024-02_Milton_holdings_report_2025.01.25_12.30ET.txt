@@ -1,0 +1,112 @@
+FIDELITY STATEMENT HOLDINGS EXTRACTION REPORT
+=============================================
+Extraction Date: January 25, 2025 at 12:30 ET
+Document Processed: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-02_Milton.pdf
+Extraction Mode: HOLDINGS
+Document Hash: 242fe88002e168563016e9ea81ee649f
+
+DOCUMENT DETAILS
+================
+Institution: Fidelity
+Statement Period: February 1, 2024 - February 29, 2024
+Total Pages: 8 pages processed
+
+ACCOUNTS PROCESSED
+==================
+Account Found: Z40-394067 (Milton Preschool Inc - Corporation)
+- Account Type: Brokerage
+- Account Holder: MILTON PRESCHOOL INC
+- Net Account Value: $792,331.14
+- Beginning Value: $788,415.05
+- Ending Value: $792,331.14
+
+SUMMARY COUNTS
+==============
+Total Holdings Extracted: 2 positions
+- 1 Core Account position (Money Market)
+- 1 Mutual Fund position (Short-Term Fund)
+
+Holdings Breakdown:
+- Core Account: FIDELITY GOVERNMENT MONEY MARKET (SPAXX) - $659.57
+- Mutual Funds: FIMM TREASURY ONLY PORTFOLIO: CL I (FSIXX) - $791,671.57
+
+INCOME SUMMARY EXTRACTED
+========================
+Period Income:
+- Taxable Dividends: $3,258.56
+- Total Period Income: $3,258.56
+
+Year-to-Date Income:
+- Taxable Dividends: $7,588.24
+- Total YTD Income: $7,588.24
+
+EXTRACTION STATUS
+=================
+Status: SUCCESS - Complete extraction accomplished
+
+DATA QUALITY NOTES
+==================
+✓ All required account information successfully extracted
+✓ All holdings data captured with complete attributes
+✓ Income summary table fully populated
+✓ Portfolio values reconcile correctly
+✓ No missing or corrupted data encountered
+
+EXTRACTION FEEDBACK
+===================
+
+What Went Smoothly:
+- Clean, straightforward document structure with clear holdings sections
+- Standard Fidelity format with well-organized data presentation
+- All numeric values clearly readable and properly formatted
+- Account identification and mapping successful using existing configuration
+
+Notable Observations:
+- Simple portfolio with only 2 holdings (Core Account + Single Mutual Fund)
+- No complex securities requiring special parsing (no bonds, options, stocks)
+- No Realized Gains section present (normal - no sales occurred during period)
+- Standard money market fund and Treasury portfolio structure
+
+Sections Processed Successfully:
+- Account Summary: Complete extraction of portfolio values and account metadata
+- Income Summary: Full taxable dividend income data for both period and YTD
+- Holdings - Core Account: FIDELITY GOVERNMENT MONEY MARKET with EAI and yield
+- Holdings - Mutual Funds: FIMM TREASURY ONLY PORTFOLIO with complete data
+
+Sections Absent (Normal for this statement):
+- Realized Gains and Losses: No sales activity during period
+- Bonds section: No bond holdings
+- Stocks section: No stock holdings
+- Options section: No options positions
+- Exchange Traded Products: No ETP holdings
+- Other Holdings: No alternative investments
+
+DATA VALIDATION
+===============
+✓ Account number Z40-394067 matches expected format
+✓ All monetary values properly formatted as strings with 2 decimal places
+✓ Quantities formatted with 6 decimal precision as required
+✓ Estimated yields in percentage format (4.770%, 4.880%)
+✓ Security symbols extracted correctly (SPAXX, FSIXX)
+✓ All required fields populated, optional fields appropriately null
+
+CONFIDENCE LEVEL
+================
+Extraction Confidence: 100%
+- All data clearly visible and readable in source PDF
+- Standard document format with no anomalies
+- Complete data capture achieved
+- No ambiguous or uncertain values encountered
+
+FILES CREATED
+=============
+JSON Output: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-02_Milton_holdings_2025.01.25_12.30ET.json
+Report File: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2024-02_Milton_holdings_report_2025.01.25_12.30ET.txt
+
+NEXT STEPS
+==========
+- Source PDF remains in /documents/2staged/ for orchestrator processing
+- JSON file ready for database loading
+- No manual review required - extraction complete and validated
+
+Extraction completed successfully at 2025.01.25_12.30ET

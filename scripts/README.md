@@ -2,7 +2,22 @@
 
 **Created:** 09/23/25 7:16PM
 **Updated:** 09/23/25 7:30PM
+**Updated:** 09/25/25 10:35PM - Note: Most mapping scripts are DEPRECATED. New system uses 3-table rules (map_rules/map_conditions/map_actions)
 **Purpose:** Comprehensive guide to utility scripts for data management and mapping system maintenance
+
+## ⚠️ IMPORTANT: Mapping System Migration
+
+**As of 09/25/25:** The mapping system has migrated from the `data_mappings` table to a new 3-table system:
+- `map_rules` - Rule definitions with 2-level application order
+- `map_conditions` - IF logic (check_field, match_operator, match_value)
+- `map_actions` - THEN logic (set_field, set_value)
+
+**Current Status:**
+- ✅ **Active:** `extract_pdf_pages.py` - Still useful for PDF processing
+- ❌ **Deprecated:** `load_data_mappings.py`, `fix_transaction_types.py`, `populate_sec_class.py`
+- 🔄 **New System:** Rules managed via `/config/mapping-rules.csv` and `update_mapping_rules.py`
+
+**For Current Rule Management:** See `/docs/Design/Database/CLAUDE.md` for the simplified 2-level rule structure.
 
 ## Overview
 

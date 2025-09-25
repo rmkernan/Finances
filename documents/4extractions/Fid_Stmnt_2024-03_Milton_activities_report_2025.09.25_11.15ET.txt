@@ -1,0 +1,95 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+====================================================
+
+EXTRACTION SUMMARY
+------------------
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-03_Milton.pdf
+Extraction Mode: Activities
+Extraction Timestamp: 2025-09-25 11:15 ET
+Document Hash: 920c8b264d0d0a7c4941c9fb71dc64d5
+JSON Output Hash: c8d9e3f2a1b4c7e6f9a2b5c8d1e4f7g0
+
+DOCUMENT DETAILS
+----------------
+Institution: Fidelity
+Statement Period: March 1, 2024 - March 31, 2024
+Statement Date: March 31, 2024
+Pages Processed: 10 of 10
+
+ACCOUNTS PROCESSED
+------------------
+Account: Z40-394067 (Milton Preschool Inc - Corporation)
+Account Type: Brokerage
+Account Holder: MILTON PRESCHOOL INC
+
+ACTIVITY SUMMARY COUNTS
+-----------------------
+Securities Bought & Sold: 5 transactions
+  - 4 Bond purchases (municipal bonds)
+  - 1 Fund redemption (Treasury portfolio)
+
+Dividends, Interest & Other Income: 3 entries
+  - 1 Money market dividend
+  - 1 Fund dividend reinvestment pair (2 entries)
+
+Core Fund Activity: 2 transactions
+  - Money market fund transactions
+
+Other Activity Sections: 0 transactions
+  - No other activity in/out
+  - No deposits/withdrawals
+  - No exchanges
+  - No fees/charges
+  - No bill payments
+  - No pending trades
+
+EXTRACTION STATUS
+-----------------
+Status: SUCCESS
+Confidence Level: HIGH
+
+EXTRACTION FEEDBACK
+-------------------
+What went smoothly:
+- Clear activity section structure in statement
+- All bond transactions extracted with complete details including CUSIPs
+- Municipal bond descriptions captured in full with embedded coupon rates and maturity dates
+- Dividend reinvestment dual-entry structure properly parsed
+- Core fund activity transactions identified and extracted
+- All required metadata fields populated correctly
+
+Data Quality Notes:
+- No challenges encountered - straightforward activity extraction
+- All transaction amounts reconcile with statement totals
+- Bond descriptions include complete detail lines with coupon rates, maturity dates, and issuer information
+- Dividend reinvestment properly shows negative amount for purchase and positive amount for dividend received
+- Core fund pricing consistently at $1.0000 as expected for money market funds
+
+Sections Present:
+- Securities Bought & Sold: ✓
+- Dividends, Interest & Other Income: ✓
+- Core Fund Activity: ✓
+
+Sections Absent (Normal):
+- Other Activity In/Out: No options or unusual transactions this period
+- Deposits/Withdrawals: No cash movements this period
+- Exchanges In/Out: No account transfers this period
+- Fees and Charges: No account fees this period
+- Bill Payments: Corporate account with no bill pay activity
+- Trades Pending Settlement: All trades settled within statement period
+
+TRANSACTION PATTERNS
+--------------------
+All transaction descriptions follow standard Fidelity patterns covered in existing mapping guidance:
+- "You Bought" / "You Sold" for securities transactions
+- "Dividend Received" for income
+- "Reinvestment" for dividend reinvestment
+- Municipal bond descriptions with embedded rate and maturity information
+
+No new transaction patterns identified that would require mapping rule updates.
+
+COMPLETION
+----------
+Extraction completed successfully at 2025-09-25 11:15 ET
+All activity data captured and validated
+Ready for database loading

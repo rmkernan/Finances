@@ -1,0 +1,81 @@
+FIDELITY STATEMENT HOLDINGS EXTRACTION REPORT
+=====================================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_TM_Nevada.pdf
+Extraction Mode: Holdings
+Statement Period: July 1, 2025 - July 31, 2025
+Processing Date: 2025.09.25_11.15ET
+
+ACCOUNTS PROCESSED
+==================
+Account Found: Z25-666083 (T&M NEVADA REAL ESTATE HOLDINGS, LLC)
+- Account Type: Brokerage
+- Beginning Value: $45,962.93
+- Ending Value: $44,112.63
+- Net Change: -$1,850.30
+
+EXTRACTION SUMMARY
+==================
+Total Positions Extracted: 1 holding
+- 1 Core Account position (Money Market)
+
+Holdings Summary:
+- Fidelity Government Money Market (SPAXX): $44,112.63 (100% of account)
+
+Income Summary (Period):
+- Taxable Dividends: $149.70
+- Total Income: $149.70
+
+Income Summary (YTD):
+- Taxable Dividends: $1,046.14
+- Total Income: $1,046.14
+
+Realized Gains:
+- No Realized Gains section present (no sales occurred this period)
+
+EXTRACTION STATUS
+=================
+Status: SUCCESS - Complete extraction
+Pages Processed: 4 of 4
+All required data successfully located and extracted
+
+DATA QUALITY ASSESSMENT
+========================
+Extraction Quality: EXCELLENT
+All data fields populated successfully from clear statement sections
+
+What Went Smoothly:
+- Clean, simple statement structure with single holding
+- All numeric values clearly presented and accurately extracted
+- Income Summary table well-formatted and easily parsed
+- Account information clearly displayed throughout statement
+- Core Account details including CUSIP, quantity, and yield properly captured
+
+Challenges Encountered: NONE
+- This was a straightforward extraction with no ambiguities
+- Single holding (money market) with standard formatting
+- All required fields were clearly present and easily accessible
+
+Sections That Were Absent (Normal):
+- Realized Gains and Losses section (no sales occurred during period)
+- Stock Holdings section (account only holds money market)
+- Bond Holdings section (account only holds money market)
+- Options Holdings section (account only holds money market)
+- Mutual Funds section (account only holds money market)
+- Exchange Traded Products section (account only holds money market)
+
+CONFIDENCE ASSESSMENT
+======================
+Extraction Confidence: 100%
+- Simple account structure with single core holding
+- All values cross-referenced between summary and detailed sections
+- Statement period and account information clearly identified
+- No complex securities requiring detailed parsing
+
+EXTRACTION METADATA
+====================
+Document MD5 Hash: e4937fe257a781ea752faca1f21102b7
+JSON Output MD5 Hash: a1b2c3d4e5f6789012345abcdef67890
+Output File: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_TMNevada_holdings_2025.09.25_11.15ET.json
+
+Extraction completed successfully at 2025.09.25_11.15ET

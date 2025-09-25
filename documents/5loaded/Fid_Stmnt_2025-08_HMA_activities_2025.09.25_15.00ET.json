@@ -1,0 +1,100 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-08_hma_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_HMA.pdf",
+    "json_output_md5_hash": "cf6d65a40b20b3d2effb9e2272a594bd",
+    "doc_md5_hash": "d92e90493dbe4ed36ba8fd2088cfb493",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_12.27ET",
+    "extractor_version": "1.0",
+    "pages_processed": 4,
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-08-31",
+    "period_start": "2025-08-01",
+    "period_end": "2025-08-31"
+  },
+  "accounts": [
+    {
+      "account_number": "Z40-394071",
+      "account_name": "Brokerage Account",
+      "account_holder_name": "HMA GROUP, LLC",
+      "account_type": "brokerage",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-08-29",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": "SPAXX",
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "426.66"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [
+        {
+          "date": "2025-08-08",
+          "reference": null,
+          "description": "Deposit Received",
+          "amount": "1263.78"
+        }
+      ],
+      "withdrawals": [],
+      "exchanges_in": [],
+      "exchanges_out": [
+        {
+          "date": "2025-08-01",
+          "sec_description": "Z24-527872-1",
+          "sec_symbol": null,
+          "cusip": null,
+          "description": "Transferred To",
+          "amount": "-100000.00"
+        }
+      ],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-08-01",
+          "account_type": "CASH",
+          "transaction": "You Sold",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "quantity": "-100000.000000",
+          "price_per_unit": "1.0000",
+          "amount": "-100000.00",
+          "balance": "116201.39"
+        },
+        {
+          "settlement_date": "2025-08-08",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "quantity": "1263.780000",
+          "price_per_unit": "1.0000",
+          "amount": "1263.78",
+          "balance": "117465.17"
+        },
+        {
+          "settlement_date": "2025-08-29",
+          "account_type": "CASH",
+          "transaction": "Reinvestment",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET REINVEST",
+          "sec_symbol": null,
+          "quantity": "426.660000",
+          "price_per_unit": "1.0000",
+          "amount": "426.66",
+          "balance": "117891.83"
+        }
+      ],
+      "trades_pending_settlement": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+================================================
+Generated: 2025-09-25 08:45 ET
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_KernBrok+KernCMA.pdf
+Document Hash: e884e535f5b8a8135e2ea130e076b6e1
+Extraction Mode: ACTIVITIES
+Pages Processed: 32
+
+EXTRACTION SUMMARY
+==================
+Status: SUCCESS
+Accounts Found: 2
+Statement Period: July 1, 2025 - July 31, 2025
+
+ACCOUNTS PROCESSED
+==================
+1. Z24-527872 (KernBrok) - Brokerage Account
+   - Securities Bought & Sold: 11 transactions
+   - Dividends & Interest Income: 35 entries
+   - Other Activity In: 1 expiration
+   - Withdrawals: 4 wire transfers
+   - Core Fund Activity: 17 money market transactions
+
+2. Z27-375656 (KernCMA) - Cash Management Account
+   - Dividends & Interest Income: 4 entries
+   - Deposits: 6 transactions
+   - Withdrawals: 1 mortgage payment
+   - Bill Payments: 2 credit card payments
+   - Core Fund Activity: 7 FDIC deposit transactions
+
+TRANSACTION SUMMARY COUNTS
+===========================
+Securities Bought & Sold: 11 trades (including 1 bond redemption, 9 options, 1 stock purchase)
+Dividends & Interest: 39 income entries (municipal bonds, stocks, money market funds)
+Options Activity: 10 options transactions (puts/calls on TSLA, META, MSFT, CRWV)
+Withdrawals: 5 cash outflows ($270K from brokerage, mortgage payment from CMA)
+Deposits: 6 cash inflows to CMA (payroll, transfers)
+Bill Payments: 2 credit card payments
+Core Fund/Cash Management: 24 money market and FDIC deposit transactions
+
+EXTRACTION FEEDBACK
+===================
+
+What Went Smoothly:
+- Successfully extracted all activity data from both accounts following Map_Stmnt_Fid_Activities.md guidance
+- Multi-line security descriptions parsed correctly for complex bonds and options
+- Bond redemption with null price handled properly per reference guidance
+- Options transactions with detailed strike prices and expiration dates captured accurately
+- All core fund activity including running balances extracted completely
+- Municipal bond interest payments properly categorized as "Muni Exempt Int"
+- Dividend reinvestments captured as dual entries (negative purchase, positive dividend)
+- Wire transfer reference numbers and destination details preserved
+- FDIC deposit account activity tracked with accurate balances
+
+Challenges Encountered:
+None. All transaction patterns were covered by the existing mapping documentation.
+
+Sections Absent (Normal):
+- No Exchanges In/Out: No account-to-account transfers during this period
+- No Fees & Charges: No account maintenance fees charged
+- Short Activity: Not applicable for these account types
+- No Trades Pending Settlement: All trades settled within statement period
+
+Unknown Transaction Patterns:
+None encountered. All transaction descriptions matched existing classification patterns in the mapping system.
+
+New Security Patterns:
+None requiring new classification rules. All securities fell within existing categories:
+- Municipal bonds with standard coupon structures
+- Common stock and preferred stock dividends
+- Options with standard call/put nomenclature
+- Money market funds with standard dividend structures
+
+CONFIDENCE LEVEL
+================
+High (95%) - All activity data successfully extracted with complete field population. Transaction amounts cross-verified against statement totals where available. All reference document patterns followed successfully.
+
+COMPLETION TIME
+===============
+2025-09-25 08:45 ET
+
+FILES GENERATED
+===============
+- JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_KernBrok+KernCMA_activities_2025.09.25_08.45ET.json
+- Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-07_KernBrok+KernCMA_activities_report_2025.09.25_08.45ET.txt
+
+Source PDF remains in /documents/2staged/ for orchestrator file management.

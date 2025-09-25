@@ -1,0 +1,104 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+================================================
+
+Source Document: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_TM_Nevada.pdf
+Extraction Mode: Activities
+Document Hash: e4937fe257a781ea752faca1f21102b7
+Extraction Timestamp: 2025-09-25T14:56:00ET
+
+ACCOUNTS PROCESSED
+==================
+Account Z25-666083: T&M NEVADA REAL ESTATE HOLDINGS, LLC - Brokerage Account
+
+SUMMARY COUNTS
+==============
+• 1 dividend transaction (money market fund dividend)
+• 1 withdrawal (EFT to JPMorgan Chase)
+• 2 core fund transactions (sale and reinvestment)
+
+Total: 4 transactions extracted
+
+EXTRACTION DETAILS
+==================
+
+Securities Bought & Sold: NONE
+- No securities trading activity during this period
+
+Dividends, Interest & Other Income: 1 transaction
+- 07/31/2025: FIDELITY GOVERNMENT MONEY MARKET dividend $149.70
+
+Other Activity In/Out: NONE
+- No options activity or other complex transactions
+
+Deposits: NONE
+- No cash deposits during this period
+
+Withdrawals: 1 transaction
+- 07/08/2025: EFT withdrawal $2,000.00 to JPMorgan Chase Bank
+
+Exchanges In/Out: NONE
+- No account-to-account transfers
+
+Fees and Charges: NONE
+- No account fees charged
+
+Bill Payments: NONE
+- No bill payment activity
+
+Core Fund Activity: 2 transactions
+- 07/08/2025: Sale of $2,000 from money market fund (balance: $43,962.93)
+- 07/31/2025: Dividend reinvestment $149.70 (balance: $44,112.63)
+
+Trades Pending Settlement: NONE
+- No unsettled trades
+
+EXTRACTION STATUS
+=================
+SUCCESS - Complete extraction of all activity data
+
+EXTRACTION CONFIDENCE
+=====================
+High - All data clearly presented in standard Fidelity format
+
+EXTRACTION FEEDBACK
+===================
+
+What went smoothly:
+- Simple statement structure with clear activity sections
+- All transaction data was clearly formatted and easily parsable
+- Money market fund activity followed expected patterns
+- No complex securities or multi-line descriptions to handle
+
+Challenges encountered: NONE
+- This was a straightforward statement with standard Fidelity formatting
+- No parsing difficulties or data quality issues
+
+Sections that were absent:
+- Securities Bought & Sold: No trading activity (normal for money market only account)
+- Other Activity In/Out: No options or complex transactions (normal)
+- Deposits: No deposits this period (normal)
+- Exchanges: No transfers between accounts (normal)
+- Fees: No account fees charged (normal)
+- Bill Payments: No bill pay activity (normal - not a CMA account)
+- Trades Pending: No pending trades (normal)
+
+DATA QUALITY NOTES
+==================
+- All amounts properly signed (withdrawals negative, income positive)
+- All dates in consistent MM/DD format, converted to YYYY-MM-DD
+- CUSIP correctly identified for money market fund (31617H102)
+- Reference numbers captured for withdrawal tracking
+- Balance reconciliation verified in core fund activity
+
+COMPLETION VERIFICATION
+======================
+✓ All 4 pages reviewed and processed
+✓ Single account (Z25-666083) identified and extracted
+✓ All activity sections checked for content
+✓ JSON output generated with proper structure
+✓ All required metadata fields populated
+✓ Document hash integrated from orchestrator
+✓ JSON content hash calculated and embedded
+✓ Timestamp matches filename format
+
+No manual review required - extraction complete and accurate.

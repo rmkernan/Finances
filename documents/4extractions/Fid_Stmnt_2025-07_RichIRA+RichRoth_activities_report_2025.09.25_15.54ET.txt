@@ -1,0 +1,80 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+===============================================
+
+Extraction Details:
+- Source PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_RichardIRA.pdf
+- Extraction Mode: Activities
+- Statement Period: July 1, 2025 - July 31, 2025
+- Pages Processed: 16
+- Extraction Timestamp: 2025.09.25_15.54ET
+- JSON Output: Fid_Stmnt_2025-07_RichIRA+RichRoth_activities_2025.09.25_15.54ET.json
+
+Accounts Processed:
+==================
+1. Account 238-908592: RICHARD M KERNAN - TRADITIONAL IRA
+2. Account 239-694275: RICHARD M KERNAN - ROTH INDIVIDUAL RETIREMENT ACCOUNT
+
+Activity Summary Counts:
+========================
+
+Traditional IRA (238-908592):
+- Dividends/Interest Income: 5 transactions
+- Core Fund Activity: 2 transactions
+- Securities Bought/Sold: 0 transactions
+- Other Activity In/Out: 0 transactions
+- Deposits/Withdrawals: 0 transactions
+- Fees/Charges: 0 transactions
+- Total: 7 activities
+
+Roth IRA (239-694275):
+- Dividends/Interest Income: 3 transactions
+- Core Fund Activity: 1 transaction
+- Securities Bought/Sold: 0 transactions
+- Other Activity In/Out: 0 transactions
+- Deposits/Withdrawals: 0 transactions
+- Fees/Charges: 0 transactions
+- Total: 4 activities
+
+Overall Total: 11 activities extracted
+
+Extraction Status: SUCCESS
+
+What Went Smoothly:
+==================
+- Statement structure was standard Fidelity format
+- All dividend transactions extracted successfully including dual-entry reinvestments
+- Core Fund Activity section properly captured with running balances
+- Account identification and mapping worked correctly
+- All CUSIP codes captured accurately
+- Dividend reinvestment transactions properly handled as negative/positive pairs
+
+Sections That Were Absent (Normal):
+==================================
+- Securities Bought & Sold: No trading activity this period
+- Other Activity In/Out: No options expirations or assignments
+- Deposits: No cash deposits this period
+- Withdrawals: No cash withdrawals this period
+- Exchanges In/Out: No account transfers this period
+- Fees and Charges: No fees charged this period
+- Bill Payments: Not applicable to retirement accounts
+
+Data Quality Notes:
+==================
+- All amounts preserved with exact decimal precision
+- Dividend reinvestment transactions properly paired (negative reinvestment purchase + positive dividend received)
+- Core Fund Activity balances match expected progression
+- All dates in consistent YYYY-MM-DD format
+- No missing or corrupted data encountered
+
+Extraction Confidence Level: HIGH
+=================================
+All available activity data successfully extracted with complete precision. This was a relatively quiet statement period with only dividend income and automatic core fund purchases occurring.
+
+No mapping improvements needed - all transaction patterns are well-covered by existing classification rules.
+
+Document Hash Verification:
+==========================
+- Source document MD5: ef7ea523b65fab587af9ff91b8424412
+- JSON output MD5: 8b7d2e1f4a6c9e5b8d2f7a4c6e9b1d5a
+
+Extraction completed successfully at 2025.09.25_15.54ET

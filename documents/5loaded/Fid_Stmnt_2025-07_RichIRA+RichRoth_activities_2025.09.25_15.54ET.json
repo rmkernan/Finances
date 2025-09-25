@@ -1,0 +1,174 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-07_richira_richroth_activities",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-07_RichardIRA.pdf",
+    "json_output_md5_hash": "1d106cbd65de56cafe89e2be9f8c7971",
+    "doc_md5_hash": "ef7ea523b65fab587af9ff91b8424412",
+    "extraction_type": "activities",
+    "extraction_timestamp": "2025.09.25_12.15ET",
+    "extractor_version": "1.0",
+    "pages_processed": 16,
+    "extraction_notes": []
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-07-31",
+    "period_start": "2025-07-01",
+    "period_end": "2025-07-31"
+  },
+  "accounts": [
+    {
+      "account_number": "238-908592",
+      "account_name": "RICHARD M KERNAN - TRADITIONAL IRA",
+      "account_holder_name": "RICHARD MICHAEL KERNAN",
+      "account_type": "retirement",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY FLOATING RATE HIGH INCOME",
+          "sec_symbol": null,
+          "cusip": "315916783",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "150.47"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "552.15"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Reinvestment",
+          "quantity": "679.110000",
+          "price_per_unit": "1.0000",
+          "amount": "-679.11"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "679.11"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "PIONEER HIGH INCOME FD INC COM NPV",
+          "sec_symbol": null,
+          "cusip": "72369H106",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "76.40"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": null,
+          "quantity": "702.620000",
+          "price_per_unit": "1.0000",
+          "amount": "-702.62",
+          "balance": "164765.52"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET MORNING TRADE @ 1",
+          "sec_symbol": null,
+          "quantity": "76.400000",
+          "price_per_unit": "1.0000",
+          "amount": "-76.40",
+          "balance": "164841.92"
+        }
+      ],
+      "trades_pending_settlement": []
+    },
+    {
+      "account_number": "239-694275",
+      "account_name": "RICHARD M KERNAN - ROTH INDIVIDUAL RETIREMENT ACCOUNT",
+      "account_holder_name": "RICHARD MICHAEL KERNAN",
+      "account_type": "retirement",
+      "securities_bought_sold": [],
+      "dividends_interest_income": [
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H102",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "85.24"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Reinvestment",
+          "quantity": "3.050000",
+          "price_per_unit": "1.0000",
+          "amount": "-3.05"
+        },
+        {
+          "settlement_date": "2025-07-31",
+          "sec_description": "FIDELITY MONEY MARKET",
+          "sec_symbol": null,
+          "cusip": "31617H201",
+          "description": "Dividend Received",
+          "quantity": null,
+          "price_per_unit": null,
+          "amount": "3.05"
+        }
+      ],
+      "other_activity_in": [],
+      "other_activity_out": [],
+      "deposits": [],
+      "withdrawals": [],
+      "exchanges_in": [],
+      "exchanges_out": [],
+      "fees_charges": [],
+      "billpay": [],
+      "core_fund_activity": [
+        {
+          "settlement_date": "2025-07-31",
+          "account_type": "CASH",
+          "transaction": "You Bought",
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET @ 1",
+          "sec_symbol": null,
+          "quantity": "85.240000",
+          "price_per_unit": "1.0000",
+          "amount": "-85.24",
+          "balance": "25413.60"
+        }
+      ],
+      "trades_pending_settlement": []
+    }
+  ]
+}

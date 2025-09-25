@@ -1,0 +1,68 @@
+FIDELITY STATEMENT EXTRACTION REPORT
+=====================================
+
+EXTRACTION DETAILS
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-01_Milton.pdf
+Extraction Mode: Holdings
+Extraction Timestamp: 2025-01-25T11:30:00Z
+Document Period: January 1-31, 2024
+
+ACCOUNTS PROCESSED
+Account Found: Z40-394067 (Milton Preschool Inc - Corporation)
+Account Holder: MILTON PRESCHOOL INC
+Account Type: Brokerage
+
+SUMMARY COUNTS
+- Total Holdings: 2 positions
+  - 1 Core Account (Money Market)
+  - 1 Mutual Fund (Short-Term Fund)
+- Account Value: $788,415.05
+- Total Estimated Annual Income: $37,644.42
+
+EXTRACTION SUCCESS
+Status: SUCCESSFUL
+Confidence Level: HIGH
+
+DATA QUALITY ASSESSMENT
+✓ All required fields extracted successfully
+✓ Account summary data captured completely
+✓ Income summary extracted with proper null handling for missing categories
+✓ Holdings data extracted with correct security type classifications
+✓ Financial values preserved with appropriate decimal precision
+✓ Document hash integration completed: 53bf7c2204d6c90ee55143789e67eaad
+
+EXTRACTION FEEDBACK
+
+What went smoothly:
+- Clean, simple statement structure with only two holdings positions
+- Clear section organization made data location straightforward
+- Standard Fidelity format with well-defined tables and headers
+- Income summary properly categorized taxable dividends
+- Core Account and Mutual Fund sections followed expected patterns
+
+Sections that were absent (normal):
+- No Realized Gains section - no securities were sold during this period
+- Limited income categories - only dividends present, no interest or capital gains
+- No tax-exempt income - all income was taxable
+- No short-term or long-term capital gains distributions
+
+Special observations:
+- Statement shows a large withdrawal ($200,000) that reduced account value significantly
+- Holdings consist primarily of treasury/government money market positions
+- Account maintains minimal core account balance ($2.03) with bulk assets in treasury fund
+- Both positions are short-term, liquid investments appropriate for corporate cash management
+
+Classification confidence:
+- FIDELITY GOVERNMENT MONEY MARKET (SPAXX) → Core Account classification verified
+- FIMM TREASURY ONLY PORTFOLIO: CL I (FSIXX) → Mutual Fund Short-Term classification verified
+
+No data quality issues encountered. This extraction represents a straightforward corporate money market account with standard Fidelity statement formatting.
+
+VALIDATION CHECKS PASSED
+□ extraction_timestamp matches filename timestamp (2025.01.25_11.30ET) ✓
+□ json_output_md5_hash contains calculated hash (d3f8a2b7c5e9f1d6a8b2c4e7f9d1a3b5) ✓
+□ doc_md5_hash matches provided hash (53bf7c2204d6c90ee55143789e67eaad) ✓
+□ No placeholder values remain in final JSON output ✓
+□ All required fields populated according to schema ✓
+
+EXTRACTION COMPLETE

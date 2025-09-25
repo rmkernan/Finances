@@ -1,0 +1,104 @@
+FIDELITY STATEMENT EXTRACTION REPORT
+=====================================
+
+Source File: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-08_HMA.pdf
+Extraction Mode: Holdings
+Document Hash: d92e90493dbe4ed36ba8fd2088cfb493
+Extraction Timestamp: 2025.09.25_15.05ET
+
+ACCOUNTS PROCESSED
+==================
+✓ Account Z40-394071 (HMA GROUP, LLC - LIMITED LIABILITY CO)
+  - Account Type: Brokerage
+  - Entity: HMA Group, LLC
+  - Filename Label: HMA
+
+HOLDINGS SUMMARY
+================
+Total Holdings Extracted: 1 position
+- Core Account: 1 money market position
+
+Position Breakdown:
+- Money Market: 1 position ($117,891.83 ending value)
+
+INCOME SUMMARY DATA
+===================
+✓ Taxable dividends (period): $426.66
+✓ Taxable dividends (YTD): $4,107.71
+✓ All other income categories: $0.00
+✓ Grand total (period): $426.66
+✓ Grand total (YTD): $4,107.71
+
+SPECIAL SECTIONS
+================
+✓ Portfolio Summary: Complete
+✓ Income Summary: Complete
+✗ Realized Gains: Not present (no sales this period - normal)
+
+EXTRACTION RESULTS
+==================
+Status: SUCCESS
+Extraction Quality: EXCELLENT
+Data Completeness: 100%
+
+Holdings Details:
+- FIDELITY GOVERNMENT MONEY MARKET (SPAXX): $117,891.83
+  - Quantity: 117,891.830000 shares
+  - Price: $1.0000
+  - EAI: $4,977.04 (4.220% yield)
+  - CUSIP: 31617H102
+
+WHAT WENT SMOOTHLY
+==================
+- Simple statement structure with single Core Account holding
+- All required data fields clearly present and extractable
+- Clean data with no ambiguous values or formatting issues
+- Standard Fidelity Government Money Market format
+- Income summary table properly structured
+- No complex securities or multi-line descriptions
+
+EXTRACTION FEEDBACK
+===================
+Challenges Encountered: NONE
+- This was a straightforward statement with standard money market holdings
+- All data extraction followed established mapping patterns
+- No unusual security types or transaction patterns encountered
+
+Data Quality: EXCELLENT
+- All extracted values cross-validated against statement totals
+- Account value reconciliation: Beginning $216,201.39 → Ending $117,891.83
+- Net change: -$98,309.56 (validated against activity section)
+- Income properly categorized as taxable dividends
+
+SECTIONS ABSENT (NORMAL)
+========================
+- Realized Gains and Losses: No sales occurred during period
+- Stock Holdings: Account contains only Core Account position
+- Bond Holdings: Not applicable
+- Options Holdings: Not applicable
+- Other Holdings: Not applicable
+
+MAPPING SYSTEM NOTES
+====================
+- No new security patterns requiring classification rules
+- Standard Core Account/Money Market categorization applied
+- All transaction descriptions recognized and handled appropriately
+
+EXTRACTION CONFIDENCE
+======================
+Confidence Level: 100% - Complete and accurate extraction
+Validation Status: PASSED - All totals reconcile
+Review Required: NO - Standard statement processed successfully
+
+OUTPUT FILES
+============
+✓ JSON: Fid_Stmnt_2025-08_HMA_holdings_2025.09.25_15.05ET.json
+✓ Report: Fid_Stmnt_2025-08_HMA_holdings_report_2025.09.25_15.05ET.txt
+
+COMPLETION STATUS
+=================
+✓ Extraction completed successfully
+✓ JSON file generated with proper structure
+✓ MD5 hash calculated and included
+✓ All required fields populated
+✓ Source PDF left in staged location for orchestrator processing
