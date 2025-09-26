@@ -8,7 +8,9 @@
 **Updated:** 09/22/25 8:02PM ET - Enhanced bond redemption section with specific examples and clarified normal null price behavior
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced transaction lifecycle tracking
-**Purpose:** Navigation guide for locating and extracting account activity data from Fidelity statements
+**Updated:** 09/26/25 1:15PM - Added comprehensive field handling rules and precision requirements to serve as authoritative parsing guide
+
+**Purpose:** This document provides task-specific instructions, guidance, and resources for the Fidelity Statement Extractor Agent. It augments the guidance and instruction provided in the agent definition file. 
 
 ## ⚙️ Extraction vs Classification Philosophy
 
@@ -33,6 +35,18 @@
 
 ### Transaction Description Handling
 Extract transaction descriptions exactly as shown in the PDF. Do not attempt to standardize or categorize - the advanced mapping system handles complex transaction patterns:
+
+**Field Value Handling Rules:**
+- "unavailable" → transcribe as `"unavailable"` (text value)
+- Blank fields → use `null` in JSON
+- "n/a" or "--" → transcribe exactly as shown
+- Negative in parentheses: "($1,250.00)" → `"-1250.00"`
+- Zero amounts: Use `"0.00"` for explicit zeros, `null` for blank/missing
+
+**Precision Requirements:**
+- Preserve exact numeric values including all decimal places as shown
+- Maintain original formatting for dates, account numbers, and reference numbers
+- Sign conventions: Purchases/debits negative, sales/credits positive
 
 **Enhanced Transaction Classification Examples:**
 - "OPENING TRANSACTION - BUY 5 CALL (AAPL)" → opening_transaction subtype + call classification + options tracking
@@ -75,18 +89,18 @@ The Activity section appears after the Holdings section for each account and con
 **Target Table:** `transactions` with `transaction_type = 'TRADE'`
 **Location:** First subsection under Activity for each account
 
-| Source Label     | JSON Field       | Database Column              | Type     | Notes                      |
-|------------------|------------------|------------------------------|----------|----------------------------|
-| Settlement Date  | settlement_date  | transactions.settlement_date | DATE     | MM/DD format               |
-| Security Name    | sec_description  | transactions.security_name   | TEXT     | Full security description  |
-| Symbol           | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol (stocks/ETFs/funds) |
-| CUSIP            | cusip            | transactions.cusip           | TEXT     | CUSIP (bonds)              |
-| Description      | description      | transactions.description     | TEXT     | "You Bought" or "You Sold" |
-| Quantity         | quantity         | transactions.quantity        | NUMBER   | Shares/units traded        |
-| Price            | price_per_unit   | transactions.price_per_unit  | CURRENCY | Per share price            |
-| Total Cost Basis | cost_basis       | transactions.cost_basis      | CURRENCY | For sales only             |
-| Transaction Cost | transaction_cost | transactions.fees            | CURRENCY | Commission/fees            |
-| Amount           | amount           | transactions.amount          | CURRENCY | Total transaction amount   |
+| Source Label     | JSON Field       | Database Column                  | Type     | Notes                      |
+|------------------|------------------|----------------------------------|----------|----------------------------|
+| Settlement Date  | settlement_date  | transactions.settlement_date     | DATE     | MM/DD format               |
+| Security Name    | sec_description  | transactions.security_name       | TEXT     | Full security description  |
+| Symbol           | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol             |
+| CUSIP            | cusip            | transactions.cusip               | TEXT     | CUSIP (bonds)              |
+| Description      | description      | transactions.description         | TEXT     | "You Bought" or "You Sold" |
+| Quantity         | quantity         | transactions.quantity            | NUMBER   | Shares/units traded        |
+| Price            | price_per_unit   | transactions.price_per_unit      | CURRENCY | Per share price            |
+| Total Cost Basis | cost_basis       | transactions.cost_basis          | CURRENCY | For sales only             |
+| Transaction Cost | transaction_cost | transactions.fees                | CURRENCY | Commission/fees            |
+| Amount           | amount           | transactions.amount              | CURRENCY | Total transaction amount   |
 
 **Parsing Notes:**
 - "You Bought" = BUY transaction (amount is negative)
@@ -99,16 +113,16 @@ The Activity section appears after the Holdings section for each account and con
 **Target Table:** `transactions` with `transaction_type = 'INCOME'`
 **Location:** After Securities Bought & Sold
 
-| Source Label    | JSON Field       | Database Column              | Type     | Notes               |
-|-----------------|------------------|------------------------------|----------|---------------------|
-| Settlement Date | settlement_date  | transactions.settlement_date | DATE     | MM/DD format        |
-| Security Name   | sec_description  | transactions.security_name   | TEXT     | Full security name  |
+| Source Label    | JSON Field       | Database Column                  | Type     | Notes               |
+|-----------------|------------------|----------------------------------|----------|---------------------|
+| Settlement Date | settlement_date  | transactions.settlement_date     | DATE     | MM/DD format        |
+| Security Name   | sec_description  | transactions.security_name       | TEXT     | Full security name  |
 | Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol      |
-| CUSIP           | cusip            | transactions.cusip           | TEXT     | CUSIP if bond       |
-| Description     | description      | transactions.description     | TEXT     | Type of income      |
-| Quantity        | quantity         | transactions.quantity        | NUMBER   | For reinvestments   |
-| Price           | price_per_unit   | transactions.price_per_unit  | CURRENCY | For reinvestments   |
-| Amount          | amount           | transactions.amount          | CURRENCY | Income amount       |
+| CUSIP           | cusip            | transactions.cusip               | TEXT     | CUSIP if bond       |
+| Description     | description      | transactions.description         | TEXT     | Type of income      |
+| Quantity        | quantity         | transactions.quantity            | NUMBER   | For reinvestments   |
+| Price           | price_per_unit   | transactions.price_per_unit      | CURRENCY | For reinvestments   |
+| Amount          | amount           | transactions.amount              | CURRENCY | Income amount       |
 
 **Income Types:**
 - "Dividend Received" - Regular dividend
@@ -129,26 +143,26 @@ OUT OF SCOPE
 **Location:** Separate sections for options/assignments
 
 ### Other Activity In
-| Source Label    | JSON Field       | Database Column              | Type     | Notes                          |
-|-----------------|------------------|------------------------------|----------|--------------------------------|
-| Settlement Date | settlement_date  | transactions.settlement_date | DATE     | MM/DD format                   |
-| Security Name   | sec_description  | transactions.security_name   | TEXT     | Option/security description    |
+| Source Label    | JSON Field       | Database Column                  | Type     | Notes                          |
+|-----------------|------------------|----------------------------------|----------|--------------------------------|
+| Settlement Date | settlement_date  | transactions.settlement_date     | DATE     | MM/DD format                   |
+| Security Name   | sec_description  | transactions.security_name       | TEXT     | Option/security description    |
 | Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol                 |
-| CUSIP           | cusip            | transactions.cusip           | TEXT     | CUSIP if applicable            |
-| Description     | description      | transactions.description     | TEXT     | "Expired", "Return Of Capital" |
-| Quantity        | quantity         | transactions.quantity        | NUMBER   | Contract quantity              |
-| Cost Basis      | cost_basis       | transactions.cost_basis      | CURRENCY | Original cost                  |
-| Amount          | amount           | transactions.amount          | CURRENCY | Transaction amount             |
+| CUSIP           | cusip            | transactions.cusip               | TEXT     | CUSIP if applicable            |
+| Description     | description      | transactions.description         | TEXT     | "Expired", "Return Of Capital" |
+| Quantity        | quantity         | transactions.quantity            | NUMBER   | Contract quantity              |
+| Cost Basis      | cost_basis       | transactions.cost_basis          | CURRENCY | Original cost                  |
+| Amount          | amount           | transactions.amount              | CURRENCY | Transaction amount             |
 
 ### Other Activity Out
-| Source Label    | JSON Field       | Database Column              | Type   | Notes              |
-|-----------------|------------------|------------------------------|--------|--------------------|
-| Settlement Date | settlement_date  | transactions.settlement_date | DATE   | MM/DD format       |
-| Security Name   | sec_description  | transactions.security_name   | TEXT   | Option description |
+| Source Label    | JSON Field       | Database Column                  | Type   | Notes              |
+|-----------------|------------------|----------------------------------|--------|--------------------|
+| Settlement Date | settlement_date  | transactions.settlement_date     | DATE   | MM/DD format       |
+| Security Name   | sec_description  | transactions.security_name       | TEXT   | Option description |
 | Symbol          | sec_symbol       | transactions.security_identifier | TEXT   | Option symbol      |
-| CUSIP           | cusip            | transactions.cusip           | TEXT   | CUSIP if applicable|
-| Description     | description      | transactions.description     | TEXT   | "Assigned"         |
-| Quantity        | quantity         | transactions.quantity        | NUMBER | Contracts assigned |
+| CUSIP           | cusip            | transactions.cusip               | TEXT   | CUSIP if applicable|
+| Description     | description      | transactions.description         | TEXT   | "Assigned"         |
+| Quantity        | quantity         | transactions.quantity            | NUMBER | Contracts assigned |
 
 ## 5. Deposits
 

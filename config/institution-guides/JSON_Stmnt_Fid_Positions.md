@@ -9,6 +9,7 @@
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced options and security classification
 **Updated:** 09/25/25 1:52PM - Fixed extraction_timestamp format from ISO to YYYY.MM.DD_HH.MMET to match agent specifications
+**Updated:** 09/26/25 12:45PM - Added complete doc_level_data sections (net_account_value, expanded income_summary, realized_gains) to align with updated schema
 **Purpose:** Formal specification for JSON output from Fidelity statement extraction
 **Related:** [Map_Stmnt_Fid_Positions.md](./Map_Stmnt_Fid_Positions.md)
 
@@ -96,10 +97,31 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
       "account_holder_name": "JOHN DOE",
       "account_type": "brokerage",
 
-      "portfolio_summary": {
-        "beginning_value": "500000.00",
-        "ending_value": "525000.00",
-        "net_account_value": "525000.00"
+      "net_account_value": {
+        "beg_net_acct_val_period": "500000.00",
+        "beg_net_acct_val_ytd": "480000.00",
+        "additions_period": "5000.00",
+        "additions_ytd": "45000.00",
+        "deposits_period": "5000.00",
+        "deposits_ytd": "40000.00",
+        "exchanges_in_period": "0.00",
+        "exchanges_in_ytd": "5000.00",
+        "subtractions_period": "1000.00",
+        "subtractions_ytd": "8000.00",
+        "withdrawals_period": "0.00",
+        "withdrawals_ytd": "5000.00",
+        "exchanges_out_period": "0.00",
+        "exchanges_out_ytd": "2000.00",
+        "transaction_costs_period": "50.00",
+        "transaction_costs_ytd": "400.00",
+        "taxes_withheld_period": "950.00",
+        "taxes_withheld_ytd": "600.00",
+        "change_in_inc_val_period": "21000.00",
+        "change_in_inc_val_ytd": "8000.00",
+        "ending_net_acct_val_period": "525000.00",
+        "ending_net_acct_val_ytd": "525000.00",
+        "accrued_interest": "437.50",
+        "ending_net_acct_val_incl_ai": "525437.50"
       },
 
       "income_summary": {
@@ -117,19 +139,29 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
         "tax_exempt_total_ytd": "1600.00",
         "divs_tax_exempt_period": "0.00",
         "divs_tax_exempt_ytd": "0.00",
+        "stcg_tax_ex_period": "0.00",
+        "stcg_tax_ex_ytd": "0.00",
         "int_tax_exempt_period": "200.00",
         "int_tax_exempt_ytd": "1600.00",
+        "ltcg_tax_ex_period": "0.00",
+        "ltcg_tax_ex_ytd": "0.00",
         "roc_period": "0.00",
         "roc_ytd": "0.00",
-        "grand_total_period": "1700.00",
-        "grand_total_ytd": "13600.00"
+        "incsumm_total_period": "1700.00",
+        "incsumm_total_ytd": "13600.00"
       },
 
       "realized_gains": {
-        "st_gain_period": "500.00",
-        "st_loss_period": "-200.00",
-        "lt_gain_ytd": "5000.00",
-        "lt_loss_ytd": "-1000.00"
+        "netstgl_period": "300.00",
+        "netstgl_ytd": "2300.00",
+        "stg_period": "500.00",
+        "stg_ytd": "3500.00",
+        "netltgl_period": "4000.00",
+        "netltgl_ytd": "12000.00",
+        "ltg_period": "5000.00",
+        "ltg_ytd": "15000.00",
+        "net_gl_period": "4300.00",
+        "net_gl_ytd": "14300.00"
       },
 
       "holdings": [
