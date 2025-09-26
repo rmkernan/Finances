@@ -1,0 +1,22 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-08_kernbrok_kerncma_holdings_test",
+    "source_pdf_filepath": "/Users/richkernan/Projects/Finances/documents/3processed/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf",
+    "json_output_md5_hash": "ce2c46f7c3fe676bfbd225851c2cd33b",
+    "doc_md5_hash": "test_extraction_hash",
+    "extraction_type": "holdings",
+    "extraction_timestamp": "2025.09.26_16.55",
+    "extractor_version": "structured_text_test_1.0",
+    "pages_processed": 33,
+    "extraction_notes": [
+      "Test extraction from structured text format"
+    ]
+  },
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-08-31",
+    "period_start": "2025-08-01",
+    "period_end": "2025-08-31"
+  },
+  "accounts": []
+}

@@ -1,0 +1,1485 @@
+{
+  "source_json": "/Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-04_KernCMA+KernBrok_holdings_2025.09.26_16.21ET.json",
+  "pdf_required_fields": {
+    "document_data": [
+      "statement_date",
+      "period_start",
+      "period_end"
+    ],
+    "accounts": {
+      "Z27375656": {
+        "account_index": 0,
+        "net_account_value": [
+          "beg_net_acct_val_ytd",
+          "additions_period",
+          "additions_ytd",
+          "deposits_period",
+          "deposits_ytd",
+          "exchanges_in_period",
+          "exchanges_in_ytd",
+          "subtractions_period",
+          "subtractions_ytd",
+          "withdrawals_period",
+          "withdrawals_ytd",
+          "exchanges_out_period",
+          "exchanges_out_ytd",
+          "transaction_costs_period",
+          "transaction_costs_ytd",
+          "taxes_withheld_period",
+          "taxes_withheld_ytd",
+          "change_in_inc_val_ytd",
+          "ending_net_acct_val_period",
+          "ending_net_acct_val_ytd",
+          "accrued_interest",
+          "ending_net_acct_val_incl_ai"
+        ],
+        "income_summary": [
+          "stcg_taxable_period",
+          "stcg_taxable_ytd",
+          "ltcg_taxable_period",
+          "ltcg_taxable_ytd",
+          "tax_exempt_total_period",
+          "tax_exempt_total_ytd",
+          "divs_tax_exempt_period",
+          "divs_tax_exempt_ytd",
+          "stcg_tax_ex_period",
+          "stcg_tax_ex_ytd",
+          "int_tax_exempt_period",
+          "int_tax_exempt_ytd",
+          "ltcg_tax_ex_period",
+          "ltcg_tax_ex_ytd",
+          "roc_period",
+          "roc_ytd"
+        ],
+        "realized_gains": [
+          "netstgl_period",
+          "netstgl_ytd",
+          "stg_period",
+          "stg_ytd",
+          "netltgl_period",
+          "netltgl_ytd",
+          "ltg_period",
+          "ltg_ytd",
+          "net_gl_period",
+          "net_gl_ytd"
+        ],
+        "holdings_needing_pdf": [
+          {
+            "index": 0,
+            "symbol_or_cusip": "FMPXX",
+            "description": "FIMM MONEY MARKET PORTFOLIO: CL I...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 1,
+            "symbol_or_cusip": "4624677J4",
+            "description": "IOWA FIN AUTH SINGLE FAMILY MTG REV BDS FIXED COUP...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 2,
+            "symbol_or_cusip": "QPCTQ",
+            "description": "FDIC INSURED DEPOSIT  AT CITIBANK NOT COVERED BY S...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          }
+        ]
+      },
+      "Z24527872": {
+        "account_index": 1,
+        "net_account_value": [
+          "beg_net_acct_val_ytd",
+          "additions_period",
+          "additions_ytd",
+          "deposits_period",
+          "deposits_ytd",
+          "exchanges_in_period",
+          "exchanges_in_ytd",
+          "subtractions_period",
+          "subtractions_ytd",
+          "withdrawals_period",
+          "withdrawals_ytd",
+          "exchanges_out_period",
+          "exchanges_out_ytd",
+          "transaction_costs_period",
+          "transaction_costs_ytd",
+          "taxes_withheld_period",
+          "taxes_withheld_ytd",
+          "change_in_inc_val_ytd",
+          "ending_net_acct_val_ytd",
+          "accrued_interest",
+          "ending_net_acct_val_incl_ai"
+        ],
+        "income_summary": [
+          "stcg_taxable_period",
+          "stcg_taxable_ytd",
+          "ltcg_taxable_period",
+          "ltcg_taxable_ytd",
+          "tax_exempt_total_period",
+          "tax_exempt_total_ytd",
+          "divs_tax_exempt_period",
+          "divs_tax_exempt_ytd",
+          "stcg_tax_ex_period",
+          "stcg_tax_ex_ytd",
+          "int_tax_exempt_period",
+          "int_tax_exempt_ytd",
+          "ltcg_tax_ex_period",
+          "ltcg_tax_ex_ytd",
+          "roc_period",
+          "roc_ytd"
+        ],
+        "realized_gains": [
+          "netstgl_period",
+          "netstgl_ytd",
+          "stg_period",
+          "stg_ytd",
+          "netltgl_period",
+          "netltgl_ytd",
+          "ltg_period",
+          "ltg_ytd",
+          "net_gl_period",
+          "net_gl_ytd"
+        ],
+        "holdings_needing_pdf": [
+          {
+            "index": 0,
+            "symbol_or_cusip": "TSLY",
+            "description": "TIDAL TR II YIELDMAX TSLA OP...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 1,
+            "symbol_or_cusip": "T",
+            "description": "AT&T INC COM USD1...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 2,
+            "symbol_or_cusip": "ADYEY",
+            "description": "ADYEN NV UNSPON ADS EACH REP 0.01 ORD SHS...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 3,
+            "symbol_or_cusip": "ASLE",
+            "description": "AERSALE CORPORATION COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 4,
+            "symbol_or_cusip": "GOOG",
+            "description": "ALPHABET INC CAP STK CL C...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 5,
+            "symbol_or_cusip": "APLD",
+            "description": "APPLIED DIGITAL CORP COM USD0.001 (POST REV SPLIT)...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 6,
+            "symbol_or_cusip": "BTZ",
+            "description": "BLACKROCK CR ALLOCATION INCOME COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 7,
+            "symbol_or_cusip": "BTI",
+            "description": "BRITISH AMERICAN TOBACCO LVL II ADR EACH REP 1 ORD...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 8,
+            "symbol_or_cusip": "CBSTF",
+            "description": "CANNABIST CO HOLDINGS INC. COM NPV ISIN #CA13765Y1...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 9,
+            "symbol_or_cusip": "CYBCF",
+            "description": "CYBEATS TECHNOLOGIES CORP COM NPV ISIN #CA23249F10...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 10,
+            "symbol_or_cusip": "TEAF",
+            "description": "TORTOISE SUSTAINABLE  AND SOCIAL IMPACT TERM FUND...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 11,
+            "symbol_or_cusip": "ENB",
+            "description": "ENBRIDGE INC COM ISIN #CA29250N1050 SEDOL #2466149...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 12,
+            "symbol_or_cusip": "ET",
+            "description": "ENERGY TRANSFER L P COM UT LTD PTN...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 13,
+            "symbol_or_cusip": "FMC",
+            "description": "FMC CORP COM NEW...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 14,
+            "symbol_or_cusip": "FDUS",
+            "description": "FIDUS INVT CORP COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 15,
+            "symbol_or_cusip": "HRGG",
+            "description": "HERITAGE NOLA BANCORP INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 16,
+            "symbol_or_cusip": "KVHI",
+            "description": "KVH INDUSTRIES INC...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 17,
+            "symbol_or_cusip": "MFM",
+            "description": "MFS MUN INCOME TR SH BEN INT...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 18,
+            "symbol_or_cusip": "MPLX",
+            "description": "MPLX LP COM UNIT REP LTD...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 19,
+            "symbol_or_cusip": "MP",
+            "description": "MP MATERIALS CORP COM CL A...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 20,
+            "symbol_or_cusip": "MNR",
+            "description": "MACH NATURAL RESOURCES LP COM UNIT LTD PAR...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 21,
+            "symbol_or_cusip": "MSFT",
+            "description": "MICROSOFT CORP...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 22,
+            "symbol_or_cusip": "NLCP",
+            "description": "NEWLAKE CAPITAL PARTNERS INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 23,
+            "symbol_or_cusip": "NZF",
+            "description": "NUVEEN MUNICIPAL CREDIT INC FD COM SH BEN INT...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 24,
+            "symbol_or_cusip": "JQC",
+            "description": "NUVEEN CR STRATEGIES INCOME FD COM SHS...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 25,
+            "symbol_or_cusip": "OFLX",
+            "description": "OMEGA FLEX INC COM USD0.01...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 26,
+            "symbol_or_cusip": "PFE",
+            "description": "PFIZER INC...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 27,
+            "symbol_or_cusip": "PSX",
+            "description": "PHILLIPS 66...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 28,
+            "symbol_or_cusip": "PDI",
+            "description": "PIMCO DYNAMIC INCOME FD COM USD0.00001...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 29,
+            "symbol_or_cusip": "PSEC",
+            "description": "PROSPECT CAP CORP COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 30,
+            "symbol_or_cusip": "REPL",
+            "description": "REPLIMUNE GROUP INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 31,
+            "symbol_or_cusip": "RVT",
+            "description": "ROYCE SMALL CAP TRUST INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 32,
+            "symbol_or_cusip": "SSTK",
+            "description": "SHUTTERSTOCK INC COM USD0.01...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 33,
+            "symbol_or_cusip": "SCGLY",
+            "description": "SOCIETE GENERALE FRANCE SPONSORED ADR...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 34,
+            "symbol_or_cusip": "SPLPPRA",
+            "description": "STEEL PARTNERS HLDGS L P PFD SER A...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 35,
+            "symbol_or_cusip": "TARS",
+            "description": "TARSUS PHARMACEUTICALS INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 36,
+            "symbol_or_cusip": "TSLA",
+            "description": "TESLA INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 37,
+            "symbol_or_cusip": "TCNNF",
+            "description": "TRULIEVE CANNABIS CORP COM NPV...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 38,
+            "symbol_or_cusip": "ULTA",
+            "description": "ULTA BEAUTY INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 39,
+            "symbol_or_cusip": "ULTA",
+            "description": "ULTA BEAUTY INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 40,
+            "symbol_or_cusip": "WBD",
+            "description": "WARNER BROS DISCOVERY INC COM SER A...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 41,
+            "symbol_or_cusip": "EBGEF",
+            "description": "ENBRIDGE INC 6.68304% PFD ISIN #CA29250N6679...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 42,
+            "symbol_or_cusip": "OXLCZ",
+            "description": "OXFORD LANE CAP CORP CAL NT 27 5.00000% 01/31/2027...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 43,
+            "symbol_or_cusip": "RLJPRA",
+            "description": "RLJ LODGING TR CUM CONV PFD A...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 44,
+            "symbol_or_cusip": "SNVPRE",
+            "description": "SYNOVUS FINL CORP 5.875 PFD SER E 8.41700%...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 45,
+            "symbol_or_cusip": "APDQX",
+            "description": "ARTISAN MID CAP VALUE FUND ADVISOR...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 46,
+            "symbol_or_cusip": "LZEMX",
+            "description": "LAZARD EMERGING MKTS EQUITY INSTITUTIONAL...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 47,
+            "symbol_or_cusip": "NOSGX",
+            "description": "NORTHERN SMALL CAP VALUE...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 48,
+            "symbol_or_cusip": "FTABX",
+            "description": "FIDELITY TAX-FREE BOND...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 49,
+            "symbol_or_cusip": "FTCXX",
+            "description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 50,
+            "symbol_or_cusip": "74348GRW2",
+            "description": "PROSPECT CAP CORP SER 1399 MTN FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 51,
+            "symbol_or_cusip": "08869FFD6",
+            "description": "BIBB CNTY GA DEV AUTH REV BDS USG FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 52,
+            "symbol_or_cusip": "04780MA66",
+            "description": "ATLANTA GA ARPT REV GEN BDS SER. 2022A FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 53,
+            "symbol_or_cusip": "187145GB7",
+            "description": "CLIFTON TEX HIGHER ED FIN CORP ED REV FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 54,
+            "symbol_or_cusip": "880558HN4",
+            "description": "TENNESSEE ST SCH BD AUTH HIGHER EDL FACS FIXED COU...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 55,
+            "symbol_or_cusip": "432074EU2",
+            "description": "HILLSBORO OHIO CITY SCH DIST SCH IMPT FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 56,
+            "symbol_or_cusip": "499527BV0",
+            "description": "KNOX CNTY TENN HEALTH EDL &HS G FAC FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 57,
+            "symbol_or_cusip": "6262075L4",
+            "description": "MUNICIPAL ELEC AUTH GA GEN RESOLUTION FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 58,
+            "symbol_or_cusip": "56035DGF3",
+            "description": "MAIN STR NAT GAS INC GA GAS SUPPLY REV FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 59,
+            "symbol_or_cusip": "88278PUJ1",
+            "description": "TEXAS ST UNIV SYS FING REV REV AND REF FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 60,
+            "symbol_or_cusip": "80036RAN0",
+            "description": "SANDY SPRINGS GA PUB FACS AUTH REV REV FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 61,
+            "symbol_or_cusip": "84136FAN7",
+            "description": "SOUTHEAST ENERGY AUTH COMMODITY FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 62,
+            "symbol_or_cusip": "43232VSU6",
+            "description": "HILLSBOROUGH CNTY FLA SCH BRD CTFS FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 63,
+            "symbol_or_cusip": "380037FU0",
+            "description": "GLYNN-BRUNSWICK MEM HOSP AUTH GA REV REV FIXED COU...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 64,
+            "symbol_or_cusip": "09182TAL1",
+            "description": "BLACK BELT ENERGY GAS DIST ALA GAS FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 65,
+            "symbol_or_cusip": "09182TBQ9",
+            "description": "BLACK BELT ENERGY GAS DIST ALA GAS FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 66,
+            "symbol_or_cusip": "362762PX8",
+            "description": "GAINESVILLE & HALL CNTY GA HOSP AUTH FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 67,
+            "symbol_or_cusip": "507071JC3",
+            "description": "LAGO VISTA TEX GO REF BDS SER. 2015 FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 68,
+            "symbol_or_cusip": "56035DGH9",
+            "description": "MAIN STR NAT GAS INC GA GAS SUPPLY REV FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 69,
+            "symbol_or_cusip": "56035DEB4",
+            "description": "MAIN STR NAT GAS INC GA GAS SUPPLY REV FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 70,
+            "symbol_or_cusip": "452227KN0",
+            "description": "ILLINOIS ST SALES TAX REV JR OBLIG REF FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 71,
+            "symbol_or_cusip": "144709HK1",
+            "description": "CARROLL CITY-CNTY HOSP AUTH GA REV FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 72,
+            "symbol_or_cusip": "226688CY3",
+            "description": "CRISP CNTY GA HOSP AUTH REV ANTIC CTFS FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 73,
+            "symbol_or_cusip": "19078VAG3",
+            "description": "COBB CNTY GA DEV AUTH LEASE REV REV FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 74,
+            "symbol_or_cusip": "97712DHL3",
+            "description": "WISCONSIN ST HEALTH & EDL FACS AUTH REV FIXED COUP...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 75,
+            "symbol_or_cusip": "764603BM7",
+            "description": "RICHMOND CNTY GA HOSP AUTH REV ANTIC FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 76,
+            "symbol_or_cusip": "46874TJE3",
+            "description": "JACKSON TENN HOSP REV BDS WEST FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 77,
+            "symbol_or_cusip": "59333TDX5",
+            "description": "MIAMI-DADE CNTY FLA PUB FACS REV REV AND FIXED COU...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 78,
+            "symbol_or_cusip": "115065YY4",
+            "description": "BROWARD CNTY FLA SCH BRD CTFS PARTN COPS FIXED COU...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 79,
+            "symbol_or_cusip": "23378RFD3",
+            "description": "DAHLONEGA GA DOWNTOWN DEV AUTH FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 80,
+            "symbol_or_cusip": "705888BY0",
+            "description": "PELL CITY ALA SPL CARE FACS FING AUTH FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 81,
+            "symbol_or_cusip": "6262072E3",
+            "description": "MUNICIPAL ELEC AUTH GA BDS PLT VOGTLE FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 82,
+            "symbol_or_cusip": "46874TGU0",
+            "description": "JACKSON TENN HOSP REV REF BDS WEST FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 83,
+            "symbol_or_cusip": "181685JC3",
+            "description": "CLARKE CNTY GA HOSP AUTH REV CTFS ANTIC FIXED COUP...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 84,
+            "symbol_or_cusip": "67884XBQ9",
+            "description": "OKLAHOMA DEV FIN AUTH HEALTH SYS REV FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 85,
+            "symbol_or_cusip": "09182TCZ8",
+            "description": "BLACK BELT ENERGY GAS DIST ALA GAS FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 86,
+            "symbol_or_cusip": "235641AC1",
+            "description": "DALTON WHITFIELD CNTY GA JT DEV AUTH FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 87,
+            "symbol_or_cusip": "56035DGS5",
+            "description": "MAIN STR NAT GAS INC GA GAS SUPPLY REV FIXED COUPO...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 88,
+            "symbol_or_cusip": "362762LR5",
+            "description": "GAINESVILLE & HALL CNTY GA HOSP AUTH FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 89,
+            "symbol_or_cusip": "05115CAR5",
+            "description": "AUGUSTA GA DEV AUTH REV BDS AU HEALTH FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 90,
+            "symbol_or_cusip": "88046KGV2",
+            "description": "TENNESSEE HSG DEV AGY RESIDENTIAL FIN FIXED COUPON...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "maturity_date",
+              "coupon_rate",
+              "accrued_int",
+              "agency_ratings",
+              "next_call_date",
+              "call_price",
+              "payment_freq",
+              "bond_features"
+            ]
+          },
+          {
+            "index": 91,
+            "symbol_or_cusip": "SPAXX",
+            "description": "FIDELITY GOVERNMENT MONEY MARKET...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 92,
+            "symbol_or_cusip": "NLY",
+            "description": "ANNALY CAPITAL MANAGEMENT INC COM NEW...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 93,
+            "symbol_or_cusip": "CPT",
+            "description": "CAMDEN PROPERTY TRUST SBI USD0.01...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 94,
+            "symbol_or_cusip": "NLOP",
+            "description": "NET LEASE OFFICE PROPERTIES COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 95,
+            "symbol_or_cusip": "WPC",
+            "description": "WP CAREY INC COM...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield"
+            ]
+          },
+          {
+            "index": 96,
+            "symbol_or_cusip": "MBUU250516C45",
+            "description": "CALL (MBUU) MALIBU BOATS INC COM MAY 16 25 $45 (10...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "expiration_date"
+            ]
+          },
+          {
+            "index": 97,
+            "symbol_or_cusip": "TSLA250516P270",
+            "description": "PUT (TSLA) TESLA INC COM MAY 16 25 $270 (100 SHS)...",
+            "fields": [
+              "unrealized_gain_loss",
+              "estimated_ann_inc",
+              "est_yield",
+              "expiration_date"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "total_null_fields": 739,
+    "holdings_with_nulls": 101,
+    "bonds_needing_details": 42,
+    "options_needing_dates": 2,
+    "document_fields": 3,
+    "account_summary_fields": 95
+  }
+}

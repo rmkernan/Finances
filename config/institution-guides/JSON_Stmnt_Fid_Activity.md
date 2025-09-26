@@ -54,11 +54,21 @@ This document defines the exact JSON structure that must be produced when extrac
 
 ## File Naming Convention
 
+Uses institution-statement-period-accounts-type-timestamp format:
+
 ```
-{file_hash}_activity_{YYYYMMDD_HHMMSS}.json
+Fid_Stmnt_YYYY-MM_[Accounts]_activities_YYYY.MM.DD_HH.MMET.json
 ```
 
-Example: `a3b5c7d9e1f3_activity_20240922_151500.json`
+Example: `Fid_Stmnt_2024-08_Brok+CMA_activities_2025.09.25_14.30ET.json`
+
+**Components:**
+- `Fid` - Institution code (Fidelity)
+- `Stmnt` - Document type (Statement)
+- `YYYY-MM` - Statement period (from document)
+- `[Accounts]` - Account labels from mappings (Brok, CMA, etc.)
+- `activities` - Extraction type
+- `YYYY.MM.DD_HH.MMET` - Current extraction timestamp
 
 ## Data Type Rules
 

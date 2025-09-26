@@ -37,7 +37,7 @@
 
 ### 🗄️ Database Operations
 **Route:** → `/docs/Design/Database/CLAUDE.md`
-**Quick Schema Check:** `PGPASSWORD=postgres psql -h localhost -p 54322 -d postgres -c "\d+ [table_name]"`
+**Quick Schema Check:** `PGPASSWORD=postgres psql -h localhost -p 54322 -U postgres -d postgres -c "\d+ [table_name]"`
 - Schema reference and connection details
 - Query patterns and data relationships
 - Multi-entity financial analysis

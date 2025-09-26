@@ -10,7 +10,10 @@
 **Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced options and security classification
 **Updated:** 09/25/25 1:52PM - Fixed extraction_timestamp format from ISO to YYYY.MM.DD_HH.MMET to match agent specifications
 **Updated:** 09/26/25 12:45PM - Added complete doc_level_data sections (net_account_value, expanded income_summary, realized_gains) to align with updated schema
-**Purpose:** Formal specification for JSON output from Fidelity statement extraction
+**Updated:** 09/26/25 1:45PM - Updated extraction workflow
+**Updated:** 09/26/25 5:00PM - Removed hybrid workflow, reverted to pure LLM extraction from PDF
+**Updated:** 09/26/25 5:45PM - Complete removal of all hybrid extraction references
+**Purpose:** Formal specification for JSON output from Fidelity statement holdings extraction
 **Related:** [Map_Stmnt_Fid_Positions.md](./Map_Stmnt_Fid_Positions.md)
 
 ## ⚙️ Extraction vs Classification Philosophy
@@ -44,15 +47,25 @@ Extract security descriptions, CUSIPs, and symbols exactly as shown in the PDF. 
 
 ## Overview
 
-This document defines the exact JSON structure that must be produced when extracting data from Fidelity statements. The extraction process produces a single JSON file containing metadata, document information, and holdings data.
+This document defines the exact JSON structure that must be produced when extracting holdings data from Fidelity statements. The extraction process uses pure LLM extraction directly from PDF statements to produce a complete JSON file containing metadata, document information, and holdings data.
 
 ## File Naming Convention
 
+Uses institution-statement-period-accounts-type-timestamp format:
+
 ```
-{file_hash}_holdings_{YYYYMMDD_HHMMSS}.json
+Fid_Stmnt_YYYY-MM_[Accounts]_holdings_YYYY.MM.DD_HH.MMET.json
 ```
 
-Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
+Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
+
+**Components:**
+- `Fid` - Institution code (Fidelity)
+- `Stmnt` - Document type (Statement)
+- `YYYY-MM` - Statement period (from document)
+- `[Accounts]` - Account labels from mappings (Brok, CMA, etc.)
+- `holdings` - Extraction type
+- `YYYY.MM.DD_HH.MMET` - Current extraction timestamp
 
 ## Data Type Rules
 
@@ -299,14 +312,25 @@ Example: `a3b5c7d9e1f3_holdings_20240922_143000.json`
 - `est_yield`: May be missing
 - Bond optional fields: `agency_ratings`, `next_call_date`, `call_price`, `payment_freq`, `bond_features`
 
-## Extraction Instructions for Claude
+## LLM Extraction Instructions
 
-1. **One JSON file per document** containing all accounts found
-2. **Preserve exact values** - Copy numbers exactly as shown (including decimal places)
-3. **Handle "unavailable"** - Convert to `null` in JSON
-4. **Include all holdings** - Even those with zero or negative values
-5. **Maintain order** - Holdings in same order as document
-6. **Ask if uncertain** - If data location unclear or values ambiguous, ask user for guidance
+**IMPORTANT:** You are extracting all holdings data directly from the PDF statement.
+
+### Your Extraction Task:
+1. **Read PDF statement** - Extract all holdings and document-level data
+2. **Create complete JSON** - Generate full JSON structure from scratch
+3. **Extract all fields** - Capture all data points from the PDF
+4. **Complete doc_level_data** - All 20+ summary fields must be extracted
+5. **Calculate MD5 hash** - Hash the completed JSON content
+6. **Include all accounts** - Process every account in the statement
+
+### Fields You Must Extract:
+- **All holdings data:** `sec_type`, `quantity`, `price_per_unit`, `end_market_value`, `cost_basis`, `beg_market_value`, `estimated_ann_inc`, `est_yield`, `unrealized_gain_loss`
+- **Security info:** `sec_symbol`, `sec_description`, `cusip`
+- **Bonds:** `maturity_date`, `coupon_rate`, `accrued_int`, `agency_ratings`, `next_call_date`, `call_price`, `payment_freq`, `bond_features`
+- **Options:** `underlying_symbol`, `strike_price`, `expiration_date`
+- **Account metadata:** `account_number`, `account_name`, `account_type`
+- **Document-Level:** Complete `net_account_value`, `income_summary`, `realized_gains` sections
 
 ## Validation Rules
 

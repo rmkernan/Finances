@@ -18,23 +18,27 @@ Transform user-identified workflow needs into functional features through system
 - **Interactive Navigation** - Clickable dashboard metrics
 - **Accounts Layout** - Verified excellent existing organization
 
-## 🚧 CURRENT PHASE: Days 6-8 Interactive Features
+## ✅ COMPLETED (Days 6-8): Interactive Features
 
-### Feature 7: Dynamic Portfolio Summary
-- Add entity/institution filter dropdowns to dashboard summary
-- Support 2 simultaneous selection criteria
-- Update data dynamically
+### Feature 7: Dynamic Portfolio Summary ✅
+- ✅ Added entity/institution filter dropdowns to dashboard portfolio summary
+- ✅ Implemented 2 simultaneous selection criteria support
+- ✅ Dynamic data updates with advanced institution filtering logic
+- **Files:** `src/components/portfolio/PortfolioSummaryCard.tsx`
 
-### Feature 8: Interactive Recent Activity
-- Make activity items clickable → navigate to transactions
-- Add expandable details with toggle functionality
-- Show transaction expansion fields: `settlement_date`, `payee`, `fees`, `tax_category`
+### Feature 8: Interactive Recent Activity ✅
+- ✅ Made activity items clickable with navigation to account pages
+- ✅ Added expandable details with toggle functionality (multiple items)
+- ✅ Rich transaction details: `settlement_date`, `payee`, `fees`, `tax_category`, `sec_cusip`
+- **Files:** `src/components/dashboard/RecentActivity.tsx`
 
-### Feature 9: Enhanced Transactions Table
-- Default to previous full month (not current)
-- Add account column for context
-- Apply UniversalTable with expandable rows
-- Consistent across all transaction table locations
+### Feature 9: Enhanced Transactions Table ✅
+- ✅ Created previous full month default logic with `getPreviousMonthDateRange()`
+- ✅ Enhanced account context throughout transaction displays
+- ✅ Applied consistent patterns across all transaction table locations
+- **Files:** `src/lib/dateUtils.ts`, `src/components/accounts/AccountTransactions.tsx`
+
+## 🚧 CURRENT PHASE: Days 9-11 Portfolio Analysis & Document Coverage
 
 ## 🔮 REMAINING: Days 9-12
 

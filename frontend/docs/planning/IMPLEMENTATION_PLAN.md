@@ -10,6 +10,7 @@
 **Updated:** 09/25/25 10:24AM - Added mandatory build verification and pre-creation checks based on Day 9 learnings
 **Updated:** 09/25/25 4:06PM - Added Week 4+ user-driven feature implementation plan with 21 prioritized features from comprehensive page-by-page review
 **Updated:** 09/25/25 6:37PM - Marked Days 1-2 and Days 3-5 as complete with detailed implementation results
+**Updated:** 09/26/25 2:34PM - Added Days 6-8 completion status and comprehensive progress documentation
 **Purpose:** Step-by-step coding tasks for building core infrastructure and dashboard functionality
 
 ## ⚠️ CRITICAL QUALITY REQUIREMENTS
@@ -1081,24 +1082,26 @@ export default function EntityPage() {
    - ✅ Applied universal table patterns where beneficial
    - **Files:** Quality verification confirmed - no changes needed
 
-#### Days 6-8: Interactive Features 🟠
+#### Days 6-8: Interactive Features 🟠 ✅ COMPLETE
 **Goal:** Dynamic filtering and expandable content
 
-7. **Dynamic Portfolio Summary** - dashboard
-   - Add dropdowns for entity/institution filtering
-   - Support up to 2 simultaneous selection criteria
-   - **Files:** Update dashboard summary component, add filter controls
+7. **Dynamic Portfolio Summary** - dashboard ✅
+   - ✅ Added entity/institution filter dropdowns with advanced logic
+   - ✅ Implemented 2 simultaneous selection criteria support
+   - ✅ Dynamic data updates with proper query key management
+   - **Files:** Enhanced `src/components/portfolio/PortfolioSummaryCard.tsx`
 
-8. **Interactive Recent Activity** - dashboard
-   - Make items clickable → navigate to specific transactions
-   - Add expandable detail view with multiple items support
-   - **Files:** Update recent activity component, add transaction detail expansion
+8. **Interactive Recent Activity** - dashboard ✅
+   - ✅ Made items clickable with navigation to account detail pages
+   - ✅ Added expandable detail view supporting multiple simultaneous expansions
+   - ✅ Rich transaction details: settlement_date, payee, fees, tax_category, sec_cusip
+   - **Files:** Enhanced `src/components/dashboard/RecentActivity.tsx`
 
-9. **Enhanced Transactions Table** - all locations
-   - Default to previous full month instead of current
-   - Add account column for transaction context
-   - Implement clickable expandable rows
-   - **Files:** Update transaction table components, add account context
+9. **Enhanced Transactions Table** - all locations ✅
+   - ✅ Created previous full month default with `getPreviousMonthDateRange()` utility
+   - ✅ Enhanced account context throughout transaction displays
+   - ✅ Applied consistent patterns across all transaction table locations
+   - **Files:** `src/lib/dateUtils.ts`, updated transaction components
 
 #### Days 9-10: Portfolio Analysis 🟠
 **Goal:** Advanced holdings management and multi-account tracking

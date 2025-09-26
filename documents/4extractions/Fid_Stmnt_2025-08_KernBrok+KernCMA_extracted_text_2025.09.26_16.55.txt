@@ -1,0 +1,540 @@
+FIDELITY PDF TEXT EXTRACTION REPORT
+==================================================
+
+SOURCE PDF: /Users/richkernan/Projects/Finances/documents/3processed/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf
+EXTRACTION TIME: 2025.09.26_16.55
+TOTAL PAGES: 33
+TOTAL TABLES: 46
+EXTRACTION STATUS: success
+
+TABLES BY TYPE:
+- account_summary: 5
+- holdings_table: 27
+- activity_table: 14
+
+ACCOUNTS DETECTED: 23
+- Z40-394071
+- D83488553
+- 015 507071
+- 316128503
+- 007903107
+- 92805202
+- Z27-375656
+- Z40-397011
+- D83546207
+- M05272516620
+- 316175207
+- Z24-527872
+- 092508100
+- 001 45814010
+- R60065690900
+- R60066286100
+- 110448107
+- D84401349
+- 594972408
+- Z40-394067
+- 552738106
+- D83188739
+- 316176106
+
+DETAILED TABLE DATA:
+==============================
+
+Table 2 (Page 2) - account_summary
+Rows: 1, Columns: 1
+--------------------
+Page Account Type/Name Number Beginning Value Endi
+
+
+Table 2 (Page 3) - account_summary
+Rows: 1, Columns: 1
+--------------------
+Income Summary Asset Allocation
+
+
+Table 2 (Page 4) - account_summary
+Rows: 1, Columns: 1
+--------------------
+Income Summary
+
+
+Table 0 (Page 5) - holdings_table
+Rows: 6, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | EY (%)
+MARTISAN MID CAP VALUE FUND | $4,114.14 | 271.203 | $15.9400 | $4,322.97 | $4,275.29 | t | $47.68 | $26.49
+ADVISOR (APDQX) | 0.610 | %
+MLAZARD EMERGING MKTS EQUITY | 11,817.36 | 544.830 | 22.2200 | 12,106.12 | 8,660.73 | t | 3,445.39 | 303.20
+5 | of | 36
+
+
+Table 1 (Page 5) - activity_table
+Rows: 2, Columns: 5
+--------------------
+deposits | , | cash dividends | , | and interest payments which have not been transfer
+from Other Activity In or Out and Multi-currency t | , | plus any distribution and
+
+
+Table 2 (Page 5) - account_summary
+Rows: 1, Columns: 3
+--------------------
+Free Credit Balance | $359,802.10 | Income Summary (continued)
+
+
+Table 0 (Page 6) - holdings_table
+Rows: 19, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | EY (%)
+MNORTHERN SMALL CAP VALUE | 5,907.63 | 459.738 | 13.8900 | 6,385.76 | 8,419.48 | t - | 2,033.72 | 82.39
+Total Stock Funds ( | 0 | % of account holdings) | $21,839.13 | $22,814.85 | $21,355.50 | $1,459.35 | $412.08
+FIDELITY TAX-FREE BOND (FTABX) | $1,002,334.85 | 94,201.940 | $10.7300 | $1,010,786.82 | $1,013,337.57 | - | $2,550.75 | $31,973.38
+-- | 30 | -day yield: | 3.83 | % | 3.160 | %
+Total Bond Funds ( | 15 | % of account holdings) | $1,002,334.85 | $1,010,786.82 | $1,013,337.57 | - | $2,550.75 | $31,973.38
+FIMM TAX EXEMPT PORTFOLIO: CLASS | $2,802,664.31 | 2,315,122.290 | $1.0000 | $2,315,122.29 | not applicable not applicable | $65,086.92
+I (FTCXX) | 2.810 | %
+-- | 7 | -day yield: | 2.71 | %
+... (9 more rows)
+
+
+Table 0 (Page 7) - holdings_table
+Rows: 23, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | EY (%)
+MAT&T INC COM USD | 1 | (T) | $65,268.63 | 2,381.198 | $29.2900 | $69,745.28 | $34,184.37 | $35,560.91 | $2,643.13
+MADYEN NV UNSPON ADS EACH REP | 17,200.00 | 1,000.000 | 16.7800 | 16,780.00 | 7,550.00 | 9,230.00 | -
+MADVANCED MICRO DEVICES INC (AMD) unavailable | 2,000.000 | 162.6300 | 325,260.00 | 348,513.49 | - | 23,253.49 | -
+MAERSALE CORPORATION COM (ASLE) | 6,040.00 | 1,000.000 | 8.6300 | 8,630.00 | 14,006.70 | - | 5,376.70 | -
+MALPHABET INC CAP STK CL C (GOOG) | 482,150.00 | 2,500.000 | 213.5300 | 533,825.00 | 389,063.56 | 144,761.44 | 2,100.00
+MANTERO RESOURCES CORP COM (AR) unavailable | 1,000.000 | 31.9200 | 31,920.00 | 32,156.74 | - | 236.74 | -
+MAPPLIED DIGITAL CORP COM USD | 0.001 | 13,140.00 | 1,000.000 | 15.9800 | 15,980.00 | 5,085.00 | 10,895.00 | -
+MBLACKROCK CR ALLOCATION INCOME | 11,040.00 | 1,000.000 | 11.0000 | 11,000.00 | 9,311.62 | 1,688.38 | 1,006.80
+... (13 more rows)
+
+
+Table 0 (Page 8) - holdings_table
+Rows: 21, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | EY (%)
+MENERGY TRANSFER L P COM UT LTD | 18,040.00 | 1,000.000 | 17.7200 | 17,720.00 | 13,835.00 | 3,885.00 | 1,320.00
+MFMC CORP COM NEW (FMC) | 7,808.00 | 200.000 | 39.1000 | 7,820.00 | 12,081.35 | - | 4,261.35 | 464.00
+MFIDUS INVT CORP COM (FDUS) | 1,421.58 | 68.742 | 21.5300 | 1,480.01 | 1,249.99 | 230.02 | 118.24
+MHERITAGE NOLA BANCORP INC COM | 8,850.00 | 500.000 | 17.6000 | 8,800.00 | 9,125.00 | - | 325.00 | -
+MINTEL CORP COM USD | 0.001 | (INTC) unavailable | 1,000.000 | 24.3500 | 24,350.00 | 20,905.00 | 3,445.00 | 500.00
+MKVH INDUSTRIES INC (KVHI) | 10,051.00 | 1,900.000 | 5.6300 | 10,697.00 | 8,794.53 | 1,902.47 | -
+MMFS MUN INCOME TR SH BEN INT | 5,130.00 | 1,000.000 | 5.1900 | 5,190.00 | 4,629.90 | 560.10 | 266.00
+MMPLX LP COM UNIT REP LTD (MPLX) | 7,483.92 | 142.551 | 50.8700 | 7,251.56 | 4,999.98 | 2,251.58 | 545.40
+... (11 more rows)
+
+
+Table 0 (Page 9) - holdings_table
+Rows: 23, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | EY (%)
+MPIMCO DYNAMIC INCOME FD COM | 9,600.00 | 500.000 | 19.6500 | 9,825.00 | 7,730.30 | 2,094.70 | 1,323.00
+USD | 0.00001 | (PDI) | 13.470
+MPROSPECT CAP CORP COM (PSEC) | 310.00 | 100.000 | 2.9800 | 298.00 | 513.85 | - | 215.85 | 54.00
+MREPLIMUNE GROUP INC COM (REPL) | 14,060.00 | 2,000.000 | 5.4000 | 10,800.00 | 14,813.44 | - | 4,013.44 | -
+MROYCE SMALL CAP TRUST INC COM | 11,981.71 | 789.309 | 16.0600 | 12,676.30 | 9,999.99 | 2,676.31 | 915.60
+SSHUTTERSTOCK INC COM USD | 0.01 | - | 9,580.00 | - | 500.000 | 20.9300 | - | 10,465.00 | - | 22,496.47 | 12,031.47 | - | 660.00
+MSOCIETE GENERALE FRANCE | 25,580.00 | 2,000.000 | 12.3800 | 24,760.00 | 9,588.69 | 15,171.31 | 492.16
+MSTEEL PARTNERS HLDGS L P PFD SER | 2,479.00 | 100.000 | 24.7775 | 2,477.75 | 2,360.00 | 117.75 | 150.00
+... (13 more rows)
+
+
+Table 0 (Page 10) - holdings_table
+Rows: 23, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | EY (%)
+MRLJ LODGING TR CUM CONV PFD A | 12,225.00 | 500.000 | 24.3400 | 12,170.00 | 11,798.25 | 371.75 | 975.00
+MSYNOVUS FINL CORP | 5.875 | PFD SER E | 11,908.42 | 454.000 | 26.4400 | 12,003.76 | 9,806.40 | 2,197.36 | 953.05
+8.41700 | % (SNVPRE) | 7.940
+Total Preferred Stock ( | 1 | % of account | $42,327.42 | $42,578.73 | $37,855.65 | $4,723.08 | $3,075.93
+Total Stocks ( | 35 | % of account holdings) | $1,414,604.80 | $2,340,512.87 | $1,925,109.38 | $415,403.49 | $24,984.29
+Beginning Price End. Market Value Unrealized
+Market Value Quantity Per Unit Accrued Int. (AI) T
+Description Maturity Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | Income (EAI) Rate
+... (13 more rows)
+
+
+Table 0 (Page 11) - holdings_table
+Rows: 27, Columns: 1
+--------------------
+Beginning Price End. Market Value Unrealized
+Market Value Quantity Per Unit Accrued Int. (AI) T
+Description Maturity Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | Income (EAI) Rate
+MMAIN STR NAT GAS INC GA | 03 | / | 01 | / | 26 | 50,502.50 | 50,000.000 | 100.9240 | 50,462.00 | 50,322.24 | B | 139.76 | 2,500.00 | 5.000
+FIXED COUPON MOODYS Aa | 1 | SEMIANNUALLY EXTRAORDINARY CALL CUSIP: | 56035 | DGF | 3
+MTEXAS ST UNIV SYS FING | 03 | / | 15 | / | 26 | 10,031.60 | 10,000.000 | 100.3050 | 10,030.50 | 10,000.00 | B | 30.50 | 500.00 | 5.000
+FIXED COUPON MOODYS Aa | 2 | SEMIANNUALLY NEXT CALL DATE | 09 | / | 30 | / | 2025 | 100.00 | CUSIP: | 88278 | PUJ | 1
+MSANDY SPRINGS GA PUB | 05 | / | 01 | / | 29 | 10,188.30 | 10,000.000 | 101.7540 | 10,175.40 | 10,066.72 | B | 108.68 | 500.00 | 5.000
+FIXED COUPON PRE-REFUNDED | 05 | / | 01 | / | 2026 | @ | 100.000 | MOODYS Aaa S&P AAA SEMIANNUALLY CONT CALL | 05 | / | 01 | / | 2026 | CUSIP: | 80036 | RAN | 0
+MSOUTHEAST ENERGY AUTH | 06 | / | 01 | / | 26 | 35,206.15 | 35,000.000 | 100.6270 | 35,219.45 | 35,034.03 | B | 185.42 | 1,400.00 | 4.000
+... (17 more rows)
+
+
+Table 0 (Page 12) - holdings_table
+Rows: 26, Columns: 1
+--------------------
+Beginning Price End. Market Value Unrealized
+Market Value Quantity Per Unit Accrued Int. (AI) T
+Description Maturity Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | Income (EAI) Rate
+MMAIN STR NAT GAS INC GA | 06 | / | 01 | / | 27 | 118,423.55 | 115,000.000 | 103.0910 | 118,554.65 | 117,181.97 | B | 1,372.68 | 5,750.00 | 5.000
+FIXED COUPON MOODYS A | 3 | SEMIANNUALLY EXTRAORDINARY CALL CUSIP: | 56035 | DEB | 4
+MILLINOIS ST SALES TAX REV | 06 | / | 15 | / | 27 | 15,074.10 | 15,000.000 | 100.6100 | 15,091.50 | 15,034.39 | B | 57.11 | 600.00 | 4.000
+FIXED COUPON S&P A SEMIANNUALLY NEXT CALL DATE | 06 | / | 15 | / | 2026 | 100.00 | CONT CALL | 06 | / | 15 | / | 2026 | CUSIP: | 452227 | KN | 0
+MCARROLL CITY-CNTY HOSP | 07 | / | 01 | / | 27 | 5,103.80 | 5,000.000 | 102.0070 | 5,100.35 | 5,030.53 | B | 69.82 | 250.00 | 5.000
+FIXED COUPON MOODYS Aa | 2 | S&P AA SEMIANNUALLY NEXT CALL DATE | 07 | / | 01 | / | 2026 | 100.00 | CONT CALL | 07 | / | 01 | / | 2026 | EXTRAORDINARY CALL CUSIP: | 144709 | HK | 1
+MCRISP CNTY GA HOSP AUTH | 07 | / | 01 | / | 27 | 31,182.60 | 30,000.000 | 104.0430 | 31,212.90 | 30,798.44 | B | 414.46 | 1,500.00 | 5.000
+... (16 more rows)
+
+
+Table 0 (Page 13) - holdings_table
+Rows: 25, Columns: 1
+--------------------
+Beginning Price End. Market Value Unrealized
+Market Value Quantity Per Unit Accrued Int. (AI) T
+Description Maturity Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | Income (EAI) Rate
+MJACKSON TENN HOSP REV | 04 | / | 01 | / | 29 | 25,016.25 | 25,000.000 | 100.0680 | 25,017.00 | 25,000.00 | B | 17.00 | 1,250.00 | 5.000
+FIXED COUPON MOODYS A | 3 | S&P BBB+ SEMIANNUALLY NEXT CALL DATE | 09 | / | 20 | / | 2025 | 100.00 | EXTRAORDINARY CALL CUSIP: | 46874 | TGU | 0
+MCLARKE CNTY GA HOSP | 07 | / | 01 | / | 29 | 30,552.90 | 30,000.000 | 101.8400 | 30,552.00 | 30,255.13 | B | 296.87 | 1,500.00 | 5.000
+FIXED COUPON MOODYS Aa | 3 | S&P AA- SEMIANNUALLY NEXT CALL DATE | 07 | / | 01 | / | 2026 | 100.00 | CONT CALL | 07 | / | 01 | / | 2026 | CUSIP: | 181685 | JC | 3
+MOKLAHOMA DEV FIN AUTH | 08 | / | 15 | / | 29 | 15,013.35 | 15,000.000 | 100.1040 | 15,015.60 | 15,000.00 | B | 15.60 | 750.00 | 5.000
+FIXED COUPON MOODYS A | 3 | S&P A- SEMIANNUALLY NEXT CALL DATE | 09 | / | 30 | / | 2025 | 100.00 | EXTRAORDINARY CALL CUSIP: | 67884 | XBQ | 9
+MBLACK BELT ENERGY GAS | 06 | / | 01 | / | 31 | 54,289.50 | 50,000.000 | 109.1970 | 54,598.50 | 52,607.72 | B | 1,990.78 | 2,750.00 | 5.500
+... (15 more rows)
+
+
+Table 0 (Page 14) - holdings_table
+Rows: 21, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025
+MCALL (ETN) EATON CORPORATION unavailable | 5.000 | $0.6500 | $325.00 | $2,116.37 | - | $1,791.37
+SEP | 19 | 25 | $380 | ( | 100 | SHS)
+(ETN | 250919 | C | 380 | )
+MPUT (ETN) EATON CORPORATION unavailable - | 5.000 | 1.2800 | - | 640.00 | - | 1,328.63 | 688.63
+SEP | 19 | 25 | $320 | ( | 100 | SHS)
+(ETN | 250919 | P | 320 | ) SHT
+MCALL (GOOG) ALPHABET INC CAP STK unavailable | 20.000 | 5.1600 | 10,320.00 | 5,493.48 | 4,826.52
+SEP | 12 | 25 | $215 | ( | 100 | SHS)
+... (11 more rows)
+
+
+Table 0 (Page 15) - holdings_table
+Rows: 28, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025
+MPUT (ORCL) ORACLE CORP unavailable - | 10.000 | 4.3000 | - | 4,300.00 | - | 2,073.26 | - | 2,226.74
+AUG | 29 | 25 | $230 | ( | 100 | SHS)
+(ORCL | 250829 | P | 230 | ) SHT
+MPUT (RRC) RANGE RESOURCES CORP unavailable - | 10.000 | 1.4200 | - | 1,420.00 | - | 1,393.26 | - | 26.74
+SEP | 19 | 25 | $35 | ( | 100 | SHS)
+(RRC | 250919 | P | 35 | ) SHT
+MPUT (SERV) SERVE ROBOTICS INC unavailable - | 10.000 | 1.0000 | - | 1,000.00 | - | 883.26 | - | 116.74
+SEP | 12 | 25 | $11.5 | ( | 100 | SHS)
+... (18 more rows)
+
+
+Table 0 (Page 16) - holdings_table
+Rows: 3, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 04 | TESLA INC COM ASSIGNED PUTS | 88160 | R | 101 | You Bought | 500.000 | $305.00000 | - - | $152,500.00
+16 | of | 36
+
+
+Table 1 (Page 16) - activity_table
+Rows: 2, Columns: 3
+--------------------
+AI (Accrued Interest) - Represents interest accumu | , | but not yet paid by the issuer or received by NFS.
+Date Security Name CUSIP Description Quantity Pric
+
+
+Table 0 (Page 17) - holdings_table
+Rows: 3, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 06 | PUT (COIN) COINBASE GLOBAL INC | 7378399 | EA You Sold - | 10.000 | 10.70000 | - - | 6.74 | 10,693.26
+AUG | 15 | 25 | $300 | ( | 100 | SHS) OPENING
+
+
+Table 1 (Page 17) - activity_table
+Rows: 2, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+05.00000 | % | 11 | / | 15 | / | 2027 | FULL CALL PAYOUT
+
+
+Table 0 (Page 18) - holdings_table
+Rows: 3, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 12 | CALL (INTC) INTEL CORP COM | 7729649 | UU You Bought | 20.000 | 0.52000 | - - | 13.49 | - | 1,053.49
+OCT | 17 | 25 | $25 | ( | 100 | SHS) OPENING
+
+
+Table 1 (Page 18) - activity_table
+Rows: 2, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+05.00000 | % | 08 | / | 15 | / | 2025 | REDEMPTION
+
+
+Table 0 (Page 19) - holdings_table
+Rows: 4, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 18 | STRATEGY INC COMMON STOCK CLASS | 594972408 | You Bought | 500.000 | 370.00000 | - - | 185,000.00
+08 | / | 19 | CALL (CRWV) COREWEAVE INC COM CL | 8041349 | XV You Bought | 2.000 | 7.25000 | - - | 1.35 | - | 1,451.35
+SEP | 05 | 25 | $105 | ( | 100 | SHS) OPENING
+
+
+Table 0 (Page 20) - holdings_table
+Rows: 3, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 28 | PUT (NVDA) NVIDIA CORPORATION | 7999339 | QK You Sold - | 10.000 | 2.95000 | - - | 6.74 | 2,943.26
+AUG | 29 | 25 | $175 | ( | 100 | SHS) OPENING
+
+
+Table 1 (Page 20) - activity_table
+Rows: 4, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+Dividends | , | Interest & Other Income
+Date Security Name CUSIP Description Quantity Pric
+05.00000 | % | 08 | / | 01 | / | 2026 | ANTIC CTFS
+
+
+Table 0 (Page 21) - holdings_table
+Rows: 5, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 06 | BRITISH AMERICAN TOBACCO LVL II ADR | 110448107 | Dividend Received - - | 239.22
+EACH REP | 1 | ORD GBP | 0.25 | BNY
+08 | / | 08 | TIDAL TR II YIELDMAX TSLA OP | 88636 | J | 444 | Dividend Received - - | 113.29
+08 | / | 08 | WISCONSIN ST HEALTH & EDL FACS | 97712 | DHL | 3 | Muni Exempt Int - - | 115.28
+
+
+Table 1 (Page 21) - activity_table
+Rows: 9, Columns: 3
+--------------------
+Dividends | , | Interest & Other Income (continued)
+Date Security Name CUSIP Description Quantity Pric
+05.00000 | % | 11 | / | 15 | / | 2027 | FULL CALL PAYOUT
+05.00000 | % | 08 | / | 15 | / | 2025 | REV BDS IDEA PUB
+05.00000 | % | 08 | / | 15 | / | 2031 | REV BDS HAMILTON
+05.00000 | % | 02 | / | 15 | / | 2037 | REV ANTIC CTFS
+05.00000 | % | 02 | / | 15 | / | 2027 | REV ANTIC CTFS
+04.00000 | % | 02 | / | 15 | / | 2027
+05.00000 | % | 08 | / | 15 | / | 2029 | REF BDS INTEGRIS
+
+
+Table 0 (Page 22) - holdings_table
+Rows: 8, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 29 | FIDELITY GOVERNMENT MONEY | 31617 | H | 102 | Dividend Received - - | 548.94
+08 | / | 29 | FIDELITY TAX-FREE BOND | 316128503 | Reinvestment | 262.404 | 10.73000 | - | 2,815.60
+08 | / | 29 | FIDELITY TAX-FREE BOND | 316128503 | Dividend Received - - | 2,815.60
+08 | / | 29 | FIMM TAX EXEMPT PORTFOLIO: CLASS I | 316176106 | Reinvestment | 5,619.830 | 1.00000 | - | 5,619.83
+08 | / | 29 | FIMM TAX EXEMPT PORTFOLIO: CLASS I | 316176106 | Dividend Received - - | 5,619.83
+08 | / | 29 | MFS MUN INCOME TR SH BEN INT | 552738106 | Dividend Received - - | 24.00
+08 | / | 29 | TORTOISE SUSTAINABLE AND SOCIAL | 27901 | F | 109 | Dividend Received - - | 90.00
+
+
+Table 1 (Page 22) - activity_table
+Rows: 5, Columns: 3
+--------------------
+Dividends | , | Interest & Other Income (continued)
+Date Security Name CUSIP Description Quantity Pric
+Total Dividends | , | Interest & Other Income | $8,352.01
+Date Security Name Description Quantity Price Cost
+Date Security Name CUSIP Description Quantity Pric
+
+
+Table 0 (Page 23) - holdings_table
+Rows: 12, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 15 | PUT (CRWV) COREWEAVE INC COM CL | 7894949 | PJ Expired | 5.000 | - - | 3,801.63 | f - -
+AUG | 15 | 25 | $100 | ( | 100 | SHS)
+08 | / | 15 | PUT (GOOG) ALPHABET INC CAP STK | 7766399 | LJ Expired | 10.000 | - - | 10,173.21 | f - -
+AUG | 15 | 25 | $170 | ( | 100 | SHS)
+08 | / | 15 | PUT (GOOG) ALPHABET INC CAP STK | 7766399 | TT Expired | 10.000 | - - | 2,593.26 | f - -
+AUG | 15 | 25 | $200 | ( | 100 | SHS)
+08 | / | 15 | PUT (META) META PLATFORMS INC | 7285639 | EE Expired | 5.000 | - - | 3,236.63 | f - -
+AUG | 15 | 25 | $750 | ( | 100 | SHS)
+08 | / | 15 | PUT (TSLA) TESLA INC COM | 7347879 | NJ Expired | 10.000 | - - | 15,308.25 | f - -
+... (2 more rows)
+
+
+Table 1 (Page 23) - activity_table
+Rows: 2, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+Date Security Name CUSIP Description Quantity Pric
+
+
+Table 0 (Page 24) - holdings_table
+Rows: 5, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 01 | Z | 40 | - | 394071 | - | 1 | Transferred From - - | $100,000.00
+08 | / | 14 | Z | 40 | - | 394067 | - | 1 | Transferred From - - | 250,000.00
+08 | / | 14 | Z | 40 | - | 397011 | - | 1 | Transferred From - - | 156,000.00
+08 | / | 01 | Wire Tfr To Bank WD | 83188739 | - | $100,000.00
+
+
+Table 1 (Page 24) - activity_table
+Rows: 4, Columns: 1
+--------------------
+Date Reference Description Amount
+Date Security Name CUSIP Description Quantity Pric
+Date Reference Description Amount
+Date Description Amount Date Description Amount
+
+
+Table 0 (Page 25) - holdings_table
+Rows: 19, Columns: 1
+--------------------
+Date Type Transaction Description Quantity Price A
+08 | / | 01 | CASH You Bought FIDELITY GOVERNMENT MONEY MARKET | 2,767.460 | $1.0000 | $2,767.46 | $331,482.20
+08 | / | 04 | CASH You Sold FIDELITY GOVERNMENT MONEY MARKET - | 152,500.000 | 1.0000 | - | 152,500.00 | 178,982.20
+08 | / | 06 | CASH You Bought FIDELITY GOVERNMENT MONEY MARKET | 236.220 | 1.0000 | 236.22 | 179,218.42
+08 | / | 06 | CASH You Bought FIDELITY GOVERNMENT MONEY MARKET | 23,731.410 | 1.0000 | 23,731.41 | 202,949.83
+08 | / | 08 | CASH You Bought FIDELITY GOVERNMENT MONEY MARKET | 11,952.510 | 1.0000 | 11,952.51 | 214,902.34
+08 | / | 12 | CASH You Sold FIDELITY GOVERNMENT MONEY MARKET - | 15,485.460 | 1.0000 | - | 15,485.46 | 199,416.88
+08 | / | 13 | CASH You Sold FIDELITY GOVERNMENT MONEY MARKET - | 199,416.880 | 1.0000 | - | 199,416.88 | -
+08 | / | 14 | CASH You Bought FIDELITY GOVERNMENT MONEY MARKET | 406,000.000 | 1.0000 | 406,000.00 | 406,000.00
+08 | / | 15 | CASH You Sold FIDELITY GOVERNMENT MONEY MARKET - | 250,000.000 | 1.0000 | - | 250,000.00 | 156,000.00
+... (9 more rows)
+
+
+Table 0 (Page 26) - holdings_table
+Rows: 9, Columns: 1
+--------------------
+Date Type Transaction Description Quantity Price A
+08 | / | 27 | CASH You Bought FIDELITY GOVERNMENT MONEY MARKET | 7,616.520 | 1.0000 | 7,616.52 | 7,616.52
+08 | / | 28 | CASH You Bought FIDELITY GOVERNMENT MONEY MARKET | 3,826.520 | 1.0000 | 3,826.52 | 11,443.04
+08 | / | 29 | CASH You Sold FIDELITY GOVERNMENT MONEY MARKET - | 11,540.330 | 1.0000 | - | 11,540.33 | - | 97.29
+08 | / | 29 | CASH You Sold FIDELITY GOVERNMENT MONEY MARKET - | 451.650 | 1.0000 | - | 451.65 | - | 548.94
+08 | / | 29 | CASH Reinvestment FIDELITY GOVERNMENT MONEY MARKET | 548.940 | 1.0000 | 548.94 | -
+Date Date Security Name CUSIP Description Quantity
+08 | / | 29 | 09 | / | 02 | PUT (CRWV) COREWEAVE INC COM CL CRWV Bought | 1.0000 | $0.01000 | - | $699.33 | f - | $1.02
+AUG | 29 | 25 | $100 | ( | 100 | SHS) CLOSING Short-term gain: | $698.31
+
+
+Table 1 (Page 26) - activity_table
+Rows: 2, Columns: 1
+--------------------
+Date Type Transaction Description Quantity Price A
+Date Date Security Name CUSIP Description Quantity
+
+
+Table 0 (Page 27) - holdings_table
+Rows: 3, Columns: 1
+--------------------
+Date Date Security Name CUSIP Description Quantity
+08 | / | 29 | 09 | / | 02 | PUT (CRWV) COREWEAVE INC COM CL CRWV Sold - | 10.0000 | 2.43000 | - | 2,423.26
+SEP | 05 | 25 | $101 | ( | 100 | SHS) OPENING
+
+
+Table 1 (Page 27) - activity_table
+Rows: 2, Columns: 1
+--------------------
+Date Date Security Name CUSIP Description Quantity
+This table presents the estimated monthly interest | 12 | months.
+
+
+Table 2 (Page 29) - account_summary
+Rows: 1, Columns: 1
+--------------------
+Income Summary
+
+
+Table 0 (Page 30) - holdings_table
+Rows: 17, Columns: 1
+--------------------
+Market Value Quantity Per Unit Market Value Total 
+Description Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | EY (%)
+FIMM MONEY MARKET PORTFOLIO: CL | $46,531.50 | 29,607.190 | $1.0000 | $29,607.19 | not applicable not applicable | $1,335.25
+I (FMPXX) | 4.510 | %
+-- | 7 | -day yield: | 4.26 | %
+Total Short-Term Funds ( | 54 | % of account | $46,531.50 | $29,607.19 | $1,335.25
+Total Mutual Funds ( | 54 | % of account | $46,531.50 | $29,607.19 | $1,335.25
+Beginning Price End. Market Value Unrealized
+Market Value Quantity Per Unit Accrued Int. (AI) T
+Description Maturity Aug | 1, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Aug | 31, | 2025 | Cost Basis Aug | 31, | 2025 | Income (EAI) Rate
+... (7 more rows)
+
+
+Table 0 (Page 31) - holdings_table
+Rows: 3, Columns: 1
+--------------------
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 20 | FIMM MONEY MARKET PORTFOLIO: CL I | 316175207 | You Sold - | 3,907.060 | - - | $3,907.06
+08 | / | 29 | FIMM MONEY MARKET PORTFOLIO: CL I | 316175207 | You Sold - | 13,180.480 | - - | 13,180.48
+
+
+Table 1 (Page 31) - activity_table
+Rows: 6, Columns: 3
+--------------------
+AI (Accrued Interest) - Represents interest accumu | , | but not yet paid by the issuer or received by NFS.
+Date Security Name CUSIP Description Quantity Pric
+Dividends | , | Interest & Other Income
+Date Security Name CUSIP Description Quantity Pric
+08 | / | 29 | FDIC INSURED DEPOSIT FDIC | 99375 | Interest Earned - - | $22.52
+Total Dividends | , | Interest & Other Income | $22.52
+
+
+Table 0 (Page 32) - holdings_table
+Rows: 7, Columns: 1
+--------------------
+Date Type Transaction Description Quantity Price A
+08 | / | 01 | CASH You Sold FDIC INSURED DEPOSIT AT CITIBANK - | 2,339.780 | $1.0000 | - | $2,339.78 | $19,207.56
+08 | / | 14 | CASH You Bought FDIC INSURED DEPOSIT AT CITIBANK | 470.110 | 1.0000 | 470.11 | 19,677.67
+08 | / | 18 | CASH You Sold FDIC INSURED DEPOSIT AT CITIBANK - | 10,000.000 | 1.0000 | - | 10,000.00 | 9,677.67
+08 | / | 20 | CASH You Sold FDIC INSURED DEPOSIT AT CITIBANK - | 9,677.670 | 1.0000 | - | 9,677.67 | -
+08 | / | 28 | CASH You Bought FDIC INSURED DEPOSIT AT CITIBANK | 470.110 | 1.0000 | 470.11 | 470.11
+32 | of | 36
+
+
+Table 1 (Page 32) - activity_table
+Rows: 4, Columns: 1
+--------------------
+Date Reference Description Amount
+Date Reference Description Amount
+Post Date Payee Payee Account Amount YTD Payments
+Date Type Transaction Description Quantity Price A
+
+
+Table 0 (Page 33) - holdings_table
+Rows: 19, Columns: 1
+--------------------
+Date Type Transaction Description Quantity Price A
+08 | / | 29 | CASH You Sold FDIC INSURED DEPOSIT AT CITIBANK - | 470.110 | 1.0000 | - | 470.11 | -
+(Rolling as of August | 31, | 2025 | )
+September | 2025 | -- -- -- -- | $111 | -- | $111
+October -- -- -- -- | 111 | -- | 111
+November -- -- -- -- | 111 | -- | 111
+December -- -- -- -- | 111 | -- | 111
+January | 2026 | 650 | -- -- -- | 111 | -- | 761
+February -- -- -- -- | 111 | -- | 111
+March -- -- -- -- | 111 | -- | 111
+... (9 more rows)
+
+
+Table 1 (Page 33) - activity_table
+Rows: 2, Columns: 1
+--------------------
+Date Type Transaction Description Quantity Price A
+This table presents the estimated monthly interest | 12 | months.
+

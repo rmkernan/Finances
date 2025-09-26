@@ -9,6 +9,8 @@
 **Updated:** 09/24/25 2:29PM - Added incremental JSON loading support with activities_loaded/positions_loaded timestamps and JSON hash tracking in documents table
 **Updated:** 09/24/25 2:43PM - Removed deprecated json_output_id and json_output_md5_hash columns and references (superseded by incremental loading system)
 **Updated:** 09/25/25 10:35PM - MAJOR: Simplified rule structure from 6 levels to 2 levels: Transaction Classification (Level 1) and Security Classification (Level 2). Fixed Return Of Capital case sensitivity issue.
+**Updated:** 09/26/25 2:55PM - Fixed database connection protocol to prevent authentication failures
+**Updated:** 09/26/25 2:58PM - Removed maintenance queries, migration management, security considerations, and Claude tips - streamlined to essential information
 **Purpose:** Database-specific context and orientation for Claude when working with the financial database
 
 ## 🚀 Quick Start - Connection Details
@@ -35,11 +37,14 @@ API Endpoint: http://127.0.0.1:54321
 
 ### Connect via Command Line
 ```bash
-# Using psql
+# CRITICAL: Always use -U postgres to avoid authentication failures
+PGPASSWORD=postgres psql -h localhost -p 54322 -U postgres -d postgres
+
+# Alternative: Full connection string
 psql postgresql://postgres:postgres@127.0.0.1:54322/postgres
 
-# Using connection parameters
-psql -h localhost -p 54322 -U postgres -d postgres
+# COMMON ERROR: This will fail with "password authentication failed"
+# psql -h localhost -p 54322 -d postgres  # Missing -U postgres!
 ```
 
 ## 📊 Database Schema Overview
@@ -394,85 +399,10 @@ AND federal_taxable = FALSE;
 - **RESTRICT:** Can't delete entities, institutions, or accounts with dependent records
 - **SET NULL:** Amendment links cleared if original document deleted
 
-## 🛠️ Database Maintenance
+## 🎯 Common Tasks
 
-### View Table Sizes
-```sql
-SELECT
-    schemaname,
-    tablename,
-    pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
-FROM pg_tables
-WHERE schemaname = 'public'
-ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
-```
 
-### Check Index Usage
-```sql
-SELECT
-    schemaname,
-    tablename,
-    indexname,
-    idx_scan as index_scans
-FROM pg_stat_user_indexes
-ORDER BY idx_scan DESC;
-```
 
-### Find Missing Indexes
-```sql
--- Tables with sequential scans but no index scans
-SELECT
-    schemaname,
-    tablename,
-    seq_scan,
-    idx_scan,
-    seq_scan - idx_scan AS difference
-FROM pg_stat_user_tables
-WHERE seq_scan > idx_scan
-ORDER BY difference DESC;
-```
-
-## 🔄 Migration Management
-
-### Current Migration Files
-- **Schema Definition:** `/docs/Design/02-Technical/schema.md`
-- **Migration Plan:** `/database-migration-plan.md`
-
-### Apply Migration
-```bash
-# Connect to database
-psql postgresql://postgres:postgres@127.0.0.1:54322/postgres
-
-# Run migration script
-\i /path/to/database-migration-plan.sql
-
-# Or use Supabase migrations
-supabase db reset  # WARNING: Drops all data
-supabase migration new initial_schema
-# Copy SQL to the new migration file
-supabase db push
-```
-
-## 🏗️ Schema Evolution Guidelines
-
-When modifying the schema:
-
-1. **Add, Don't Remove:** Add new columns as nullable, don't remove existing ones
-2. **Update Both Docs:** Update both `schema.md` and `database-migration-plan.md`
-3. **Add Comments:** Always add PostgreSQL comments for new columns
-4. **Test Constraints:** Verify UNIQUE and CHECK constraints don't break existing data
-5. **Consider Archives:** Check if changes affect archived (soft-deleted) records
-
-## 🔐 Security Considerations
-
-### Sensitive Data Columns
-- `entities.tax_id` - Should be encrypted/hashed
-- `accounts.account_number` - Should be encrypted/masked
-- `transactions.payee_account` - Should be masked
-
-### Display-Only Fields
-- `entities.tax_id_display` - Last 4 digits only
-- `accounts.account_number_display` - Last 4 digits only
 
 ## 📊 Database Statistics
 
@@ -505,49 +435,21 @@ GROUP BY i.institution_name;
 
 ## 🎯 Common Tasks
 
+### Database Backup
+Use the `/backup-database` command - provides timestamped backups with data-only, schema-only, and full backup options.
+
 ### Reset Database (Development Only)
 ```bash
-# Complete reset - drops and recreates
-supabase db reset
-
-# Or manually
-psql postgresql://postgres:postgres@127.0.0.1:54322/postgres
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-# Then run migration script
+supabase db reset  # WARNING: Drops all data
 ```
-
-### Backup Database
-```bash
-# Backup structure and data
-pg_dump postgresql://postgres:postgres@127.0.0.1:54322/postgres > backup_$(date +%Y%m%d).sql
-
-# Backup structure only
-pg_dump --schema-only postgresql://postgres:postgres@127.0.0.1:54322/postgres > schema_$(date +%Y%m%d).sql
-```
-
-### Restore Database
-```bash
-psql postgresql://postgres:postgres@127.0.0.1:54322/postgres < backup_20250922.sql
-```
-
-## 💡 Tips for Claude
-
-1. **Always check for duplicates** before inserting documents (use MD5 hash)
-2. **Include `is_archived = FALSE`** in queries unless specifically looking for archived records
-3. **Use transactions** for multi-table inserts to maintain consistency
-4. **Check constraints** before inserting - the database will reject invalid data
-5. **Read the comments** - use `\d+ tablename` to understand column purposes
-6. **Test with SELECT first** - verify your WHERE clause before UPDATE/DELETE
-7. **Remember the hierarchy:** Entity → Institution → Account → Transaction
 
 ## 🚨 Critical Reminders
 
-- **LOCAL ONLY** - Never connect to cloud databases
-- **MD5 for hashing** - Not SHA-256
-- **doc_level_data is cached** - Can be regenerated from transactions
-- **Georgia tax rules** - Municipal bonds from GA are state tax-exempt
-- **Soft deletes only** - Never hard DELETE, use is_archived flag
+- **LOCAL ONLY** - Localhost:54322 Supabase instance only
+- **MD5 for hashing** - Use MD5, not SHA-256
+- **Soft deletes only** - Use `is_archived = TRUE`, never hard DELETE
+- **Check duplicates first** - Always verify MD5 hash before inserting documents
+- **Entity hierarchy:** Entity → Institution → Account → Transaction
 
 ---
 

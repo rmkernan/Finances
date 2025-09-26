@@ -22,10 +22,19 @@
 **Updated:** 09/25/25 12:56PM - Simplified Step 6 to use direct SQL commands instead of separate Python script
 **Updated:** 09/25/25 1:08PM - Expanded Step 6 to include missing reference data loading (entities and accounts) before document creation
 **Updated:** 09/25/25 1:12PM - Added unique constraints for entity_name and institution_name, updated conflict handling to use proper composite keys
+**Updated:** 09/26/25 2:00PM - Restructured extraction workflow with updated agent invocation formats
+**Updated:** 09/26/25 2:12PM - Added PDF validation for holdings extraction workflow
+**Updated:** 09/26/25 2:29PM - Fixed database connection command (added -U postgres flag) and added mandatory validation checkpoint with failure handling
+**Updated:** 09/26/25 3:52PM - Fixed Quick Assessment section with clear step-by-step instructions
+**Updated:** 09/26/25 4:07PM - Added critical instruction to read entire command before starting, preventing premature execution
 **Purpose:** Guide Claude through orchestrating document processing from inbox using specialized extraction agents
 **Usage:** User invokes this when ready to process financial documents
 
 ## Command: `/process-inbox`
+
+### ⚠️ CRITICAL: READ THIS ENTIRE COMMAND FIRST ⚠️
+**DO NOT start processing until you have read ALL sections of this document.**
+This command contains specific instructions for CSV+PDF hybrid processing that differ significantly between holdings and activities extraction. Skipping ahead will cause errors.
 
 ### The Big Picture
 
@@ -46,18 +55,26 @@ You're the **Orchestra Conductor** for financial document processing. Your job i
 ls -la /Users/richkernan/Projects/Finances/documents/1inbox/
 ```
 
-**Note:** Ignore source filenames completely - extract all document details from PDF content.
+**⚠️ CRITICAL: Fidelity Statements Require CSV+PDF Pairs for Holdings ⚠️**
 
-For each document found:
-1. **DO NOT Read the PDF file directly** - instead extract text from first 2 pages using Python provided below
-2. Check account mappings from extracted text
-3. Present findings simply:
-   - "Found Fidelity statement for Milton Preschool (unmapped account 4067)"
-   - "Found Chase statement for Smith Corp (already mapped as 'Smith')"
+**STEP 1: Identify ALL Files and Check for Pairing**
+1. List all files in inbox (PDFs and CSVs)
+2. Look for date patterns in filenames:
+   - PDFs: `Fid_Stmnt_YYYY-MM_*.pdf` or similar
+   - CSVs: `*Statement*MMDDYYYY.csv` or `*MMDDYYYY.csv`
+   - Match by period (e.g., `2025-04` PDF with `4302025` CSV)
 
-**Token-Efficient PDF Text Extraction:**
+**STEP 2: Validate CSV Files First**
+For each CSV file found, check if it's Fidelity positions data:
 ```bash
-# Extract text from first 2 pages directly - DO NOT Read the PDF file
+head -3 /Users/richkernan/Projects/Finances/documents/1inbox/[csv_filename].csv
+# Look for: "Account Type,Account,Beginning mkt Value" header
+# This confirms it's a Fidelity positions export
+```
+
+**STEP 3: Extract PDF Period and Accounts**
+For each PDF, extract text to identify period and accounts:
+```bash
 python3 -c "
 import PyPDF2
 with open('documents/1inbox/[filename].pdf', 'rb') as file:
@@ -65,18 +82,31 @@ with open('documents/1inbox/[filename].pdf', 'rb') as file:
     print('=== PAGE 1 ===')
     print(reader.pages[0].extract_text())
     print('\n=== PAGE 2 ===')
-    print(reader.pages[1].extract_text())
+    print(reader.pages[1].extract_text() if len(reader.pages) > 1 else 'No page 2')
 "
-# Read the printed text output above, not the original PDF file
+# Look for: Statement period dates and account numbers
 ```
+
+**STEP 4: Report Pairing Status CLEARLY**
+Present findings WITH explicit pairing status:
+- "✅ **PAIRED:** Fidelity April 2025 - PDF + CSV found (ready for BOTH holdings AND activities)"
+- "⚠️ **UNPAIRED:** Fidelity March 2025 - PDF only, NO CSV (activities OK, holdings BLOCKED)"
+- "📄 **NON-FIDELITY:** Chase statement - Different processor needed"
+
+**CRITICAL RULES:**
+- **Holdings extraction REQUIRES both CSV and PDF files**
+- **Activities extraction can use PDF alone**
+- **Never proceed with holdings if CSV is missing**
+
+**Note:** Ignore source filenames for content - extract all details from file contents.
 
 ### Understanding the Workflow
 
 **Document Flow:**
 ```
 /documents/1inbox/ (generic names) → Staging → /documents/2staged/ (renamed PDFs)
-                                              → Extraction → /documents/4extractions/ (JSON)
-                                              → Completion → /documents/3processed/ (final archive)
+                                          → Extraction → /documents/4extractions/ (JSON)
+                                          → Completion → /documents/3processed/ (final archive)
 ```
 
 **Your Role vs Sub-Agent Role:**
@@ -151,6 +181,9 @@ When sub-agents encounter unknown patterns:
 
 ### Step 1: Parallel Assessment & Staging
 
+**⚠️ CRITICAL: ALL VALIDATION STEPS ARE REQUIRED**
+**If ANY step fails, STOP immediately and consult with the user before proceeding.**
+
 **Estimated Time:** ~10-15 seconds (parallel) vs ~45 seconds (sequential)
 
 For each document, run all validation checks in parallel:
@@ -167,8 +200,17 @@ grep -r "[hash_value]" /Users/richkernan/Projects/Finances/documents/4extraction
 ls -la /Users/richkernan/Projects/Finances/documents/3processed/[similar_pattern]*.pdf 2>/dev/null || echo "No processed duplicates"
 
 # 4. Verify database accounts exist (parallel)
-psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "SELECT a.account_number, a.account_type, i.institution_name FROM accounts a JOIN institutions i ON a.institution_id = i.id WHERE a.account_number IN ('[account1]', '[account2]');"
+PGPASSWORD=postgres psql -U postgres -h localhost -p 54322 -d postgres -c "SELECT a.account_number, a.account_type, i.institution_name FROM accounts a JOIN institutions i ON a.institution_id = i.id WHERE a.account_number IN ('[account1]', '[account2]');"
 ```
+
+**VALIDATION CHECKPOINT:**
+Before proceeding, verify ALL four validation checks succeeded:
+- ✅ MD5 hash generated successfully
+- ✅ No duplicate hash found in existing extractions
+- ✅ No similar processed files found
+- ✅ Database connection successful and accounts exist
+
+**If any validation step failed, STOP and ask user how to proceed.**
 
 Then:
 1. **Extract account information** from PDF content (already done in Quick Assessment)
@@ -204,25 +246,31 @@ Read /Users/richkernan/Projects/Finances/documents/2staged/Fid_1099_2024_Brok+CM
 ```
 
 
-After checking for duplicates, present your findings and ask what to do next:
+After checking for duplicates and CSV pairing, present your findings and ask what to do next:
 ```
 Staging complete. Here's what I found:
 
 STAGED FILES:
-1. Fid_Stmnt_2024-08_Brok+CMA.pdf
-   - Fidelity Investment Statement for August 2024
+1. Fid_Stmnt_2024-08_Brok+CMA.pdf + Statement8312024.csv
+   - ✅ PAIRED: Fidelity Investment Statement for August 2024
    - Accounts: Brokerage + CMA
-   - 36 pages
+   - 36 pages PDF + CSV export
    - ✅ No duplicate found in processed folder
-   - ✓ Ready for extraction with fidelity-statement-extractor
+   - ✓ Ready for HYBRID holdings extraction (CSV+LLM)
+   - ✓ Ready for activities extraction (LLM only)
 
-2. BofA_Stmnt_2024-09_Checking.pdf
+2. Fid_Stmnt_2024-07_Brok+CMA.pdf
+   - ❌ UNPAIRED: Fidelity statement without CSV export
+   - ✗ Holdings extraction BLOCKED (no CSV)
+   - ✓ Activities extraction still possible
+
+3. BofA_Stmnt_2024-09_Checking.pdf
    - Bank of America checking statement
    - ✗ No extraction agent available
    - Options: Manual processing or skip
 
 POTENTIAL ISSUES:
-3. Fid_1099_2024_Brok+CMA.pdf
+4. Fid_1099_2024_Brok+CMA.pdf
    - ⚠️ Similar file exists: Fid_1099_2024_Brok+CMA.pdf in processed folder
    - Content shows "AMENDED" marking
    - ✗ No 1099 extraction agent available anyway
@@ -230,23 +278,55 @@ POTENTIAL ISSUES:
 I found these files. What do you want to do next?
 
 Some options:
-- Extract holdings from Fidelity statement
-- Extract activities from Fidelity statement
-- Extract both (parallel or serial)
-- Skip Fidelity and handle Bank of America manually
+- Extract holdings from paired Fidelity statement (#1)
+- Extract activities from any Fidelity statement (#1 or #2)
+- Extract both from paired statement (sequential)
+- Skip unpaired statement until CSV available
+- Handle Bank of America manually
 - Review the amended 1099 situation
 - Something else entirely
 
 What would you like me to do?
 ```
 
-### Step 3: Delegate to Sub-Agents
+### Step 3: Extraction Process
+
+The extraction process differs based on data type:
+
+#### Step 3A: Holdings Extraction (Hybrid CSV+LLM)
+
+**For holdings, we use a two-stage hybrid process:**
+
+1. **Stage 1: Python CSV Extraction**
+   - Export CSV from Fidelity statement (manual step)
+   - Run `scripts/csv_to_holdings_json.py` to create base JSON structure (~75% complete)
+   - Python fills all CSV-available fields marked with (C) in mapping document
+
+2. **Stage 2: LLM PDF Augmentation**
+   - LLM reads the pre-populated JSON from Stage 1
+   - LLM extracts PDF-only fields (yields, bond details, doc_level_data)
+   - LLM ignores all CSV fields, preserves existing data
+
+**CSV Extraction Command:**
+```bash
+python3 scripts/csv_to_holdings_json.py /path/to/exported.csv /documents/4extractions/
+```
+
+#### Step 3B: Activities Extraction (Pure LLM)
+
+**For activities, we use traditional LLM extraction:**
+- Single-stage process
+- LLM extracts all transaction data from PDF
+- Creates complete JSON from scratch
 
 **Prerequisites before invoking any sub-agent:**
 1. **Verify the PDF is readable and supported** (Fidelity statements currently)
-2. **Specify extraction type explicitly** (holdings OR activities)
-3. **Provide complete file path** to staged PDF
-4. **Be ready to interpret the report** (success, partial, or failure)
+2. **For holdings: Verify CSV+PDF pairing** - Holdings extraction requires both files
+3. **For holdings: Complete CSV extraction first** using `scripts/csv_to_holdings_json.py`
+4. **Specify extraction type explicitly** (holdings OR activities)
+5. **Provide complete file paths** (PDF + CSV_JSON for holdings, PDF only for activities)
+
+**CRITICAL: Holdings extraction will FAIL without CSV companion file**
 
 **IMPORTANT: Before invoking any sub-agent, present the prompt you're about to send for user review:**
 
@@ -267,32 +347,37 @@ Wait for user approval before proceeding.
 3. **Use directive language** (not conversational)
 4. **Set clear expectations** for the output
 
-**Proper Invocation Format:**
+**Holdings Invocation Format (Hybrid CSV+LLM):**
 
 Use the Task tool with:
 ```python
 Task(
-    description="Extract holdings",
+    description="Augment CSV holdings",
     subagent_type="fidelity-statement-extractor",
     prompt="""
 EXTRACTION MODE: Holdings
 DOC_MD5_HASH: [insert_md5_hash_here]
+CSV_JSON_FILE: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_YYYY-MM_[Accounts]_holdings_YYYY.MM.DD_HH.MMET.json
+SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
 
-Please extract HOLDINGS data from the following Fidelity statement:
-/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
+Please AUGMENT the pre-populated JSON file with PDF-only data.
 
-Note: This file has been staged for processing (not in inbox).
-The doc_md5_hash above must be included in the extraction_metadata section of your JSON output.
+CRITICAL: The CSV_JSON_FILE contains ~75% of holdings data from CSV extraction.
+- IGNORE all fields marked with (C) in Map_Stmnt_Fid_Positions.md
+- EXTRACT ONLY non-(C) fields from PDF: yields, bond details, options details, doc_level_data
+- UPDATE the existing JSON in-place, preserving all CSV data
+- SAVE the completed JSON back to the CSV_JSON_FILE path
 
 Expected output:
-- JSON extraction file in /documents/4extractions/
-- Report on extraction success/issues
+- Updated JSON file with complete holdings data
+- Report on augmentation success/issues
 - Do NOT move the PDF - orchestrator will handle that
 """
 )
 ```
 
-**Alternative for Activities:**
+**Activities Invocation Format (Pure LLM - Unchanged):**
+
 ```python
 Task(
     description="Extract activities",
@@ -300,15 +385,17 @@ Task(
     prompt="""
 EXTRACTION MODE: Activities
 DOC_MD5_HASH: [insert_md5_hash_here]
+SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-08_Brok+CMA.pdf
 
-Please extract ACTIVITIES data from the following Fidelity statement:
-/Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-08_Brok+CMA.pdf
+Please extract ACTIVITIES data from the Fidelity statement PDF.
 
-Note: This file has been staged for processing (not in inbox).
-The doc_md5_hash above must be included in the extraction_metadata section of your JSON output.
+This is full LLM extraction (not hybrid mode).
+- EXTRACT all transaction data from PDF
+- CREATE complete JSON from scratch using Map_Stmnt_Fid_Activities.md
+- SAVE as new JSON file in /documents/4extractions/
 
 Expected output:
-- JSON extraction file in /documents/4extractions/
+- New JSON extraction file in /documents/4extractions/
 - Report on extraction success/issues
 - Do NOT move the PDF - orchestrator will handle that
 """
@@ -316,12 +403,22 @@ Expected output:
 ```
 
 **What to expect from the agent:**
-- It will load its reference documents based on extraction mode
-- It will create a timestamped JSON file in `/documents/4extractions/`
-- It will produce a completion report with:
-  - ✅ Success: Details of what was extracted, file created
-  - ⚠️ Partial: What worked, what failed, why
-  - ❌ Failed: Specific blocker that prevented extraction
+
+**For Holdings (Hybrid Mode):**
+- Reads pre-populated JSON and PDF
+- Updates existing JSON with PDF-only fields
+- Preserves all CSV data exactly as-is
+- Reports what fields were augmented from PDF
+
+**For Activities (Traditional Mode):**
+- Reads PDF and creates complete JSON from scratch
+- Uses full LLM extraction process
+- Creates new timestamped JSON file
+
+**Both modes produce completion reports with:**
+- ✅ Success: Details of what was extracted/augmented, files updated/created
+- ⚠️ Partial: What worked, what failed, why
+- ❌ Failed: Specific blocker that prevented extraction
 
 **Important:** The agent is stateless and cannot ask follow-up questions. If it encounters an issue it can't resolve, it will document it in the report and exit.
 
@@ -456,27 +553,42 @@ But if there were issues, keep it in staged and note why:
 Keeping Fid_Stmnt_2024-08_Brok+CMA.pdf in staged folder - manual review needed for option positions
 ```
 
-### Parallel Processing (When User Wants Both)
+### Sequential Processing (When User Wants Both)
 
-If the user wants both holdings and activities, run them in parallel:
-```python
-# Launch both extractions in parallel with a single message containing two Task tool calls:
-Task(
-    description="Extract holdings",
-    subagent_type="fidelity-statement-extractor",
-    prompt="EXTRACTION MODE: Holdings\nDOC_MD5_HASH: [insert_md5_hash_here]\n\nExtract HOLDINGS data from: /Users/richkernan/Projects/Finances/documents/2staged/[filename].pdf\n\nInclude the doc_md5_hash in extraction_metadata."
-)
-Task(
-    description="Extract activities",
-    subagent_type="fidelity-statement-extractor",
-    prompt="EXTRACTION MODE: Activities\nDOC_MD5_HASH: [insert_md5_hash_here]\n\nExtract ACTIVITIES data from: /Users/richkernan/Projects/Finances/documents/2staged/[filename].pdf\n\nInclude the doc_md5_hash in extraction_metadata."
-)
+**IMPORTANT:** Holdings and activities must be processed sequentially, not in parallel, because holdings requires CSV extraction first.
 
-# Both agents will run simultaneously and return their reports
-# Results:
-- Holdings: Fid_Stmnt_2024-08_Brok+CMA_holdings_2024.09.22_15.30ET.json
-- Activities: Fid_Stmnt_2024-08_Brok+CMA_activities_2024.09.22_15.32ET.json
+**Recommended Process:**
+1. **Holdings First (Hybrid):**
+   - Extract CSV from statement (manual step for now)
+   - Run Python CSV extraction script → creates base JSON
+   - Run LLM agent to augment JSON with PDF-only fields
+
+2. **Activities Second (Traditional):**
+   - Run LLM agent for full activities extraction from PDF
+
+**Example Sequential Processing:**
+```bash
+# Step 1A: CSV Extraction (manual CSV export required first)
+python3 scripts/csv_to_holdings_json.py /path/to/statement.csv /documents/4extractions/
+# Creates: Fid_Stmnt_2024-08_Brok+CMA_holdings_2024.09.22_15.30ET.json (base structure)
+
+# Step 1B: LLM Augmentation
+Task(description="Augment CSV holdings", subagent_type="fidelity-statement-extractor", ...)
+# Updates: Same JSON file with PDF-only fields
+
+# Step 2: Activities extraction (after holdings complete)
+Task(description="Extract activities", subagent_type="fidelity-statement-extractor", ...)
+# Creates: Fid_Stmnt_2024-08_Brok+CMA_activities_2024.09.22_15.32ET.json (new file)
+
+# Final Results:
+- Holdings: Complete JSON with CSV data + PDF augmentation
+- Activities: Complete JSON from PDF extraction
 ```
+
+**Why Sequential:**
+- Holdings CSV extraction must complete before LLM augmentation
+- Parallel processing would break the hybrid workflow
+- Activities can run independently after holdings completes
 
 ### Handling Edge Cases
 

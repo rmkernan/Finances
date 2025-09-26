@@ -1,0 +1,43 @@
+{
+  "extraction_summary": {
+    "processing_time_seconds": 0.001147,
+    "accounts_processed": 0,
+    "total_holdings_extracted": 0,
+    "security_types_found": {}
+  },
+  "field_completeness": {
+    "basic_fields_from_structured_text": 0,
+    "pdf_only_fields_missing": [
+      "estimated_ann_inc",
+      "est_yield",
+      "unrealized_gain_loss",
+      "bond_specific_fields",
+      "options_fields",
+      "complete_document_level_data"
+    ],
+    "total_completeness_percentage": 0
+  },
+  "data_quality_issues": {
+    "parsing_errors": 0,
+    "parsing_details": []
+  },
+  "token_efficiency": {
+    "structured_text_input_size_chars": 228556,
+    "estimated_tokens_for_processing": 57139,
+    "comparison_note": "This is intermediate format - would need additional LLM pass for PDF-only fields"
+  },
+  "methodology_assessment": {
+    "advantages": [
+      "Fast parsing of structured data",
+      "No OCR errors for basic holdings data",
+      "Reduced token usage for basic extraction"
+    ],
+    "limitations": [
+      "Missing critical fields that require PDF text analysis",
+      "Limited accuracy for complex security parsing",
+      "Still requires LLM pass for complete data",
+      "Table structure parsing challenges"
+    ],
+    "recommendation": "Hybrid approach beneficial for basic data but direct PDF processing needed for completeness"
+  }
+}

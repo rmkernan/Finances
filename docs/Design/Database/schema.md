@@ -26,6 +26,7 @@
 **Updated:** 09/24/25 2:26PM - Added incremental JSON loading support: activities_loaded, activities_json_md5_hash, positions_loaded, positions_json_md5_hash columns to documents table
 **Updated:** 09/24/25 2:43PM - Removed deprecated json_output_id and json_output_md5_hash columns from documents table (superseded by incremental loading columns)
 **Updated:** 09/24/25 3:26PM - Completed three-table mapping system migration: deprecated data_mappings table, loader now uses map_rules/map_conditions/map_actions exclusively
+**Updated:** 09/25/25 10:40PM - MAJOR: Simplified rule structure from 5 levels to 2 levels: Transaction Classification (Level 1) and Security Classification (Level 2)
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -348,13 +349,28 @@ Rule Name,Triggers,Actions,Problem Solved
 
 ### Rule Processing Logic
 
+**SIMPLIFIED 2-LEVEL STRUCTURE** (as of 09/25/25):
+
 Rules are applied in `application_order` sequence:
 
-1. **Options Lifecycle** (order 1) - Override subtypes for options tracking
-2. **Transaction Types** (order 2) - Specific description-based classification
-3. **Security Identification** (order 3) - Call/put identification for matching
-4. **Section Fallbacks** (order 4) - Generic section-based classification
-5. **General Securities** (order 5) - Basic security type classification
+**Level 1: Transaction Classification** (application_order = 1)
+- 18 rules that determine the primary transaction type and subtypes
+- Includes: Options transactions, dividends, interest, deposits, withdrawals, transfers, core fund activity
+- These rules set `transaction_type`, `transaction_subtype`, and sometimes `sec_class`
+- **Foundation rules** - won't be overwritten by Level 2
+
+**Level 2: Security Classification** (application_order = 2)
+- 10 rules that identify security types for investment analysis
+- Includes: Stock, Bond, ETF, Mutual Fund, REIT, Warrant, Options identification
+- These rules primarily set `sec_class` as a fallback when Level 1 doesn't specify it
+- **Fallback rules** - only apply if Level 1 didn't already classify the security
+
+**Key Improvements in Simplified Structure:**
+- Eliminated unnecessary complexity of 6 application levels
+- Clear separation between transaction logic vs security classification
+- Level 1 rules are foundational and won't be overwritten
+- Level 2 provides security analysis without disrupting transaction classification
+- Fixed "Return Of Capital" case sensitivity issue (now matches "Return Of Capital" not "Return of Capital")
 
 **Cross-Table Support:** Ready for future triggers on `positions.security_type`, `accounts.account_type`, etc.
 
