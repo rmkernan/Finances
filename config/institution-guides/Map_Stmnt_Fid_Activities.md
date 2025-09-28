@@ -1,7 +1,6 @@
 # Fidelity Statement Activity Document Map
 
 **Created:** 09/22/25 3:45PM ET
-**Updated:** 09/22/25 2:08PM ET - Aligned database column names with actual schema (security_identifier, price_per_unit)
 **Updated:** 09/22/25 2:17PM ET - Aligned with positions map: separated ticker/CUSIP, added sec_ prefix to JSON fields, standardized naming conventions
 **Updated:** 09/22/25 5:21PM ET - Added multi-line description parsing guidance and Bill Payments section details
 **Updated:** 09/22/25 6:13PM ET - Clarified bond redemption pricing, dividend reinvestment dual-entry, and null handling based on agent feedback
@@ -9,6 +8,11 @@
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced transaction lifecycle tracking
 **Updated:** 09/26/25 1:15PM - Added comprehensive field handling rules and precision requirements to serve as authoritative parsing guide
+**Updated:** 09/26/25 6:30PM - Added source field mappings for all numbered activity sections
+**Updated:** 09/26/25 6:59PM - Added account structure guidance, clarified Other Activity source assignment, and added total activity fields
+**Updated:** 09/28/25 3:11PM - Enhanced faithful transcription principle and added variable statement content guidance
+**Updated:** 09/28/25 3:47PM - Added section 11 (Trades Pending Settlement) with trade_date field and pending flag attribute
+**Updated:** 09/28/25 4:00PM - Added section-level total fields to all 11 activity sections for comprehensive statement reconciliation
 
 **Purpose:** This document provides task-specific instructions, guidance, and resources for the Fidelity Statement Extractor Agent. It augments the guidance and instruction provided in the agent definition file. 
 
@@ -36,12 +40,18 @@
 ### Transaction Description Handling
 Extract transaction descriptions exactly as shown in the PDF. Do not attempt to standardize or categorize - the advanced mapping system handles complex transaction patterns:
 
+**CORE PRINCIPLE: Faithful Transcription**
+Extract whatever value is actually present, regardless of what it is. Only blank/empty fields become `null`.
+
 **Field Value Handling Rules:**
-- "unavailable" → transcribe as `"unavailable"` (text value)
-- Blank fields → use `null` in JSON
-- "n/a" or "--" → transcribe exactly as shown
-- Negative in parentheses: "($1,250.00)" → `"-1250.00"`
-- Zero amounts: Use `"0.00"` for explicit zeros, `null` for blank/missing
+- **Any visible value** → extract exactly as shown (numbers, letters, dashes, "n/a", "--", "unavailable", etc.)
+- **Truly blank/empty field** → use `null` in JSON
+- **Dashes ("-")** → transcribe as `"-"` (this is a value, not blank)
+- **"n/a" or "N/A"** → transcribe exactly as shown
+- **"unavailable"** → transcribe as `"unavailable"`
+- **Negative in parentheses:** "($1,250.00)" → `"-1250.00"`
+- **Zero amounts:** Use `"0.00"` for explicit zeros, `null` for blank/missing
+- **Any other text/symbols** → transcribe exactly as they appear
 
 **Precision Requirements:**
 - Preserve exact numeric values including all decimal places as shown
@@ -56,8 +66,6 @@ Extract transaction descriptions exactly as shown in the PDF. Do not attempt to 
 - "Dividend Received" → dividend/received classification with qualified dividend determination
 - "Interest Earned" → interest/deposit classification separate from dividend income
 
-**Complex Rule Matching:**
-The system now supports compound conditions like "description contains X AND section equals Y" enabling precise classification of transactions that appear in unexpected statement sections for accurate tax categorization.
 
 ## Claude's Role as Financial Activity Transcriber
 
@@ -68,6 +76,15 @@ You are extracting transaction and activity data from Fidelity statements to cre
 **The Goal:** Convert all account activity from PDF statements into a structured format for transaction analysis and reconciliation.
 
 **Document Structure Note:** A single Fidelity statement PDF contains activity for MULTIPLE accounts. You must extract activity data for ALL accounts listed in the document.
+
+**Account Structure:** Each statement contains one or more account summary sections. Each account section shows:
+- Account owner's name
+- Account number
+- Account activity section with numbered subsections (1-10 as described below)
+
+**Account Number Extraction:** The account number for each transaction comes from the account header section that precedes the activity data. This account number must be included with every transaction record to identify which account the activity belongs to.
+
+**Variable Statement Content:** Not every statement will contain all 11 activity sections. Extract only the sections and attributes that are actually present in the specific statement. Look for all possible attributes within each section, but only extract what is visible. Different statements may have different combinations of activity types depending on account activity during the statement period.
 
 ## Activity Section Structure
 
@@ -83,110 +100,108 @@ The Activity section appears after the Holdings section for each account and con
 8. **Fees and Charges** - Account fees
 9. **Cards, Checking & Bill Payments** - Card and bill pay transactions
 10. **Core Fund Activity** - Money market fund transactions
+11. **Trades Pending Settlement** - Unsettled trades with future settlement dates
 
 ## 1. Securities Bought & Sold
 
-**Target Table:** `transactions` with `transaction_type = 'TRADE'`
+**Target Table:** `transactions` `source = 'sec_bot_sold'`
 **Location:** First subsection under Activity for each account
 
-| Source Label     | JSON Field       | Database Column                  | Type     | Notes                      |
-|------------------|------------------|----------------------------------|----------|----------------------------|
-| Settlement Date  | settlement_date  | transactions.settlement_date     | DATE     | MM/DD format               |
-| Security Name    | sec_description  | transactions.security_name       | TEXT     | Full security description  |
-| Symbol           | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol             |
-| CUSIP            | cusip            | transactions.cusip               | TEXT     | CUSIP (bonds)              |
-| Description      | description      | transactions.description         | TEXT     | "You Bought" or "You Sold" |
-| Quantity         | quantity         | transactions.quantity            | NUMBER   | Shares/units traded        |
-| Price            | price_per_unit   | transactions.price_per_unit      | CURRENCY | Per share price            |
-| Total Cost Basis | cost_basis       | transactions.cost_basis          | CURRENCY | For sales only             |
-| Transaction Cost | transaction_cost | transactions.fees                | CURRENCY | Commission/fees            |
-| Amount           | amount           | transactions.amount              | CURRENCY | Total transaction amount   |
+| Source Label              | JSON Field       | Database Column             | Type     | Notes                      |
+|---------------------------|------------------|-----------------------------|----------|----------------------------|
+| Settlement Date           | settlement_date  | transactions.sett_date      | DATE     | MM/DD format               |
+| Security Name             | sec_description  | transactions.security_name  | TEXT     | extract text exactly       |
+| Symbol/CUSIP              | symbol_cusip     | transactions.symbol_cusip   | TEXT     | extract text exactly       |
+| Description               | description      | transactions.desc    | TEXT     | extract text exactly       |
+| Quantity                  | quantity         | transactions.quantity       | NUMBER   | Shares/units traded        |
+| Price                     | price_per_unit   | transactions.price_per_unit | CURRENCY | Per share price            |
+| Total Cost Basis          | cost_basis       | transactions.cost_basis     | CURRENCY | For sales only             |
+| Transaction Cost          | transaction_cost | transactions.fees           | CURRENCY | Commission/fees            |
+| Amount                    | amount           | transactions.amount         | CURRENCY | Total transaction amount   |
+| Total Securities Bought   | total_sec_bot    | transactions.section_total  | CURRENCY | Section subtotal for purch |
+| Total Securities Sold     | total_sec_sold   | transactions.section_total  | CURRENCY | Section subtotal for sales |
+| Net Securities Bot & Sold | net_sec_act      | transactions.section_total  | CURRENCY | Net activity for section   |
 
-**Parsing Notes:**
-- "You Bought" = BUY transaction (amount is negative)
-- "You Sold" = SELL transaction (amount is positive)
-- Options transactions include details like "OPENING TRANSACTION" or "CLOSING TRANSACTION"
-- Some entries show gain/loss information (e.g., "Short-term gain: $10,683.02")
 
 ## 2. Dividends, Interest & Other Income
 
-**Target Table:** `transactions` with `transaction_type = 'INCOME'`
+**Target Table:** `transactions` with `source = 'div_int_income'`
 **Location:** After Securities Bought & Sold
 
-| Source Label    | JSON Field       | Database Column                  | Type     | Notes               |
-|-----------------|------------------|----------------------------------|----------|---------------------|
-| Settlement Date | settlement_date  | transactions.settlement_date     | DATE     | MM/DD format        |
-| Security Name   | sec_description  | transactions.security_name       | TEXT     | Full security name  |
-| Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol      |
-| CUSIP           | cusip            | transactions.cusip               | TEXT     | CUSIP if bond       |
-| Description     | description      | transactions.description         | TEXT     | Type of income      |
-| Quantity        | quantity         | transactions.quantity            | NUMBER   | For reinvestments   |
-| Price           | price_per_unit   | transactions.price_per_unit      | CURRENCY | For reinvestments   |
-| Amount          | amount           | transactions.amount              | CURRENCY | Income amount       |
+| Source Label        | JSON Field       | Database Column                  | Type     | Notes                |
+|---------------------|------------------|----------------------------------|----------|----------------------|
+| Settlement Date     | settlement_date  | transactions.sett_date           | DATE     | MM/DD format         |
+| Security Name       | sec_description  | transactions.security_name       | TEXT     | Full security name   |
+| Symbol/CUSIP        | symbol_cusip     | transactions.symbol_cusip        | TEXT     | extract text exactly |
+| Description         | description      | transactions.desc         | TEXT     | Type of income       |
+| Quantity            | quantity         | transactions.quantity            | NUMBER   | For reinvestments    |
+| Price               | price_per_unit   | transactions.price_per_unit      | CURRENCY | For reinvestments    |
+| Amount              | amount           | transactions.amount              | CURRENCY | Income amount        |
+| Ttl Div, Int & Other Inc | total_div_int_inc | transactions.section_total | CURRENCY | Section subtotal     |
 
-**Income Types:**
-- "Dividend Received" - Regular dividend
-- "Muni Exempt Int" - Tax-exempt municipal interest
-- "Interest Earned" - Taxable interest
-- "Reinvestment" - Dividend reinvestment (appears as dual entry:
-  1. Negative amount for the reinvestment purchase
-  2. Positive amount for the dividend received)
-- "Return Of Capital" - ROC distribution
 
 ## 3. Short Activity
+
+**Target Table:** `transactions` with `source = 'short_activity'`
 OUT OF SCOPE
 
 
 ## 4. Other Activity In/Out
 
-**Target Table:** `transactions` with `transaction_type = 'OTHER'`
+**Target Table:** `transactions` with `source = 'other_activity_in'` or `source = 'other_activity_out'`
 **Location:** Separate sections for options/assignments
+
+**Source Assignment:** Use section header to determine source value:
+- If section header reads "Other Activity In" → use `source = 'other_activity_in'`
+- If section header reads "Other Activity Out" → use `source = 'other_activity_out'`
 
 ### Other Activity In
 | Source Label    | JSON Field       | Database Column                  | Type     | Notes                          |
 |-----------------|------------------|----------------------------------|----------|--------------------------------|
-| Settlement Date | settlement_date  | transactions.settlement_date     | DATE     | MM/DD format                   |
+| Settlement Date | settlement_date  | transactions.sett_date           | DATE     | MM/DD format                   |
 | Security Name   | sec_description  | transactions.security_name       | TEXT     | Option/security description    |
-| Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Trading symbol                 |
-| CUSIP           | cusip            | transactions.cusip               | TEXT     | CUSIP if applicable            |
-| Description     | description      | transactions.description         | TEXT     | "Expired", "Return Of Capital" |
+| Symbol/CUSIP    | symbol_cusip     | transactions.symbol_cusip        | TEXT     | extract text exactly           |
+| Description     | description      | transactions.desc         | TEXT     | "Expired", "Return Of Capital" |
 | Quantity        | quantity         | transactions.quantity            | NUMBER   | Contract quantity              |
 | Cost Basis      | cost_basis       | transactions.cost_basis          | CURRENCY | Original cost                  |
 | Amount          | amount           | transactions.amount              | CURRENCY | Transaction amount             |
 
 ### Other Activity Out
-| Source Label    | JSON Field       | Database Column                  | Type   | Notes              |
-|-----------------|------------------|----------------------------------|--------|--------------------|
-| Settlement Date | settlement_date  | transactions.settlement_date     | DATE   | MM/DD format       |
-| Security Name   | sec_description  | transactions.security_name       | TEXT   | Option description |
-| Symbol          | sec_symbol       | transactions.security_identifier | TEXT   | Option symbol      |
-| CUSIP           | cusip            | transactions.cusip               | TEXT   | CUSIP if applicable|
-| Description     | description      | transactions.description         | TEXT   | "Assigned"         |
-| Quantity        | quantity         | transactions.quantity            | NUMBER | Contracts assigned |
+| Source Label            | JSON Field       | Database Column             | Type     | Notes                |
+|-------------------------|------------------|-----------------------------|----------|----------------------|
+| Settlement Date         | settlement_date  | transactions.sett_date      | DATE     | MM/DD format         |
+| Security Name           | sec_description  | transactions.security_name  | TEXT     | Option description   |
+| Symbol/CUSIP            | symbol_cusip     | transactions.symbol_cusip   | TEXT     | extract text exactly |
+| Description             | description      | transactions.desc    | TEXT     | "Assigned"           |
+| Quantity                | quantity         | transactions.quantity       | NUMBER   | Contracts assigned   |
+| Total Other Activity In  | total_act_in    | transactions.section_total  | CURRENCY | Section subtotal     |
+| Total Other Activity Out | total_act_out   | transactions.section_total  | CURRENCY | Section subtotal     |
 
 ## 5. Deposits
 
-**Target Table:** `transactions` with `transaction_type = 'DEPOSIT'`
+**Target Table:** `transactions` with `source = 'deposits'`
 **Location:** Separate section
 
-| Source Label | JSON Field  | Database Column               | Type     | Notes                     |
-|--------------|-------------|-------------------------------|----------|---------------------------|
-| Date         | date        | transactions.settlement_date  | DATE     | MM/DD format              |
-| Reference    | reference   | transactions.reference_number | TEXT     | Internal reference        |
-| Description  | description | transactions.description      | TEXT     | Deposit description       |
-| Amount       | amount      | transactions.amount           | CURRENCY | Deposit amount (positive) |
+| Source Label   | JSON Field  | Database Column               | Type     | Notes               |
+|----------------|-------------|-------------------------------|----------|---------------------|
+| Date           | date        | transactions.sett_date        | DATE     | MM/DD format        |
+| Reference      | reference   | transactions.reference_number | TEXT     | Internal reference  |
+| Description    | description | transactions.desc      | TEXT     | Deposit description |
+| Amount         | amount      | transactions.amount           | CURRENCY | Deposit amount      |
+| Total Deposits | total_dep   | transactions.section_total    | CURRENCY | Section subtotal    |
 
 ## 6. Withdrawals
 
-**Target Table:** `transactions` with `transaction_type = 'WITHDRAWAL'`
+**Target Table:** `transactions` with `source = 'withdrawals'`
 **Location:** Separate section
 
-| Source Label | JSON Field  | Database Column               | Type     | Notes                        |
-|--------------|-------------|-------------------------------|----------|------------------------------|
-| Date         | date        | transactions.settlement_date  | DATE     | MM/DD format                 |
-| Reference    | reference   | transactions.reference_number | TEXT     | Wire reference number        |
-| Description  | description | transactions.description      | TEXT     | Withdrawal description       |
-| Amount       | amount      | transactions.amount           | CURRENCY | Withdrawal amount (negative) |
+| Source Label   | JSON Field     | Database Column            | Type     | Notes                  |
+|----------------|----------------|----------------------------|----------|------------------------|
+| Date           | date           | transactions.sett_date     | DATE     | MM/DD format           |
+| Reference      | reference      | transactions.reference_number | TEXT     | Extract all text       |
+| Description    | description    | transactions.desc   | TEXT     | Withdrawal description |
+| Amount         | amount         | transactions.amount        | CURRENCY | Withdrawal amount      |
+| Total Withdrwls| total_withdrwls| transactions.section_total | CURRENCY | Section subtotal       |
 
 **Common Patterns:**
 - Wire transfers show destination bank details
@@ -194,41 +209,44 @@ OUT OF SCOPE
 
 ## 7. Exchanges In/Out
 
-**Target Table:** `transactions` with `transaction_type = 'TRANSFER'`
+**Target Table:** `transactions` with `source = 'exchanges_in'` or `source = 'exchanges_out'`
 **Location:** Separate sections
 
-| Source Label  | JSON Field       | Database Column              | Type     | Notes                 |
-|---------------|------------------|------------------------------|----------|-----------------------|
-| Date          | date             | transactions.settlement_date | DATE     | MM/DD format          |
-| Security Name | sec_description  | transactions.security_name   | TEXT     | Account identifier    |
-| Symbol        | sec_symbol       | transactions.security_identifier | TEXT     | Usually blank → null  |
-| CUSIP         | cusip            | transactions.cusip           | TEXT     | Usually blank → null  |
-| Description   | description      | transactions.description     | TEXT     | "Transferred From/To" |
-| Amount        | amount           | transactions.amount          | CURRENCY | Transfer amount       |
+| Source Label        | JSON Field      | Database Column              | Type     | Notes                         |
+|---------------------|-----------------|------------------------------|----------|------------------------------ |
+| Date                | date            | transactions.sett_date       | DATE     | MM/DD format                  |
+| Security Name       | sec_description | transactions.security_name   | TEXT     | Account identifier            |
+| Symbol/CUSIP        | symbol_cusip    | transactions.symbol_cusip    | TEXT     | extract text exactly          |
+| Description         | description     | transactions.desc     | TEXT     | "Transferred From/To"         | 
+| Amount              | amount          | transactions.amount          | CURRENCY | Transfer amount               |
+| Total Exchanges In  | total_exch_in   | transactions.section_total   | CURRENCY | Section subtotal for xfers in |
+| Total Exchanges Out | total_exch_out  | transactions.section_total   | CURRENCY | Section subtotal for xfers out|
 
 ## 8. Fees and Charges
 
-**Target Table:** `transactions` with `transaction_type = 'FEE'`
+**Target Table:** `transactions` with `source = 'fees_charges'`
 **Location:** Separate section
 
-| Source Label | JSON Field  | Database Column              | Type     | Notes                 |
-|--------------|-------------|------------------------------|----------|-----------------------|
-| Date         | date        | transactions.settlement_date | DATE     | MM/DD format          |
-| Description  | description | transactions.description     | TEXT     | Fee description       |
-| Amount       | amount      | transactions.amount          | CURRENCY | Fee amount (negative) |
+| Source Label.          | JSON Field         | Database Column            | Type     | Notes                 |
+|------------------------|--------------------|----------------------------|----------|-----------------------|
+| Date                   | date               | transactions.sett_date     | DATE     | MM/DD format          |
+| Description            | description        | transactions.desc          | TEXT     | Fee description       |
+| Amount                 | amount             | transactions.amount        | CURRENCY | Fee amount (negative) |
+| Total Fees and Charges | total_fees_charges | transactions.section_total | CURRENCY | Section subtotal      |
 
 ## 9. Cards, Checking & Bill Payments
 
-**Target Table:** `transactions` with `transaction_type = 'BILLPAY'`
+**Target Table:** `transactions` with `source = 'bill_payments'`
 **Location:** Separate section in cash management accounts
 
-| Source Label  | JSON Field    | Database Column              | Type     | Notes                     |
-|---------------|---------------|------------------------------|----------|---------------------------|
-| Post Date     | post_date     | transactions.settlement_date | DATE     | MM/DD format              |
-| Payee         | payee         | transactions.payee           | TEXT     | Bill payment recipient    |
-| Payee Account | payee_account | transactions.payee_account   | TEXT     | Masked account number     |
-| Amount        | amount        | transactions.amount          | CURRENCY | Payment amount (negative) |
-| YTD Payments  | ytd_payments  | transactions.ytd_amount      | CURRENCY | Year-to-date total        |
+| Source Label    | JSON Field     | Database Column            | Type     | Notes                  |
+|-----------------|----------------|----------------------------|----------|------------------------|
+| Post Date       | post_date      | transactions.sett_date     | DATE     | MM/DD format           |
+| Payee           | payee          | transactions.payee         | TEXT     | Bill payment recipient |
+| Payee Account   | payee_account  | transactions.payee_account | TEXT     | Masked account number  |
+| Amount          | amount         | transactions.amount        | CURRENCY | Payment amount (neg)   |
+| YTD Payments    | ytd_payments   | transactions.ytd_amount    | CURRENCY | Year-to-date total     |
+| Total Bill Paym | total_bill_pay | transactions.section_total | CURRENCY | Section subtotal       |
 
 **Example from statement:**
 ```
@@ -238,20 +256,42 @@ Post Date  Payee                   Payee Account      Amount        YTD Payments
 
 ## 10. Core Fund Activity
 
-**Target Table:** `transactions` with `transaction_type = 'CORE_FUND'`
+**Target Table:** `transactions` with `source = 'core_fund'`
 **Location:** Detailed money market fund transactions
 
-| Source Label    | JSON Field       | Database Column              | Type     | Notes                      |
-|-----------------|------------------|------------------------------|----------|----------------------------|
-| Settlement Date | settlement_date  | transactions.settlement_date | DATE     | MM/DD format               |
-| Account Type    | account_type     | transactions.account_type    | TEXT     | "CASH"                     |
-| Transaction     | transaction      | transactions.description     | TEXT     | "You Bought" or "You Sold" |
-| Description     | sec_description  | transactions.security_name   | TEXT     | Core fund name             |
-| Symbol          | sec_symbol       | transactions.security_identifier | TEXT     | Fund ticker if available   |
-| Quantity        | quantity         | transactions.quantity        | NUMBER   | Shares                     |
-| Price           | price_per_unit   | transactions.price_per_unit  | CURRENCY | Usually $1.0000            |
-| Amount          | amount           | transactions.amount          | CURRENCY | Transaction amount         |
-| Balance         | balance          | transactions.balance         | CURRENCY | Running balance            |
+| Source Label        | JSON Field      | Database Column             | Type     | Notes                      |
+|---------------------|-----------------|-----------------------------|----------|----------------------------|
+| Settlement Date     | settlement_date | transactions.sett_date      | DATE     | MM/DD format               |
+| Account Type        | account_type    | transactions.account_type   | TEXT     | "CASH"                     |
+| Transaction         | transaction     | transactions.desc           | TEXT     | "You Bought" or "You Sold" |
+| Description         | sec_description | transactions.security_name  | TEXT     | Core fund name             |
+| Quantity            | quantity        | transactions.quantity       | NUMBER   | Shares                     |
+| Price               | price_per_unit  | transactions.price_per_unit | CURRENCY | Usually $1.0000            |
+| Amount              | amount          | transactions.amount         | CURRENCY | Transaction amount         |
+| Balance             | balance         | transactions.balance        | CURRENCY | Running balance            |
+| Total Core Fund Act | total_core      | transactions.section_total  | CURRENCY | Section subtotal           |
+
+
+## 11. Trades Pending Settlement
+
+**Target Table:** `transactions` with `source = 'trades_pending'`
+**Location:** Section showing unsettled trades with future settlement dates
+
+| Source Label     | JSON Field       | Database Column                  | Type     | Notes                      |
+|------------------|------------------|----------------------------------|----------|----------------------------|
+| Trade Date       | trade_date       | transactions.trade_date          | DATE     | MM/DD format               |
+| Settlement Date  | settlement_date  | transactions.sett_date           | DATE     | MM/DD format (future)      |
+| Security Name    | sec_description  | transactions.security_name       | TEXT     | extract text exactly       |
+| Symbol/CUSIP     | symbol_cusip     | transactions.symbol_cusip        | TEXT     | extract text exactly       |
+| Description      | description      | transactions.desc         | TEXT     | extract text exactly       |
+| Quantity         | quantity         | transactions.quantity            | NUMBER   | Shares/units traded        |
+| Price            | price_per_unit   | transactions.price_per_unit      | CURRENCY | Per share price            |
+| Total Cost Basis | cost_basis       | transactions.cost_basis          | CURRENCY | For sales only             |
+| Amount           | amount           | transactions.amount              | CURRENCY | Total transaction amount   |
+| Status           | pending          | transactions.pending             | BOOLEAN  | Always true for this section |
+| Total Trades Pending Settlement | total_trades_pending | transactions.section_total | CURRENCY | Section subtotal |
+
+**Note:** These transactions have already occurred (trade_date) but have not yet settled (settlement_date is in the future). Extract all the same fields as Securities Bought & Sold, but include both trade_date and settlement_date, and mark pending as true.
 
 
 ## Special Parsing Considerations
@@ -304,21 +344,12 @@ Bonds being called or maturing show complex descriptions with embedded data:
 
 **Redemption Transaction Rules:**
 - Copy full description exactly as shown (don't truncate reference numbers)
-- **Price handling**: When price shows "-" for redemptions, use null (this is normal)
+- **Price handling**: When price shows "-" for redemptions, use "-" (this is normal)
 - **Cost basis**: Usually null for redemptions (this is normal)
-- **Transaction cost**: Use null for blank/missing costs (not "0.00")
-- Amount reflects redemption proceeds
+- **All attributes**: Use null for blank/missing values (not "0.00"), Otherwise, extract whatever value is present
 - Reference numbers (#REOR, etc.) are part of the description
 
 **This is normal bond redemption behavior - not a parsing challenge**
-
-### Transaction Signs
-- **Purchases/Debits:** Negative amounts
-- **Sales/Credits:** Positive amounts
-- **Income:** Positive amounts
-- **Fees:** Negative amounts
-- **Deposits:** Positive amounts
-- **Withdrawals:** Negative amounts
 
 ## Data Extraction Order
 
@@ -333,14 +364,16 @@ For each account in the statement:
 8. Extract Fees and Charges
 9. Extract Cards, Checking & Bill Payments (if present)
 10. Extract Core Fund Activity (if detailed)
-11. Note any Trades Pending Settlement
+11. Extract Trades Pending Settlement (if present)
 
 ## Required Fields for All Transactions
 
-Every transaction record should include:
-- `account_number` - From the account header
-- `transaction_date` - Trade or post date
-- `settlement_date` - Settlement date
-- `transaction_type` - Category of transaction
+Every transaction record should include all values present for all attributes. If an attribute is truly blank, only then use "null"
+
+Required fields:
+- `account_number` - From the account header section
+- `source` - Activity section identifier (e.g., 'sec_bot_sold', 'div_int_income', 'trades_pending')
+- `settlement_date` or `date` or `post_date` - As labeled in source section
 - `amount` - Transaction amount with proper sign
 - `description` - Transaction description
+- `pending` - Boolean flag (true for trades_pending section, false for all others) 

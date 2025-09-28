@@ -68,6 +68,7 @@ documents/archived/
 # Allow sample documents (redacted) but ignore real PDFs elsewhere
 *.pdf
 !documents/samples/**/*.pdf
+!documents/3processed/Fid_Stmnt_2025-08_KernBrok+KernCMA.pdf
 
 # Other sensitive folders
 personal_data/

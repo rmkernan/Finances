@@ -19,6 +19,9 @@
 **Updated:** 09/26/25 1:26PM - Enhanced field markers for extraction workflow
 **Updated:** 09/26/25 5:00PM - Removed field markers, reverted to pure LLM extraction from PDF
 **Updated:** 09/26/25 5:45PM - Final cleanup of all extraction guidance for pure LLM workflow
+**Updated:** 09/28/25 4:22PM - Added numbered subsection structure to match activities mapping approach
+**Updated:** 09/28/25 4:26PM - Reordered holdings subsections to match PDF navigation structure
+**Updated:** 09/28/25 4:40PM - Added source field mapping to all 6 holdings subsections for section identification
 
 **Purpose:** This document provides task-specific instructions, guidance, and resources for the Fidelity Statement Extractor Agent. It augments the guidance and instruction provided in the agent definition file. 
 
@@ -81,16 +84,44 @@ You are acting as a highly efficient data entry clerk who can read financial sta
    - Account Summary with Net Account Value
    - Income Summary Table (for this account)
    - Realized Gains and Losses Table (for this account) - only present if sales occurred
-   - Holdings Section (for this account)
-     - Stocks subsection
-     - Bonds subsection
-     - Mutual Funds subsection
-     - Exchange Traded Products subsection
-     - Options subsection
-     - Other subsection
+   - Holdings Section (for this account) with numbered subsections:
+     - **Section 1:** Mutual Funds subsection
+     - **Section 2:** Exchange Traded Products subsection
+     - **Section 3:** Stocks subsection
+     - **Section 4:** Bonds subsection
+     - **Section 5:** Options subsection
+     - **Section 6:** Other subsection
 4. **Activity** (OUT OF SCOPE for positions extraction)
 
 **EXTRACTION REQUIREMENT:** You must iterate through EACH account listed in the "Accounts Included in This Report" section and extract ALL holdings for EACH account. Do not stop after the first account.
+
+## Holdings Subsection Navigation Structure
+
+**IMPORTANT:** The Holdings section for each account contains up to 6 numbered subsections that appear in order. Not all sections appear in every statement - presence depends on account holdings.
+
+**Navigation Order in PDF:**
+- **Section 1:** Mutual Funds - Actively managed fund holdings, money market funds, bond funds
+- **Section 2:** Exchange Traded Products - ETFs, ETNs, and similar products
+- **Section 3:** Stocks - Individual equity holdings and stock positions
+- **Section 4:** Bonds - Corporate bonds, municipal bonds, treasuries
+- **Section 5:** Options - Calls, puts, and complex option positions
+- **Section 6:** Other - Miscellaneous holdings not fitting other categories
+
+**Extraction Guidance:**
+- Process subsections in the order they appear in the PDF
+- Some subsections may be absent (e.g., no Options section if account holds no options)
+- Each subsection has a clear header indicating the security type
+- Extract ALL holdings from ALL present subsections for complete account coverage
+
+**Source Field Values:**
+Each holdings subsection requires a specific `source` value for section identification:
+- **Section 1:** Mutual Funds → `source = "mutual_funds"`
+- **Section 2:** Exchange Traded Products → `source = "exchange_traded_products"`
+- **Section 3:** Stocks → `source = "stocks"`
+- **Section 4:** Bonds → `source = "bonds"`
+- **Section 5:** Options → `source = "options"`
+- **Section 6:** Other → `source = "other"`
+
 
 # Fidelity Statement Sections, subsections and attributes
 
@@ -144,32 +175,32 @@ Contains a table that shows cash flows and value changes for an account. It appe
 Contains a table labeled Income Summary. It may span more than one page.
 
 **Target Table:** `doc_level_data` with `doc_section = 'income_summary'` with account_number from the Account Summary Header
-| Source Label                      | JSON Field              | Database Column                        | Type     | Notes                      |
-|-----------------------------------|-------------------------|----------------------------------------|----------|----------------------------|
-| Taxable Total (period)            | taxable_total_period    | doc_level_data.taxable_total_period    | CURRENCY | Fidelity's  total          |
-| Taxable Total (YTD)               | taxable_total_ytd       | doc_level_data.taxable_total_ytd       | CURRENCY | Fidelity's YTD total       |
-| Taxable Dividends (period)        | divs_taxable_period     | doc_level_data.divs_taxable_period     | CURRENCY | Doc period's taxable divs  |
-| Taxable Dividends (YTD)           | divs_taxable_ytd        | doc_level_data.divs_taxable_ytd        | CURRENCY | YTD taxable divs           |
-| Short-term Capital Gains (period) | stcg_taxable_period     | doc_level_data.stcg_taxable_period     | CURRENCY | Doc period's ST gains      |
-| Short-term Capital Gains (YTD)    | stcg_taxable_ytd        | doc_level_data.stcg_taxable_ytd        | CURRENCY | YTD short-term gains       |
-| Taxable Interest (period)         | int_taxable_period      | doc_level_data.int_taxable_period      | CURRENCY | Doc period's taxable int   |
-| Taxable Interest (YTD)            | int_taxable_ytd         | doc_level_data.int_taxable_ytd         | CURRENCY | YTD taxable int            |
-| Long-term Capital Gains (period)  | ltcg_taxable_period     | doc_level_data.ltcg_taxable_period     | CURRENCY | Doc period's LT gains      |
-| Long-term Capital Gains (YTD)     | ltcg_taxable_ytd        | doc_level_data.ltcg_taxable_ytd        | CURRENCY | YTD long-term gains        |
-| Tax-exempt Total (period)         | tax_exempt_total_period | doc_level_data.tax_exempt_total_period | CURRENCY | Fidelity's  total          |
-| Tax-exempt Total (YTD)            | tax_exempt_total_ytd    | doc_level_data.tax_exempt_total_ytd    | CURRENCY | Fidelity's YTD total       |
-| Tax-exempt Dividends (period)     | divs_tax_exempt_period  | doc_level_data.divs_tax_exempt_period  | CURRENCY | Doc period's exempt divs   |
-| Tax-exempt Dividends (YTD)        | divs_tax_exempt_ytd     | doc_level_data.divs_tax_exempt_ytd     | CURRENCY | YTD tax-exempt divs        |
-| Tax-exempt Interest (period)      | int_tax_exempt_period   | doc_level_data.int_tax_exempt_period   | CURRENCY | Doc period's exempt int    |
-| Tax-exempt Interest (YTD)         | int_tax_exempt_ytd      | doc_level_data.int_tax_exempt_ytd      | CURRENCY | YTD tax-exempt int         |
-| Short-term Capital Gains Tax-Ex (period)  | stcg_tax_ex_period  | doc_level_data.stcg_tax_ex_period  | CURRENCY | Doc period's tax-ex ST gains   |
-| Short-term Capital Gains Tax-Ex (YTD)     | stcg_tax_ex_ytd     | doc_level_data.stcg_tax_ex_ytd     | CURRENCY | YTD tax-ex ST gains            |
-| Long-term Capital Gains Tax-Ex (period)   | ltcg_tax_ex_period  | doc_level_data.ltcg_tax_ex_period  | CURRENCY | Doc period's tax-ex LT gains   |
-| Long-term Capital Gains Tax-Ex (YTD)      | ltcg_tax_ex_ytd     | doc_level_data.ltcg_tax_ex_ytd     | CURRENCY | YTD tax-ex LT gains            |
-| Return of Capital (period)        | roc_period              | doc_level_data.roc_period              | CURRENCY | Doc period's ROC           |
-| Return of Capital (YTD)           | roc_ytd                 | doc_level_data.roc_ytd                 | CURRENCY | YTD return of capital      |
-| Grand Total (period)              | incsumm_total_period    | doc_level_data.incsumm_total_period    | CURRENCY | Income summary grand total |
-| Grand Total (YTD)                 | incsumm_total_ytd       | doc_level_data.incsumm_total_ytd       | CURRENCY | Income summary YTD total   |
+| Source Label                            | JSON Field              | Database Column                        | Type     | Notes                      |
+|-----------------------------------      |-------------------------|----------------------------------------|----------|----------------------------|
+| Taxable Total (period)                  | taxable_total_period    | doc_level_data.taxable_total_period    | CURRENCY | Fidelity's  total          |
+| Taxable Total (YTD)                     | taxable_total_ytd       | doc_level_data.taxable_total_ytd       | CURRENCY | Fidelity's YTD total       |
+| Taxable Dividends (period)              | divs_taxable_period     | doc_level_data.divs_taxable_period     | CURRENCY | Doc period's taxable divs  |
+| Taxable Dividends (YTD)                 | divs_taxable_ytd        | doc_level_data.divs_taxable_ytd        | CURRENCY | YTD taxable divs           |
+| Short-term Capital Gains (period).      | stcg_taxable_period     | doc_level_data.stcg_taxable_period     | CURRENCY | Doc period's ST gains      |
+| Short-term Capital Gains (YTD)          | stcg_taxable_ytd        | doc_level_data.stcg_taxable_ytd        | CURRENCY | YTD short-term gains       |
+| Taxable Interest (period)               | int_taxable_period      | doc_level_data.int_taxable_period      | CURRENCY | Doc period's taxable int   |
+| Taxable Interest (YTD)                  | int_taxable_ytd         | doc_level_data.int_taxable_ytd         | CURRENCY | YTD taxable int            |
+| Long-term Capital Gains (period)        | ltcg_taxable_period     | doc_level_data.ltcg_taxable_period     | CURRENCY | Doc period's LT gains      |
+| Long-term Capital Gains (YTD)           | ltcg_taxable_ytd        | doc_level_data.ltcg_taxable_ytd        | CURRENCY | YTD long-term gains        |
+| Tax-exempt Total (period)               | tax_exempt_total_period | doc_level_data.tax_exempt_total_period | CURRENCY | Fidelity's  total          |
+| Tax-exempt Total (YTD)                  | tax_exempt_total_ytd    | doc_level_data.tax_exempt_total_ytd    | CURRENCY | Fidelity's YTD total       |
+| Tax-exempt Dividends (period)           | divs_tax_exempt_period  | doc_level_data.divs_tax_exempt_period  | CURRENCY | Doc period's exempt divs   |
+| Tax-exempt Dividends (YTD)              |  divs_tax_exempt_ytd    | doc_level_data.divs_tax_exempt_ytd     | CURRENCY | YTD tax-exempt divs        |
+| Tax-exempt Interest (period)            | int_tax_exempt_period   | doc_level_data.int_tax_exempt_period   | CURRENCY | Doc period's exempt int    |
+| Tax-exempt Interest (YTD)               | int_tax_exempt_ytd      | doc_level_data.int_tax_exempt_ytd      | CURRENCY | YTD tax-exempt int         |
+| Short-term Capital Gains Tax-Ex (period)| stcg_tax_ex_period      | doc_level_data.stcg_tax_ex_period      | CURRENCY | Doc period's tax-ex ST gains|
+| Short-term Capital Gains Tax-Ex (YTD)   |  stcg_tax_ex_ytd        | doc_level_data.stcg_tax_ex_ytd         | CURRENCY | YTD tax-ex ST gains         |
+| Long-term Capital Gains Tax-Ex (period) | ltcg_tax_ex_period      | doc_level_data.ltcg_tax_ex_period      | CURRENCY | Doc period's tax-ex LT gains|
+| Long-term Capital Gains Tax-Ex (YTD)    | ltcg_tax_ex_ytd         | doc_level_data.ltcg_tax_ex_ytd         | CURRENCY | YTD tax-ex LT gains         |
+| Return of Capital (period)              | roc_period              | doc_level_data.roc_period              | CURRENCY | Doc period's ROC           |
+| Return of Capital (YTD)                 | roc_ytd                 | doc_level_data.roc_ytd                 | CURRENCY | YTD return of capital      |
+| Grand Total (period)                    | incsumm_total_period    | doc_level_data.incsumm_total_period    | CURRENCY | Income summary grand total |
+| Grand Total (YTD)                       | incsumm_total_ytd       | doc_level_data.incsumm_total_ytd       | CURRENCY | Income summary YTD total   |
 
  
 
@@ -178,119 +209,69 @@ Contains a table that shows realized long-term and short-term gains and losses.
 **Target Table:** `doc_level_data` with `doc_section = 'realized_gains'` with account_number from the Account Summary Header
 **Important:** This section only appears when securities were sold during the period. If not present in the statement, set all realized_gains fields to null in the JSON. This is normal and expected.
 
-| Source Label                       | JSON Field           | Database Column                  | Type     | Notes                        |
-|------------------------------------|----------------------|----------------------------------|----------|------------------------------|
-| Net Short-term Gain/Loss (period)  | netstgl_period       | doc_level_data.netstgl_period   | CURRENCY | Net ST gain/loss for period |
-| Net Short-term Gain/Loss (YTD)     | netstgl_ytd          | doc_level_data.netstgl_ytd      | CURRENCY | Net ST gain/loss YTD        |
-| Short-term Gain (period)           | stg_period           | doc_level_data.stg_period       | CURRENCY | ST gains only for period    |
-| Short-term Gain (YTD)              | stg_ytd              | doc_level_data.stg_ytd          | CURRENCY | ST gains only YTD           |
-| Net Long-term Gain/Loss (period)   | netltgl_period       | doc_level_data.netltgl_period   | CURRENCY | Net LT gain/loss for period |
-| Net Long-term Gain/Loss (YTD)      | netltgl_ytd          | doc_level_data.netltgl_ytd      | CURRENCY | Net LT gain/loss YTD        |
-| Long-term Gain (period)            | ltg_period           | doc_level_data.ltg_period       | CURRENCY | LT gains only for period    |
-| Long-term Gain (YTD)               | ltg_ytd              | doc_level_data.ltg_ytd          | CURRENCY | LT gains only YTD           |
-| Net Gain/Loss (period)             | net_gl_period        | doc_level_data.net_gl_period    | CURRENCY | Total net gain/loss period  |
-| Net Gain/Loss (YTD)                | net_gl_ytd           | doc_level_data.net_gl_ytd       | CURRENCY | Total net gain/loss YTD     |
+| Source Label                       | JSON Field        | Database Column               | Type     | Notes                      |
+|------------------------------------|------------------|-------------------------------|----------|-----------------------------|
+| Net Short-term Gain/Loss (period)  | netstgl_period   | doc_level_data.netstgl_period | CURRENCY | Net ST gain/loss for period |
+| Net Short-term Gain/Loss (YTD)     | netstgl_ytd      | doc_level_data.netstgl_ytd    | CURRENCY | Net ST gain/loss YTD        |
+| Short-term Gain (period)           | stg_period       | doc_level_data.stg_period     | CURRENCY | ST gains only for period    |
+| Short-term Gain (YTD)              | stg_ytd          | doc_level_data.stg_ytd        | CURRENCY | ST gains only YTD           |
+| Net Long-term Gain/Loss (period)   | netltgl_period   | doc_level_data.netltgl_period | CURRENCY | Net LT gain/loss for period |
+| Net Long-term Gain/Loss (YTD)      | netltgl_ytd      | doc_level_data.netltgl_ytd    | CURRENCY | Net LT gain/loss YTD        |
+| Long-term Gain (period)            | ltg_period       | doc_level_data.ltg_period     | CURRENCY | LT gains only for period    |
+| Long-term Gain (YTD)               | ltg_ytd          | doc_level_data.ltg_ytd        | CURRENCY | LT gains only YTD           |
+| Net Gain/Loss (period)             | net_gl_period    | doc_level_data.net_gl_period  | CURRENCY | Total net gain/loss period  |
+| Net Gain/Loss (YTD)                | net_gl_ytd       | doc_level_data.net_gl_ytd     | CURRENCY | Total net gain/loss YTD     |
 
 
 ### Holdings
-There is one holding section per account listed in the document. This section contains account holdings divided by holdings type and subtype. Each security type has specific attributes to extract.
+There is one holding section per Account listed in the document. This section contains account holdings divided by holdings type and subtype. Each security type has specific attributes to extract.
 
-#### Stock Holdings
-**Target Table:** `positions` with `account_number` from Account Summary Header
-**Security Type:** "Stocks" | **Security Subtype:** Determined by description content
-
-| Source Label            | JSON Field           | Database Column                | Type     | Notes                              |
-|-------------------------|----------------------|--------------------------------|----------|------------------------------------|
-| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Stocks"          |
-| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - See determination rules  |
-| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                            |
-| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses         |
-| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                    |
-| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                            |
-| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                            |
-| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                            |
-| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                    |
-| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                    |
-| Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                    |
-| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
-
-**Subtype Determination:**
-- "Preferred Stock" if contains: PFD, PREFERRED, or dividend rate (e.g., "6.68304%")
-- "Common Stock" otherwise
-
-**Examples:**
-- "AT&T INC COM USD1 (T)" → "Common Stock"
-- "ENBRIDGE INC 6.68304% PFD (EBGEF)" → "Preferred Stock"
-- "BOXFORD LANE CAP CORP CAL NT 27 5.00000% 01/31/2027 PFD (OXLCZ)" → "Preferred Stock"
-
-#### Bond Holdings
-**Target Table:** `positions` with `account_number` from Account Summary Header
-**Security Type:** "Bonds" | **Security Subtype:** "Corporate Bonds" or "Municipal Bonds"
-
-| Source Label                | JSON Field           | Database Column                | Type     | Notes                                  |
-|-------------------------    |----------------------|--------------------------------|----------|----------------------------------------|
-| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Bonds"               |
-| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - From section header          |
-| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                                |
-| CUSIP                   | cusip                | positions.cusip                | TEXT     | **REQ** - From detail line             |
-| Maturity Date               | maturity_date        | positions.maturity_date        | DATE     | **REQ** - MM/DD/YY format              |
-| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                        |
-| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                                |
-| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                                |
-| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                                |
-| Accrued Interest            | accrued_int          | positions.accrued_int          | CURRENCY | **REQ** - Italic below market value    |
-| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                        |
-| Unrealized Gain/Loss        | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                        |
-| Est Annual Income (EAI)     | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                        |
-| Coupon Rate                 | coupon_rate          | positions.coupon_rate          | NUMBER   | **REQ** - From last column             |
-| Ratings                     | agency_ratings       | positions.agency_ratings       | TEXT     | Optional - From detail line            |
-| Next Call Date              | next_call_date       | positions.next_call_date       | DATE     | Optional - Only if callable            |
-| Call Price                  | call_price           | positions.call_price           | NUMBER   | Optional - Only if callable            |
-| Payment Frequency           | payment_freq         | positions.payment_freq         | TEXT     | **REQ** - From detail line             |
-| Bond Features               | bond_features        | positions.bond_features        | TEXT     | Optional - Special features if present |
-
-##### Bond Detail Line Parsing
-Bonds have a detail line immediately below the description containing structured attributes. Parse as follows:
-
-**Pattern:** `[COUPON_TYPE] [RATINGS] [FREQUENCY] [CALL_INFO] CUSIP: [CUSIP_NUMBER]`
-
-**Examples:**
-```
-[FIXED COUPON PRE-REFUNDED 11/01/2025 @ 100.000] [MOODYS Aa1 S&P AA+] [SEMIANNUALLY]  [CONT CALL 11/01/2025] [CUSIP: 880558HN4]
-[FIXED COUPON] [MOODYS Ba1 S&P BB+] [SEMIANNUALLY] [NEXT CALL DATE 09/05/2025] [CUSIP: 74348GRW2]
-[FIXED COUPON] [S&P A] [SEMIANNUALLY] [EXTRAORDINARY CALL] [CUSIP: 499527BV0]
-[FIXED COUPON] [MOODYS Aa1] [SEMIANNUALLY] [NEXT CALL DATE 09/30/2025 100.00] [CUSIP: 432074EU2]
-```
-
-**Parsing Pattern:**
-- CUSIP: Always at end after "CUSIP:"
-- Agency Ratings: "MOODYS [rating]" and/or "S&P [rating]"
-- Payment Frequency: SEMIANNUALLY, ANNUALLY, etc.
-- Call Date: After "NEXT CALL DATE" or "CONT CALL"
-- Call Price: Number following "@" or before CUSIP
-- Bond Features: PRE-REFUNDED, etc. if present
-
-
-#### Mutual Fund Holdings
+#### 1. Mutual Fund Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
 **Security Type:** "Mutual Funds" | **Security Subtype:** "Stock Funds", "Bond Funds", "Short-Term Funds"
 
-| Source Label                | JSON Field           | Database Column                | Type     | Notes                              |
-|-----------------------------|----------------------|--------------------------------|----------|------------------------------------|
-| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Mutual Funds"    |
-| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - From section header      |
-| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                            |
-| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses         |
-| Beginning Market Value      | beg_market_value     | positions.beg_market_value     | CURRENCY |                                    |
-| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                            |
-| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ** - NAV                      |
-| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                            |
-| Total Cost Basis            | cost_basis           | positions.cost_basis           | CURRENCY |                                    |
-| Unrealized Gain/Loss        | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                    |
-| Est Annual Income (EAI)     | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                    |
-| Estimated Yield (EY %)      | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
+| Source Label            | JSON Field           | Database Column                | Type     | Notes                           |
+|-------------------------|----------------------|--------------------------------|----------|---------------------------------|
+| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Mutual Funds" |
+| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - From section header   |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier    |
+| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                         |
+| Symbol/Ticker           | sec_symbol           | positions.sec_symbol           | TEXT     | **REQ** - From parentheses      |
+| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                 |
+| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                         |
+| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ** - NAV                   |
+| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                         |
+| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                 |
+| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                 |
+| Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                 |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As % (e.g., 5.100 not 0.051).   |
 
-#### Exchange Traded Products Holdings
+##### Core Account (Part of Mutual Funds)
+**Target Table:** `positions` with `account_number` from Account Summary Header
+**Security Type:** "Core Account" | **Security Subtype:** "Money Market" (typically)
+
+| Source Label            | JSON Field           | Database Column                | Type     | Notes                            |
+|-------------------------|----------------------|--------------------------------|----------|----------------------------------|
+| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Core Account"  |
+| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - Usually "Money Market" |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier     |
+| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                          |
+| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses       |
+| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                  |
+| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                          |
+| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ** - Usually 1.0000         |
+| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                          |
+| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY | Usually "not applicable"         |
+| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY | Usually "not applicable"         |
+| Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                  |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As & (e.g., 4.880 not 0.0488)    |
+
+**Common Core Account Types:**
+- FIDELITY GOVERNMENT MONEY MARKET (SPAXX)
+- FIDELITY TREASURY MONEY MARKET (FZFXX)
+- Other Fidelity money market funds
+
+#### 2. Exchange Traded Products Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
 **Security Type:** "Exchange Traded Products" | **Security Subtype:** "Equity ETPs" (or other ETP types)
 
@@ -298,6 +279,7 @@ Bonds have a detail line immediately below the description containing structured
 |-------------------------|----------------------|--------------------------------|----------|---------------------------------------------|
 | Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Exchange Traded Products" |
 | Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - From section header               |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier                |
 | Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                                     |
 | Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - Extract from parentheses          |
 | Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                             |
@@ -328,64 +310,148 @@ Fidelity groups various traded products under "Exchange Traded Products":
 
 **This is normal Fidelity categorization - trust the source document classification.**
 
-#### Options
+#### 3. Stock Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
-**Security Type:** "Options" | **Security Subtype:** "Calls" or "Puts"
+**Security Type:** "Stocks" | **Security Subtype:** Determined by description content
 
-| Source Label                | JSON Field           | Database Column                | Type     | Notes                                      |
-|-----------------------------|----------------------|--------------------------------|----------|--------------------------------------------|
-| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Options"                 |
-| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - "Calls" or "Puts"                |
-| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                                    |
-| Underlying Symbol       | underlying_symbol    | positions.underlying_symbol    | TEXT     | **REQ** - Extract from description         |
-| Strike Price            | strike_price         | positions.strike_price         | CURRENCY | **REQ** - Extract from description         |
-| Expiration Date         | expiration_date      | positions.exp_date             | DATE     | **REQ** - MM/DD/YY format from description |
-| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                                    |
-| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                                    |
-| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY | Copy exactly as shown                      |
-| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                                    |
-| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                            |
-| Unrealized Gain/Loss        | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                            |
+| Source Label            | JSON Field           | Database Column                | Type     | Notes                              |
+|-------------------------|----------------------|--------------------------------|----------|------------------------------------|
+| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Stocks"          |
+| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - See determination rules  |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier       |
+| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                            |
+| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses         |
+| Identifiers             | sec_identifiers      | positions.sec_identifiers      | TEXT     | e.g. ISIN, SEDOL, etc.             |
+| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                    |
+| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                            |
+| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                            |
+| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                            |
+| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                    |
+| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                    |
+| Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                    |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
 
+##### Stock Description Parsing
+The stock description can contain extra identifiers like ISIN or SEDOL numbers.
 
-**Description Pattern:**
-`[CALL/PUT] ([SYMBOL]) [UNDERLYING NAME] [EXP DATE] $[STRIKE] (100 SHS)`
+**Pattern:** `[SECURITY_NAME] [IDENTIFIERS] ([TICKER])`
+
+**Extraction Logic:**
+- **`sec_description`**: Capture the core security name, which is the text up to the ISIN, SEDOL, or other long identifier string.
+- **`sec_symbol`**: Extract from parentheses.
+- **`sec_identifiers`**: Capture any remaining identifiers like ISIN or SEDOL numbers as a single text string.
+
+**Example:** "ENBRIDGE INC 6.68304% PFD ISIN #CA29250N6679 SEDOL #BF67P82 (EBGEF)"
+- `sec_description`: "ENBRIDGE INC 6.68304% PFD"
+- `sec_symbol`: "EBGEF"
+- `sec_identifiers`: "ISIN #CA29250N6679 SEDOL #BF67P82"
+
+**Subtype Determination:**
+- "Preferred Stock" if contains: PFD, PREFERRED, or dividend rate (e.g., "6.68304%")
+- "Common Stock" otherwise
 
 **Examples:**
-- "CALL (GOOG) ALPHABET INC CAP STK SEP 12 25 $215 (100 SHS)"
-- "PUT (TSLA) TESLA INC COM AUG 29 25 $300 (100 SHS)"
-- "M PUT (NVDA) NVIDIA CORPORATION AUG 29 25 $175 (100 SHS) SHT"
+- "AT&T INC COM USD1 (T)" → "Common Stock"
+- "ENBRIDGE INC 6.68304% PFD (EBGEF)" → "Preferred Stock"
+- "BOXFORD LANE CAP CORP CAL NT 27 5.00000% 01/31/2027 PFD (OXLCZ)" → "Preferred Stock"
 
-**Option Ticker Pattern (when present):**
-`[SYMBOL][YYMMDD][C/P][STRIKE]`
-Example: `GOOG250912C215` → GOOG, 250912, C, 215
-
-
-#### Core Account
+#### 4. Bond Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
-**Security Type:** "Core Account" | **Security Subtype:** "Money Market" (typically)
+**Security Type:** "Bonds" | **Security Subtype:** "Corporate Bonds" or "Municipal Bonds"
 
 | Source Label            | JSON Field           | Database Column                | Type     | Notes                                  |
 |-------------------------|----------------------|--------------------------------|----------|----------------------------------------|
-| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Core Account"        |
-| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - Usually "Money Market"       |
+| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Bonds"               |
+| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - From section header          |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier           |
 | Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                                |
-| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses             |
+| CUSIP                   | cusip                | positions.cusip                | TEXT     | **REQ** - From detail line             |
+| Maturity Date           | maturity_date        | positions.maturity_date        | DATE     | **REQ** - MM/DD/YY format              |
 | Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                        |
 | Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                                |
-| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ** - Usually 1.0000               |
+| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                                |
 | Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                                |
-| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY | Usually "not applicable"               |
-| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY | Usually "not applicable"               |
+| Accrued Interest        | accrued_int          | positions.accrued_int          | CURRENCY | **REQ** - Italic below market value    |
+| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                        |
+| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                        |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                        |
-| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 4.880 not 0.0488)|
+| Coupon Rate             | coupon_rate          | positions.coupon_rate          | NUMBER   | **REQ** - From last column             |
+| Ratings                 | agency_ratings       | positions.agency_ratings       | TEXT     | Optional - From detail line            |
+| Next Call Date          | next_call_date       | positions.next_call_date       | DATE     | Optional - Only if callable            |
+| Call Price              | call_price           | positions.call_price           | NUMBER   | Optional - Only if callable            |
+| Payment Frequency       | payment_freq         | positions.payment_freq         | TEXT     | **REQ** - From detail line             |
+| Bond Features           | bond_features        | positions.bond_features        | TEXT     | Optional - Special features if present |
 
-**Common Core Account Types:**
-- FIDELITY GOVERNMENT MONEY MARKET (SPAXX)
-- FIDELITY TREASURY MONEY MARKET (FZFXX)
-- Other Fidelity money market funds
+##### Bond Description & Detail Line Parsing
+The full description for a bond holding is typically split into two lines within the statement's "Description" column.
 
-#### Other Holdings
+- **Line 1 (The Name):** This is the human-readable name of the bond. This full line should be extracted as the `sec_description`.
+- **Line 2 (The Detail Line):** This is a structured text block immediately following the name, containing the CUSIP, ratings, call information, and other key attributes. This line must be parsed to populate several different fields.
+
+**Pattern (Detail Line):** `[BOND_FEATURES] [RATINGS] [FREQUENCY] [CALL_INFO] CUSIP: [CUSIP_NUMBER]`
+
+**Extraction Logic (from Detail Line):**
+- **`cusip`**: Extract the value that always appears at the end of the line, after "CUSIP:".
+- **`agency_ratings`**: Extract any text matching "MOODYS [rating]" and/or "S&P [rating]".
+- **`payment_freq`**: Extract the payment frequency (e.g., "SEMIANNUALLY", "ANNUALLY").
+- **`next_call_date`**: Extract the date following "NEXT CALL DATE" or "CONT CALL".
+- **`call_price`**: Extract the number following an "@" symbol or near the call date.
+- **`bond_features`**: Extract any remaining descriptive text at the beginning of the line (e.g., "FIXED COUPON", "PRE-REFUNDED").
+
+**Complete Example:**
+- **Input Line 1:** "M TENNESSEE ST SCH BD AUTH HIGHER EDL FACS"
+- **Input Line 2:** "FIXED COUPON PRE-REFUNDED 11/01/2025 @ 100.000 MOODYS Aa1 S&P AA+ SEMIANNUALLY CONT CALL 11/01/2025 CUSIP: 880558HN4"
+
+- **Resulting JSON Fields:**
+  - `sec_description`: "M TENNESSEE ST SCH BD AUTH HIGHER EDL FACS"
+  - `cusip`: "880558HN4"
+  - `agency_ratings`: "MOODYS Aa1 S&P AA+"
+  - `payment_freq`: "SEMIANNUALLY"
+  - `next_call_date`: "11/01/2025"
+  - `call_price`: "100.000"
+  - `bond_features`: "FIXED COUPON PRE-REFUNDED"
+
+#### 5. Options
+**Target Table:** `positions` with `account_number` from Account Summary Header
+**Security Type:** "Options" | **Security Subtype:** "Calls" or "Puts"
+
+| Source Label            | JSON Field           | Database Column                | Type     | Notes                               |
+|-------------------------|----------------------|--------------------------------|----------|-------------------------------------|
+| Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Options"          |
+| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - "Calls" or "Puts"         |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier        |
+| Description             | sec_description      | positions.sec_name             | TEXT     | **REQ** - The full description line |
+| Symbol/Ticker           | sec_symbol           | positions.sec_symbol           | TEXT     | **REQ** - The full option symbol    |
+| Underlying Symbol       | underlying_symbol    | positions.underlying_symbol    | TEXT     | **REQ** - From description parsing  |
+| Strike Price            | strike_price         | positions.strike_price         | CURRENCY | **REQ** - From description parsing  |
+| Expiration Date         | expiration_date      | positions.exp_date             | DATE     | **REQ** - From description parsing  |
+| Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                             |
+| Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                             |
+| Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY | Copy exactly as shown               |
+| Ending Market Value     | end_market_value     | positions.end_market_value     | CURRENCY | **REQ**                             |
+| Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                     |
+| Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                     |
+
+##### Option Description Parsing
+The option description line contains multiple structured attributes.
+
+**Pattern:** `[SIDE] ([UNDERLYING]) [NAME] [EXP_DATE] $[STRIKE] [SHARES] ([FULL_SYMBOL]) [POSITION_TYPE]`
+
+**Extraction Logic:**
+- **`sec_subtype`**: "Puts" if description starts with `PUT`, "Calls" if it starts with `CALL`.
+- **`underlying_symbol`**: Extract from the first set of parentheses.
+- **`expiration_date`**: The date following the underlying name (e.g., "AUG 29 25").
+- **`strike_price`**: The number following the dollar sign.
+- **`sec_symbol`**: Capture the full, structured option symbol from the second set of parentheses (e.g., "TSLA250829P300").
+
+**Example:** "M PUT (TSLA) TESLA INC COM AUG 29 25 $300 (100 SHS) (TSLA250829P300) SHT"
+- `sec_subtype`: "Puts"
+- `underlying_symbol`: "TSLA"
+- `expiration_date`: "AUG 29 25"
+- `strike_price`: "300"
+- `sec_symbol`: "TSLA250829P300"
+
+#### 6. Other Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
 **Security Type:** "Other" | **Security Subtype:** Derived from description
 
@@ -393,6 +459,7 @@ Example: `GOOG250912C215` → GOOG, 250912, C, 215
 |-------------------------|----------------------|--------------------------------|----------|-----------------------------------|
 | Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Other"          |
 | Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | Derive from description           |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier     |
 | Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                           |
 | Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | Extract if present in parentheses |
 | Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                   |

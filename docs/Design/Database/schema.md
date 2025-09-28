@@ -4,15 +4,6 @@
 **Updated:** 09/11/25 12:58PM ET - Added real_assets and liabilities tables for complete net worth tracking
 **Updated:** 09/17/25 3:15PM ET - Added source document mapping columns to transactions table
 **Updated:** 09/18/25 1:45PM ET - Added positions and income_summaries tables, enhanced portfolio fields per Fidelity document map
-**Updated:** 09/18/25 2:30PM ET - Added Comment column to all tables with practical metadata for PostgreSQL COMMENT ON COLUMN feature
-**Updated:** 09/22/25 12:53PM ET - Added data processing workflow, enhanced foreign key documentation, aligned with Fidelity document map
-**Updated:** 09/22/25 1:18PM ET - Added beginning_value and ending_value fields to doc_level_data table
-**Updated:** 09/22/25 1:25PM ET - Removed redundant income_summaries table, marked Phase 2 tables (not yet implemented)
-**Updated:** 09/22/25 3:11PM ET - Added sec_cusip, option fields, activity columns, bond_state, dividend_qualified to transactions table
-**Updated:** 09/22/25 5:32PM ET - Made tax fields optional, transaction_date optional, clarified settlement_date vs transaction_date separation
-**Updated:** 09/22/25 8:55PM ET - Verified doc_md5_hash column specification in documents table for duplicate prevention
-**Updated:** 09/22/25 9:00PM ET - Added UNIQUE constraints, removed restrictive CHECKs, added archival support, improved account types
-**Updated:** 09/22/25 9:10PM ET - Clarified two-stage duplicate prevention workflow using MD5 hashes at staging and database insert
 **Updated:** 09/22/25 9:15PM ET - Added PostgreSQL COMMENT specifications for all tables and columns
 **Updated:** 09/23/25 2:58PM - Added comprehensive design justification for document_accounts table and clarified doc_level_data as transcribed data
 **Updated:** 09/23/25 3:52PM - Removed entity_id from institutions table (institutions now shared across entities) and added institution_name to accounts table as derived field
@@ -27,6 +18,10 @@
 **Updated:** 09/24/25 2:43PM - Removed deprecated json_output_id and json_output_md5_hash columns from documents table (superseded by incremental loading columns)
 **Updated:** 09/24/25 3:26PM - Completed three-table mapping system migration: deprecated data_mappings table, loader now uses map_rules/map_conditions/map_actions exclusively
 **Updated:** 09/25/25 10:40PM - MAJOR: Simplified rule structure from 5 levels to 2 levels: Transaction Classification (Level 1) and Security Classification (Level 2)
+**Updated:** 09/28/25 4:03PM - Added section_total column to transactions table for statement reconciliation and section-level total tracking
+**Updated:** 09/28/25 4:13PM - Clarified section_total implementation using source field to identify section types, enabling comprehensive statement reconciliation
+**Updated:** 09/28/25 4:43PM - Added missing source column to positions table for section identification
+**Updated:** 09/28/25 6:00PM - Fixed schema alignment: use symbol_cusip (not security_identifier), added pending column, aligned with shorter field names (sett_date)
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -506,16 +501,15 @@ This junction table is **absolutely essential** for the document-centric archite
 | `account_id` *R                | UUID (FK)     | NOT NULL REF's accounts(id) ON DELETE RESTRICT               | Account where transaction occurred                       |
 | **Transaction Core Data**      |               |                                                                   |                                                          |
 | `transaction_date`             | DATE          |                                                                   | Date transaction occurred (trade date)                   |
-| `settlement_date`              | DATE          |                                                                   | Settlement/clearing date                                 |
+| `sett_date`                    | DATE          |                                                                   | Settlement/clearing date                                 |
 | `transaction_type` *R          | TEXT          | NOT NULL                                                          | Transaction classification                               |
 | `transaction_subtype`          | TEXT          |                                                                   | Detailed subtype (e.g., 'qualified_dividend',            |
 |                                |               |                                                                   | 'municipal_interest', 'management_fee')                  |
-| `description` *R               | TEXT          | NOT NULL                                                          | Transaction description from source document             |
+| `desc` *R                      | TEXT          | NOT NULL                                                          | Transaction description from source document             |
 | `amount` *R                    | NUMERIC(8,2)  | NOT NULL                                                          | Transaction amount                                       |
 | **Security Information**       |               |                                                                   |                                                          |
 | `security_name`                | TEXT          |                                                                   | Security name/description                                |
-| `security_identifier`          | TEXT          |                                                                   | Symbol/ticker identifier                                 |
-| `sec_cusip`                    | TEXT          |                                                                   | CUSIP identifier for bonds                               |
+| `symbol_cusip`                 | TEXT          |                                                                   | Symbol/ticker or CUSIP identifier                       |
 | `quantity`                     | NUMERIC(8,6)  |                                                                   | Number of shares/units in transaction                    |
 | `price_per_unit`               | NUMERIC(12,4) |                                                                   | Price per share/unit                                     |
 | `cost_basis`                   | NUMERIC(8,2)  |                                                                   |                                                          |
@@ -540,6 +534,7 @@ This junction table is **absolutely essential** for the document-centric archite
 | `ytd_amount`                   | NUMERIC(8,2)  |                                                                   | Year-to-date amount for recurring payments               |
 | `balance`                      | NUMERIC(8,2)  |                                                                   | Running balance after transaction                        |
 | `account_type`                 | TEXT          |                                                                   | Account type for transaction (e.g., 'CASH', 'MARGIN')    |
+| `section_total`                | NUMERIC(15,2) |                                                                   | Section-level total amount for statement reconciliation  |
 | **Tax Categorization**         |               |                                                                   |                                                          |
 | `tax_category`                 | TEXT          |                                                                 | Primary tax treatment                                    |
 | `federal_taxable`              | BOOLEAN       |                                                                   | True if taxable for federal purposes                     |
@@ -555,6 +550,7 @@ This junction table is **absolutely essential** for the document-centric archite
 | `is_duplicate_of`              | UUID (FK)     | REF's transactions(id) ON DELETE SET NULL                    | References original transaction if this is a duplicate   |
 | `duplicate_reason`             | TEXT          |                                                                   | Explanation of why marked as duplicate                   |
 | **Archival Support**           |               |                                                                   |                                                          |
+| `pending`                      | BOOLEAN       | DEFAULT FALSE                                                     | True if transaction is pending settlement                 |
 | `is_archived`                  | BOOLEAN       | DEFAULT FALSE                                                     | True if transaction is archived (soft delete)            |
 | **Audit Trail**                |               |                                                                   |                                                          |
 | `created_at`                   | TIMESTAMPTZ   | DEFAULT NOW()                                                     | Record creation timestamp                                |
@@ -588,6 +584,37 @@ The `sec_class` column enables sophisticated options tracking and transaction ma
    - Separate analysis of stock vs option vs bond transactions
    - Performance tracking by security type
    - Risk management and exposure analysis
+
+**Section Total Support:**
+
+The `section_total` column works in combination with the `source` field to capture section-level totals as shown on original documents:
+
+1. **Individual Transactions:** `amount` populated, `section_total` is null, `source` identifies activity section
+2. **Section Total Records:** `section_total` populated, `source` identifies which section the total belongs to
+3. **Section Mapping:** `source` values directly correspond to activity sections:
+   - `source = 'deposits'` + `section_total = 8000.00` → "Total Deposits: $8,000"
+   - `source = 'sec_bot_sold'` + `section_total = -249738.30` → "Net Securities Activity: -$249,738.30"
+   - `source = 'div_int_income'` + `section_total = 17439.54` → "Total Dividends/Interest: $17,439.54"
+
+**Example Section Total Queries:**
+```sql
+-- Find all section totals
+SELECT source, section_total, description
+FROM transactions
+WHERE section_total IS NOT NULL
+ORDER BY document_id, source;
+
+-- Verify section reconciliation
+SELECT
+    source,
+    SUM(CASE WHEN section_total IS NULL THEN amount ELSE 0 END) as individual_sum,
+    MAX(section_total) as reported_total,
+    SUM(CASE WHEN section_total IS NULL THEN amount ELSE 0 END) - MAX(section_total) as variance
+FROM transactions
+WHERE document_id = 'doc-uuid'
+GROUP BY source
+HAVING MAX(section_total) IS NOT NULL;
+```
 
 **Example Options Queries:**
 ```sql
@@ -645,11 +672,12 @@ ORDER BY net_amount DESC;
 | position_date                     | -                    | Statement Date          | DATE          | NOT NULL                     |
 | account_number                    | account_number       | Account Number          | TEXT          | NOT NULL                     |
 | **-- Security Identification --** |
-| sec_ticker                        | sec_symbol           | Symbol/Ticker           | TEXT          |                              |
+| sec_symbol                        | sec_symbol           | Symbol/Ticker           | TEXT          | from () in descriptiopn      |
 | cusip                             | sec_cusip            | CUSIP                   | TEXT          |                              |
 | sec_name                          | sec_description      | Description             | TEXT          | NOT NULL                     |
 | sec_type                          | sec_type             | Security Type           | TEXT          | NOT NULL                     |
 | sec_subtype                       | sec_subtype          | Security Subtype        | TEXT          |                              |
+| source                            | source               | Source Section          | TEXT          | NOT NULL                     |
 | **-- Position Values --**         |
 | beg_market_value                  | beg_market_value     | Beginning Market Value  | NUMERIC(8,2)  |                              |
 | quantity                          | quantity             | Quantity                | NUMERIC(15,6) | NOT NULL                     |
