@@ -18,6 +18,7 @@
 **Updated:** 09/24/25 10:25AM - Updated transaction classification section to reflect new three-table mapping system and enhanced options tracking
 **Updated:** 09/24/25 10:35AM - Added comprehensive mapping system integration with post-extraction analysis workflow and intelligent rule recommendation process
 **Updated:** 09/24/25 11:16AM - Restructured workflow with parallel processing optimizations, reducing execution time from ~45 to ~15 seconds
+**Updated:** 09/29/25 7:14PM - Steps 3-5 testing complete: Added account key extraction rule, clarified trimmed page number usage in templates
 **Updated:** 09/25/25 12:54PM - Added critical Step 6: Create Database Document Records to complete workflow before PDF archival
 **Updated:** 09/25/25 12:56PM - Simplified Step 6 to use direct SQL commands instead of separate Python script
 **Updated:** 09/25/25 1:08PM - Expanded Step 6 to include missing reference data loading (entities and accounts) before document creation
@@ -175,7 +176,10 @@ Before proceeding, verify ALL validation checks succeeded:
 Now stage the trimmed PDF with proper naming:
 
 1. **Look up accounts** in [account-mappings.json](../config/account-mappings.json)
-2. **Use mapped names** for filename generation
+   - **Extract lookup key:** Use last 4 digits of account number
+     - Example: `Z24-527872` → lookup key `"7872"`
+     - Find in mappings: `accounts.fidelity["7872"]`
+2. **Use mapped names** (`filename_label` field) for filename generation
 
 **Account Matching Rules:**
 - **Exact match:** Account in mappings → Use existing metadata, proceed with staging
@@ -295,22 +299,22 @@ STAGED FILE:
 Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf (26 pages, trimmed from 30)
 
 ✅ FIDELITY Statement: April 2025
-   MD5: bfff486f43ab3f616983cc3ec2ae5426
+   MD5: [use value from Step 2 validation]
    Accounts: Z24-527872 (KernBrok), Z27-375656 (KernCMA)
    ✅ No duplicates found
    ✅ Database accounts verified
 
-📄 PAGE MAP FOR EXTRACTION:
+📄 PAGE MAP FOR EXTRACTION (trimmed PDF page numbers):
 
    HOLDINGS (all accounts):
-   - Account Z24-527872 (KernBrok): pages 4-15 (12 pages)
-   - Account Z27-375656 (KernCMA): pages 22-24 (3 pages)
+   - Account Z24-527872 (KernBrok): pages 1-12 (12 pages)
+   - Account Z27-375656 (KernCMA): pages 19-21 (3 pages)
 
    ACTIVITIES (all accounts):
-   - Account Z24-527872 (KernBrok): pages 16-20 (5 pages)
-   - Account Z27-375656 (KernCMA): pages 25-26 (2 pages)
+   - Account Z24-527872 (KernBrok): pages 13-17 (5 pages)
+   - Account Z27-375656 (KernCMA): pages 22-23 (2 pages)
 
-   EXCLUDED: pages 27-30 (cash flow projections + legal disclaimers)
+   EXCLUDED FROM ORIGINAL: pages 1-3, 27-30 (removed during trimming)
 
 What do you want to do next?
 
@@ -368,9 +372,9 @@ EXTRACTION MODE: Holdings
 DOC_MD5_HASH: [insert_md5_hash_here]
 SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
 
-PAGE MAP FOR THIS STATEMENT:
-- Account Z24-527872 (KernBrok): pages 4-15
-- Account Z27-375656 (KernCMA): pages 22-24
+PAGE MAP FOR THIS STATEMENT (trimmed PDF page numbers):
+- Account Z24-527872 (KernBrok): pages 1-12
+- Account Z27-375656 (KernCMA): pages 19-21
 
 Please extract HOLDINGS data for ALL ACCOUNTS in this statement.
 
@@ -401,9 +405,9 @@ EXTRACTION MODE: Activities
 DOC_MD5_HASH: [insert_md5_hash_here]
 SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
 
-PAGE MAP FOR THIS STATEMENT:
-- Account Z24-527872 (KernBrok): pages 16-20
-- Account Z27-375656 (KernCMA): pages 25-26
+PAGE MAP FOR THIS STATEMENT (trimmed PDF page numbers):
+- Account Z24-527872 (KernBrok): pages 13-17
+- Account Z27-375656 (KernCMA): pages 22-23
 
 Please extract ACTIVITIES data for ALL ACCOUNTS in this statement.
 
