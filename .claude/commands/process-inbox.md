@@ -29,6 +29,10 @@
 **Updated:** 09/26/25 4:07PM - Added critical instruction to read entire command before starting, preventing premature execution
 **Updated:** 09/26/25 5:51PM - Complete removal of all CSV hybrid workflow sections, updated for pure LLM extraction
 **Updated:** 09/26/25 5:54PM - Final cleanup of remaining CSV/hybrid workflow references in example sections
+**Updated:** 09/29/25 6:12PM - Major restructure: Replaced Quick Assessment with single-pass Document Structure Analysis, added PDF trimming and page mapping for targeted sub-agent extraction
+**Updated:** 09/29/25 6:40PM - Added mental verification step in Step 2 to recalculate page offsets after trimming, preventing page mapping errors without redundant PDF reads
+**Updated:** 09/29/25 6:45PM - Changed extraction workflow to "one JSON per statement per type" (all accounts consolidated) instead of separate JSONs per account
+**Updated:** 09/29/25 6:55PM - Critical fix: Clarified that account-level summary pages (with Account # header) must be KEPT during trimming, not removed with statement-level cover pages
 **Purpose:** Guide Claude through orchestrating document processing from inbox using specialized extraction agents
 **Usage:** User invokes this when ready to process financial documents
 
@@ -51,39 +55,145 @@ You're the **Orchestra Conductor** for financial document processing. Your job i
 4. **Interpret** agent reports and handle any issues
 5. **Organize** successful extractions and maintain clean file structure
 
-### Quick Assessment (Do This First)
+### Step 1: Document Structure Analysis & Preparation
+
+**⚠️ This is a single-pass analysis that replaces the old two-step "Quick Assessment + Staging" workflow**
+
+For each PDF in inbox, perform complete document analysis:
 
 ```bash
+# List inbox files
 ls -la /Users/richkernan/Projects/Finances/documents/1inbox/
 ```
 
-**Identify PDF Files**
-1. List all PDF files in inbox
-2. Look for date patterns in filenames:
-   - PDFs: `Fid_Stmnt_YYYY-MM_*.pdf` or similar
-   - Other statement types as needed
+**Then analyze the full document structure using PyPDF2:**
 
-**Extract PDF Period and Accounts**
-For each PDF, extract text to identify period and accounts:
-```bash
-python3 -c "
-import PyPDF2
-with open('documents/1inbox/[filename].pdf', 'rb') as file:
-    reader = PyPDF2.PdfReader(file)
-    print('=== PAGE 1 ===')
-    print(reader.pages[0].extract_text())
-    print('\n=== PAGE 2 ===')
-    print(reader.pages[1].extract_text() if len(reader.pages) > 1 else 'No page 2')
-"
-# Look for: Statement period dates and account numbers
+1. **Extract text from all pages** - Use `PdfReader` and extract_text() for complete document
+2. **Identify key information:**
+   - Institution type (look for "Fidelity", "Chase", "Vanguard", etc.)
+   - Statement period (date ranges like "April 1, 2025 - April 30, 2025")
+   - All account numbers (patterns like "Account # Z24-527872" or "Account Number:")
+3. **Map page ranges** by scanning each page's text for section markers:
+   - Account summary pages (account number + "Account Summary")
+   - Holdings sections (account number + "Holdings" or "Positions" or "POSITIONS AS OF")
+   - Activities sections (account number + "Activity" or "Trade History" or "TRADE HISTORY")
+   - Extraneous sections to exclude:
+     - "Estimated Cash Flow" pages
+     - "Important Disclosure" or "Additional Information" in last 5 pages
+     - Legal disclaimers and fine print
+4. **Determine page ranges** for sub-agent extraction:
+   - Group consecutive pages by account and section type
+   - Example: "Account 1 holdings spans pages 4-15"
+5. **Identify pages to trim** - List all pages that should be excluded
+
+**Present findings in this format:**
+```
+✅ FIDELITY Statement: April 2025
+   Accounts: Z24-527872 (KernBrok), Z27-375656 (KernCMA)
+   Total: 30 pages → Recommend trimming to 26 pages
+
+   HOLDINGS EXTRACTION:
+   - Account Z24-527872: pages 4-15 (12 pages)
+   - Account Z27-375656: pages 22-24 (3 pages)
+
+   ACTIVITIES EXTRACTION:
+   - Account Z24-527872: pages 16-20 (5 pages)
+   - Account Z27-375656: pages 25-26 (2 pages)
+
+   RECOMMEND EXCLUDING: pages 27-30 (cash flow + disclaimers)
 ```
 
-**Report Findings CLEARLY**
-Present findings:
-- "✅ **FIDELITY:** April 2025 statement - Ready for holdings and/or activities extraction"
-- "📄 **NON-FIDELITY:** Chase statement - Different processor needed"
+**Important:** Ignore source filenames - extract all information from PDF content only.
 
-**Note:** Ignore source filenames for content - extract all details from file contents.
+### Step 2: Trim PDF & Parallel Validation
+
+Once you have the page map, trim extraneous pages and run all validations in parallel.
+
+**First, trim the PDF to remove extraneous pages:**
+
+Use PyPDF2 to create a new PDF with only the relevant pages.
+
+**CRITICAL - Keep these pages:**
+- **Account-level summary pages** (pages with "Account # XXXXX" header + Net Account Value, Change in Account Value, Additions/Subtractions)
+- **Holdings/positions data** (all subsections: Mutual Funds, Bonds, Stocks, Options, etc.)
+- **Activities/transactions data** (Trade History, Income, Realized Gains, etc.)
+
+**Exclude these pages:**
+- Estimated Cash Flow projections (typically page 21 or near end)
+- Legal disclaimers (typically last 3-5 pages with "Important Disclosure" or "Additional Information")
+- Statement-level cover pages (first 1-3 pages) **ONLY if they don't contain account-specific data**
+
+**Rule of thumb:** If a page shows "Account # Z24-XXXXXX" at the top, it's account-specific data - KEEP IT.
+
+**After trimming, VERIFY YOUR PAGE MAPPING:**
+
+Don't re-read the PDF. Instead, mentally recalculate the page numbers:
+
+1. **List what you removed:** "I removed pages 1-3 and pages 27-30"
+2. **Calculate page count:** Original X pages - Y removed = Z pages remaining
+3. **Determine offset for each range:**
+   - Pages before first removal: no offset
+   - Pages after removing 1-3: subtract 3
+   - Pages after removing 21: subtract 4 total (3 from earlier + 1 more)
+   - Pages after removing 27-30: subtract 7 total (3 + 1 + 4)
+4. **Apply offset to your original page map:**
+   - "Original page 4 → Trimmed page 1" (4 - 3 = 1)
+   - "Original page 22 → Trimmed page 18" (22 - 4 = 18)
+5. **Verify your math:** Trimmed page ranges should make sense given the page count
+
+**Then run validation checks in parallel:**
+
+```bash
+# Run ALL commands in parallel using multiple Bash tool calls in single message:
+
+# 1. Generate MD5 hash for duplicate detection
+md5 /Users/richkernan/Projects/Finances/documents/1inbox/[filename]_trimmed.pdf
+
+# 2. Check for duplicate hash in extractions
+grep -r "[hash_value]" /Users/richkernan/Projects/Finances/documents/4extractions/*.json 2>/dev/null || echo "No hash duplicates"
+
+# 3. Check for similar processed files
+ls -la /Users/richkernan/Projects/Finances/documents/3processed/[similar_pattern]*.pdf 2>/dev/null || echo "No processed duplicates"
+
+# 4. Verify database accounts exist
+PGPASSWORD=postgres psql -U postgres -h localhost -p 54322 -d postgres -c "SELECT a.account_number, a.account_type, i.institution_name FROM accounts a JOIN institutions i ON a.institution_id = i.id WHERE a.account_number IN ('[account1]', '[account2]');"
+```
+
+**VALIDATION CHECKPOINT:**
+Before proceeding, verify ALL validation checks succeeded:
+- ✅ PDF trimmed successfully with correct page count
+- ✅ Page mapping recalculated and verified
+- ✅ MD5 hash generated
+- ✅ No duplicate hash in existing extractions
+- ✅ No similar files in processed folder
+- ✅ Database connection successful and accounts exist
+
+**If any validation fails, STOP and ask user how to proceed.**
+
+### Step 3: Account Resolution & Staging
+
+Now stage the trimmed PDF with proper naming:
+
+1. **Look up accounts** in [account-mappings.json](../config/account-mappings.json)
+2. **Use mapped names** for filename generation
+
+**Account Matching Rules:**
+- **Exact match:** Account in mappings → Use existing metadata, proceed with staging
+- **Minor discrepancies:** Account matches but holder names differ → Do NOT overwrite mappings, use existing data
+- **Unknown account:** Account not in mappings → STOP and ask user for complete metadata
+
+**If unknown accounts found:**
+1. Ask: "Found [Institution] account XXXX for [Holder]. Not in mappings. Should I add it?"
+2. If yes, ask for complete metadata (entity, account type, etc.)
+3. Update the mapping file
+4. Proceed with staging
+
+**Stage the trimmed PDF:**
+```bash
+# Use mapped account names for clarity
+mv /Users/richkernan/Projects/Finances/documents/1inbox/[filename]_trimmed.pdf \
+   /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
+```
 
 ### Understanding the Workflow
 
@@ -164,63 +274,9 @@ When sub-agents encounter unknown patterns:
 5. **Implement improvements** - Update mapping system with user approval
 6. **Verify results** - Confirm new rules work as expected
 
-### Step 1: Parallel Assessment & Staging
+### Step 4: Present Findings & Get User Direction
 
-**⚠️ CRITICAL: ALL VALIDATION STEPS ARE REQUIRED**
-**If ANY step fails, STOP immediately and consult with the user before proceeding.**
-
-**Estimated Time:** ~10-15 seconds (parallel) vs ~45 seconds (sequential)
-
-For each document, run all validation checks in parallel:
-
-```bash
-# Run all checks simultaneously using multiple Bash tool calls in single message:
-# 1. Generate MD5 hash
-md5 /Users/richkernan/Projects/Finances/documents/1inbox/[filename].pdf
-
-# 2. Check for duplicate hash in extractions (parallel)
-grep -r "[hash_value]" /Users/richkernan/Projects/Finances/documents/4extractions/*.json 2>/dev/null || echo "No hash duplicates"
-
-# 3. Check for similar processed files (parallel)
-ls -la /Users/richkernan/Projects/Finances/documents/3processed/[similar_pattern]*.pdf 2>/dev/null || echo "No processed duplicates"
-
-# 4. Verify database accounts exist (parallel)
-PGPASSWORD=postgres psql -U postgres -h localhost -p 54322 -d postgres -c "SELECT a.account_number, a.account_type, i.institution_name FROM accounts a JOIN institutions i ON a.institution_id = i.id WHERE a.account_number IN ('[account1]', '[account2]');"
-```
-
-**VALIDATION CHECKPOINT:**
-Before proceeding, verify ALL four validation checks succeeded:
-- ✅ MD5 hash generated successfully
-- ✅ No duplicate hash found in existing extractions
-- ✅ No similar processed files found
-- ✅ Database connection successful and accounts exist
-
-**If any validation step failed, STOP and ask user how to proceed.**
-
-Then:
-1. **Extract account information** from PDF content (already done in Quick Assessment)
-2. **Look up accounts in mappings** at /Users/richkernan/Projects/Finances/config/account-mappings.json
-3. **Use mapped names** for filename generation and staging
-
-**Account Matching Rules:**
-- **Exact match:** Account number found in mappings → Use existing metadata, proceed with staging
-- **Minor discrepancies:** Account matches but holder names slightly different → Do NOT overwrite mappings, proceed with existing data
-- **Unknown account:** Account not in mappings → Stop and ask user for complete metadata
-
-If unknown accounts found:
-1. Ask: "Found [Institution] statement with unknown account XXXX for [Holder Name]. This account is not in the mappings file. Should I add it?"
-2. If yes, ask for complete metadata (entity, account type, etc.)
-3. Update the mapping file with full metadata
-4. Stage with mapped names
-
-```bash
-# Use mapped account names for clarity
-mv /Users/richkernan/Projects/Finances/documents/1inbox/Statement12312024.pdf /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
-```
-
-### Step 2: Present Findings & Get User Direction
-
-**All validation completed in Step 1.** Now present findings and ask what to do next:
+**All validation and staging completed.** Now present findings with the page map and ask what to do next:
 
 For amended documents:
 ```python
@@ -231,49 +287,43 @@ Read /Users/richkernan/Projects/Finances/documents/2staged/Fid_1099_2024_Brok+CM
 ```
 
 
-Present your findings and ask what to do next:
+Present your findings with the complete page map and ask what to do next:
 ```
 Staging complete. Here's what I found:
 
-STAGED FILES:
-1. Fid_Stmnt_2024-08_Brok+CMA.pdf
-   - ✅ Fidelity Investment Statement for August 2024
-   - Accounts: Brokerage + CMA
-   - 36 pages PDF
-   - ✅ No duplicate found in processed folder
-   - ✓ Ready for holdings extraction (pure LLM)
-   - ✓ Ready for activities extraction (pure LLM)
+STAGED FILE:
+Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf (26 pages, trimmed from 30)
 
-2. Fid_Stmnt_2024-07_Brok+CMA.pdf
-   - ✅ Fidelity Investment Statement for July 2024
-   - ✓ Ready for holdings extraction (pure LLM)
-   - ✓ Ready for activities extraction (pure LLM)
+✅ FIDELITY Statement: April 2025
+   MD5: bfff486f43ab3f616983cc3ec2ae5426
+   Accounts: Z24-527872 (KernBrok), Z27-375656 (KernCMA)
+   ✅ No duplicates found
+   ✅ Database accounts verified
 
-3. BofA_Stmnt_2024-09_Checking.pdf
-   - Bank of America checking statement
-   - ✗ No extraction agent available
-   - Options: Manual processing or skip
+📄 PAGE MAP FOR EXTRACTION:
 
-POTENTIAL ISSUES:
-4. Fid_1099_2024_Brok+CMA.pdf
-   - ⚠️ Similar file exists: Fid_1099_2024_Brok+CMA.pdf in processed folder
-   - Content shows "AMENDED" marking
-   - ✗ No 1099 extraction agent available anyway
+   HOLDINGS (all accounts):
+   - Account Z24-527872 (KernBrok): pages 4-15 (12 pages)
+   - Account Z27-375656 (KernCMA): pages 22-24 (3 pages)
 
-I found these files. What do you want to do next?
+   ACTIVITIES (all accounts):
+   - Account Z24-527872 (KernBrok): pages 16-20 (5 pages)
+   - Account Z27-375656 (KernCMA): pages 25-26 (2 pages)
 
-Some options:
-- Extract holdings from Fidelity statement (#1 or #2)
-- Extract activities from Fidelity statement (#1 or #2)
-- Extract both from statement (sequential or parallel)
-- Handle Bank of America manually
-- Review the amended 1099 situation
-- Something else entirely
+   EXCLUDED: pages 27-30 (cash flow projections + legal disclaimers)
+
+What do you want to do next?
+
+Options:
+- Extract holdings (all accounts - one JSON file)
+- Extract activities (all accounts - one JSON file)
+- Extract both holdings and activities
+- Something else
 
 What would you like me to do?
 ```
 
-### Step 3: Extraction Process
+### Step 5: Extraction Process
 
 **Both holdings and activities use pure LLM extraction:**
 - Single-stage process for both extraction types
@@ -284,7 +334,8 @@ What would you like me to do?
 **Prerequisites before invoking any sub-agent:**
 1. **Verify the PDF is readable and supported** (Fidelity statements currently)
 2. **Specify extraction type explicitly** (holdings OR activities)
-3. **Provide complete file path** to the staged PDF
+3. **Provide complete file path** to the staged (trimmed) PDF
+4. **Provide specific page ranges** for the account being extracted (from your page map)
 
 **IMPORTANT: Before invoking any sub-agent, present the prompt you're about to send for user review:**
 
@@ -305,7 +356,7 @@ Wait for user approval before proceeding.
 3. **Use directive language** (not conversational)
 4. **Set clear expectations** for the output
 
-**Holdings Invocation Format (Pure LLM):**
+**Holdings Invocation Format (Pure LLM with Page Ranges):**
 
 Use the Task tool with:
 ```python
@@ -315,24 +366,31 @@ Task(
     prompt="""
 EXTRACTION MODE: Holdings
 DOC_MD5_HASH: [insert_md5_hash_here]
-SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-12_Milton.pdf
+SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
 
-Please extract ALL HOLDINGS data from the Fidelity statement PDF.
+PAGE MAP FOR THIS STATEMENT:
+- Account Z24-527872 (KernBrok): pages 4-15
+- Account Z27-375656 (KernCMA): pages 22-24
 
-- EXTRACT all holdings/positions data from PDF
+Please extract HOLDINGS data for ALL ACCOUNTS in this statement.
+
+CRITICAL: Extract all accounts found in the statement into a single JSON file. Use the page map above to locate each account's holdings section.
+
+- EXTRACT holdings/positions for ALL accounts using the page map
 - CREATE complete JSON from scratch using Map_Stmnt_Fid_Positions.md
 - FOLLOW the mapping document to locate and extract ALL fields
-- SAVE as new JSON file in /documents/4extractions/
+- INCLUDE doc_md5_hash in output
+- SAVE as new JSON file in /documents/4extractions/ (one file for entire statement)
 
 Expected output:
-- New JSON extraction file in /documents/4extractions/
+- New JSON extraction file in /documents/4extractions/ containing all accounts
 - Report on extraction success/issues
 - Do NOT move the PDF - orchestrator will handle that
 """
 )
 ```
 
-**Activities Invocation Format (Pure LLM):**
+**Activities Invocation Format (Pure LLM with Page Ranges):**
 
 ```python
 Task(
@@ -341,16 +399,23 @@ Task(
     prompt="""
 EXTRACTION MODE: Activities
 DOC_MD5_HASH: [insert_md5_hash_here]
-SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2024-08_Brok+CMA.pdf
+SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
 
-Please extract ACTIVITIES data from the Fidelity statement PDF.
+PAGE MAP FOR THIS STATEMENT:
+- Account Z24-527872 (KernBrok): pages 16-20
+- Account Z27-375656 (KernCMA): pages 25-26
 
-- EXTRACT all transaction data from PDF
+Please extract ACTIVITIES data for ALL ACCOUNTS in this statement.
+
+CRITICAL: Extract all accounts found in the statement into a single JSON file. Use the page map above to locate each account's activities section.
+
+- EXTRACT all transaction data for ALL accounts using the page map
 - CREATE complete JSON from scratch using Map_Stmnt_Fid_Activities.md
-- SAVE as new JSON file in /documents/4extractions/
+- INCLUDE doc_md5_hash in output
+- SAVE as new JSON file in /documents/4extractions/ (one file for entire statement)
 
 Expected output:
-- New JSON extraction file in /documents/4extractions/
+- New JSON extraction file in /documents/4extractions/ containing all accounts
 - Report on extraction success/issues
 - Do NOT move the PDF - orchestrator will handle that
 """
@@ -371,7 +436,7 @@ Expected output:
 
 **Important:** The agent is stateless and cannot ask follow-up questions. If it encounters an issue it can't resolve, it will document it in the report and exit.
 
-### Step 5: Handle Agent Reports
+### Step 6: Handle Agent Reports
 
 After the agent completes, review its report and determine next steps:
 
@@ -406,7 +471,7 @@ The partial extraction has been saved. Would you like to:
 3. Keep in inbox for manual review later?
 ```
 
-### Step 6: Create Database Records (Reference Data + Documents)
+### Step 7: Create Database Records (Reference Data + Documents)
 
 **CRITICAL STEP:** Ensure all reference data exists, then create document records before moving PDFs to processed folder.
 
@@ -488,7 +553,7 @@ INSERT INTO documents (
 - **Fail-fast** - Stops on any error to prevent incomplete state
 - **Institution ID** - Hardcoded Fidelity ID from schema (33333333-3333-3333-3333-333333333333)
 
-### Step 7: Clean Up (When Appropriate)
+### Step 8: Clean Up (When Appropriate)
 
 Only after successful processing AND database record creation:
 ```bash

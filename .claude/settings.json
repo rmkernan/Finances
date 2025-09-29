@@ -12,7 +12,15 @@
       "Bash(md5sum:*)",
       "Bash(psql:*)",
       "Bash(rm:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(python3 <<:*)",
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(md5:*)",
+      "Bash(grep:*)",
+      "Bash(awk:*)",
+      "Bash(mv:*)"
     ]
   },
   "hooks": {
