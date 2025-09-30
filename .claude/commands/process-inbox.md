@@ -22,6 +22,7 @@
 **Updated:** 09/25/25 12:54PM - Added critical Step 6: Create Database Document Records to complete workflow before PDF archival
 **Updated:** 09/25/25 12:56PM - Simplified Step 6 to use direct SQL commands instead of separate Python script
 **Updated:** 09/25/25 1:08PM - Expanded Step 6 to include missing reference data loading (entities and accounts) before document creation
+**Updated:** 09/29/25 8:30PM - Added explicit page instruction guidance in Step 5 based on EXP001 results showing improved data quality with READ ONLY/DO NOT READ format
 **Updated:** 09/25/25 1:12PM - Added unique constraints for entity_name and institution_name, updated conflict handling to use proper composite keys
 **Updated:** 09/26/25 2:00PM - Restructured extraction workflow with updated agent invocation formats
 **Updated:** 09/26/25 2:12PM - Added PDF validation for holdings extraction workflow
@@ -359,8 +360,40 @@ Wait for user approval before proceeding.
 2. **Provide complete file path** to the staged PDF
 3. **Use directive language** (not conversational)
 4. **Set clear expectations** for the output
+5. **BE EXPLICIT about which pages to read and which to skip** (critical for accuracy)
 
-**Holdings Invocation Format (Pure LLM with Page Ranges):**
+**CRITICAL - Explicit Page Instructions:**
+
+Based on your document analysis from Step 1, you know EXACTLY which pages contain the data you need and which pages don't. Use this knowledge to give the sub-agent EXPLICIT READ/DON'T READ instructions:
+
+✅ **DO THIS** (Explicit):
+```
+READ ONLY THESE PAGES:
+- Pages 1-12: Account Z24-527872 Holdings
+- Pages 19-21: Account Z27-375656 Holdings
+
+DO NOT READ:
+- Pages 13-18: Activities sections (not needed for holdings)
+- Page 22: Activities section (not needed for holdings)
+
+STOP READING after page 21. You have all required holdings data.
+```
+
+❌ **NOT THIS** (Implicit):
+```
+PAGE MAP:
+- Account Z24-527872: pages 1-12
+- Account Z27-375656: pages 19-21
+```
+
+**Why this matters:** Experiment results show explicit instructions improve data quality by reducing ambiguity and preventing the sub-agent from mixing contexts between different sections.
+
+**Pattern for constructing explicit instructions:**
+1. List pages TO READ (with account labels)
+2. List pages NOT TO READ (with explanation of what they contain)
+3. State when to STOP READING (after last relevant page)
+
+**Holdings Invocation Format (Pure LLM with Explicit Page Instructions):**
 
 Use the Task tool with:
 ```python
@@ -372,13 +405,19 @@ EXTRACTION MODE: Holdings
 DOC_MD5_HASH: [insert_md5_hash_here]
 SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
 
-PAGE MAP FOR THIS STATEMENT (trimmed PDF page numbers):
-- Account Z24-527872 (KernBrok): pages 1-12
-- Account Z27-375656 (KernCMA): pages 19-21
+READ ONLY THESE PAGES:
+- Pages 1-12: Account Z24-527872 (KernBrok) Holdings
+- Pages 19-21: Account Z27-375656 (KernCMA) Holdings
+
+DO NOT READ:
+- Pages 13-18: Activities sections (not needed for holdings)
+- Page 22: Activities section (not needed for holdings)
+
+STOP READING after page 21. You have all required holdings data.
 
 Please extract HOLDINGS data for ALL ACCOUNTS in this statement.
 
-CRITICAL: Extract all accounts found in the statement into a single JSON file. Use the page map above to locate each account's holdings section.
+CRITICAL: Extract all accounts found in the statement into a single JSON file. Focus ONLY on the pages specified above.
 
 - EXTRACT holdings/positions for ALL accounts using the page map
 - CREATE complete JSON from scratch using Map_Stmnt_Fid_Positions.md
@@ -405,13 +444,19 @@ EXTRACTION MODE: Activities
 DOC_MD5_HASH: [insert_md5_hash_here]
 SOURCE_PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
 
-PAGE MAP FOR THIS STATEMENT (trimmed PDF page numbers):
-- Account Z24-527872 (KernBrok): pages 13-17
-- Account Z27-375656 (KernCMA): pages 22-23
+READ ONLY THESE PAGES:
+- Pages 13-17: Account Z24-527872 (KernBrok) Activities
+- Pages 22-23: Account Z27-375656 (KernCMA) Activities
+
+DO NOT READ:
+- Pages 1-12: Holdings sections (not needed for activities)
+- Pages 18-21: Holdings section (not needed for activities)
+
+STOP READING after page 23. You have all required activities data.
 
 Please extract ACTIVITIES data for ALL ACCOUNTS in this statement.
 
-CRITICAL: Extract all accounts found in the statement into a single JSON file. Use the page map above to locate each account's activities section.
+CRITICAL: Extract all accounts found in the statement into a single JSON file. Focus ONLY on the pages specified above.
 
 - EXTRACT all transaction data for ALL accounts using the page map
 - CREATE complete JSON from scratch using Map_Stmnt_Fid_Activities.md
