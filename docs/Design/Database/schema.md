@@ -22,6 +22,7 @@
 **Updated:** 09/28/25 4:13PM - Clarified section_total implementation using source field to identify section types, enabling comprehensive statement reconciliation
 **Updated:** 09/28/25 4:43PM - Added missing source column to positions table for section identification
 **Updated:** 09/28/25 6:00PM - Fixed schema alignment: use symbol_cusip (not security_identifier), added pending column, aligned with shorter field names (sett_date)
+**Updated:** 09/30/25 - Fixed numeric precision specifications for real-world financial data values (transactions and positions tables)
 **Purpose:** Comprehensive database schema documentation for Claude-assisted financial data management system
 **Related:** [Original Phase 1 Schema](./database-schema.md)
 
@@ -506,14 +507,14 @@ This junction table is **absolutely essential** for the document-centric archite
 | `transaction_subtype`          | TEXT          |                                                                   | Detailed subtype (e.g., 'qualified_dividend',            |
 |                                |               |                                                                   | 'municipal_interest', 'management_fee')                  |
 | `desc` *R                      | TEXT          | NOT NULL                                                          | Transaction description from source document             |
-| `amount` *R                    | NUMERIC(8,2)  | NOT NULL                                                          | Transaction amount                                       |
+| `amount` *R                    | NUMERIC(15,2)  | NOT NULL                                                          | Transaction amount                                       |
 | **Security Information**       |               |                                                                   |                                                          |
 | `security_name`                | TEXT          |                                                                   | Security name/description                                |
 | `symbol_cusip`                 | TEXT          |                                                                   | Symbol/ticker or CUSIP identifier                       |
-| `quantity`                     | NUMERIC(8,6)  |                                                                   | Number of shares/units in transaction                    |
+| `quantity`                     | NUMERIC(15,6)  |                                                                   | Number of shares/units in transaction                    |
 | `price_per_unit`               | NUMERIC(12,4) |                                                                   | Price per share/unit                                     |
-| `cost_basis`                   | NUMERIC(8,2)  |                                                                   |                                                          |
-| `fees`                         | NUMERIC(4,2)  |                                                                   | Transaction fees/costs                                   |
+| `cost_basis`                   | NUMERIC(15,2)  |                                                                   |                                                          |
+| `fees`                         | NUMERIC(8,2)  |                                                                   | Transaction fees/costs                                   |
 | `security_type`                | TEXT          |                                                                   | Type of security involved                                |
 | `option_type`                  | TEXT          |                                                                   | Type of option contract                                  |
 | `strike_price`                 | DECIMAL(3)    |                                                                   | Option strike price                                      |
@@ -679,21 +680,20 @@ ORDER BY net_amount DESC;
 | sec_subtype                       | sec_subtype          | Security Subtype        | TEXT          |                              |
 | source                            | source               | Source Section          | TEXT          | NOT NULL                     |
 | **-- Position Values --**         |
-| beg_market_value                  | beg_market_value     | Beginning Market Value  | NUMERIC(8,2)  |                              |
+| beg_market_value                  | beg_market_value     | Beginning Market Value  | NUMERIC(15,2)  |                              |
 | quantity                          | quantity             | Quantity                | NUMERIC(15,6) | NOT NULL                     |
 | price                             | price_per_unit       | Price Per Unit          | NUMERIC(12,4) | NOT NULL                     |
-| end_market_value                  | end_market_value     | Ending Market Value     | NUMERIC(8,2)  | NOT NULL                     |
+| end_market_value                  | end_market_value     | Ending Market Value     | NUMERIC(15,2)  | NOT NULL                     |
 | **-- Cost Basis & P&L --**        |
-| cost_basis                        | cost_basis           | Total Cost Basis        | NUMERIC(8,2)  |                              |
-| unrealized_gain_loss              | unrealized_gain_loss | Unrealized Gain/Loss    | NUMERIC(8,2)  |                              |
+| cost_basis                        | cost_basis           | Total Cost Basis        | NUMERIC(15,2)  |                              |
+| unrealized_gain_loss              | unrealized_gain_loss | Unrealized Gain/Loss    | NUMERIC(15,2)  |                              |
 | **-- Income Estimates --**        |
-| estimated_ann_inc                 | estimated_ann_inc    | Est Annual Income (EAI) | NUMERIC(8,2)  |                              |
-| est_yield                         | est_yield            | Estimated Yield (EY)    | NUMERIC(5,4)  | CHECK (>= 0)                 |
+| estimated_ann_inc                 | estimated_ann_inc    | Est Annual Income (EAI) | NUMERIC(15,2)  |                              |
+| est_yield                         | est_yield            | Estimated Yield (EY)    | NUMERIC(5,3)  | CHECK (>= 0)                 |
 | **-- Option-Specific --**         |
 | underlying_symbol                 | underlying_symbol    | Underlying Symbol       | TEXT          |                              |
 | strike_price                      | strike_price         | Strike Price            | NUMERIC(12,4) |                              |
 | exp_date                          | expiration_date      | Expiration Date         | DATE          |                              |
-| option_type                       | -                    | CALL/PUT                | TEXT          | CHECK (IN ('CALL','PUT'))    |
 | **-- Bond-Specific --**           |
 | maturity_date                     | maturity_date        | Maturity Date           | DATE          |                              |
 | coupon_rate                       | coupon_rate          | Coupon Rate             | NUMERIC(5,3)  |                              |
@@ -703,9 +703,6 @@ ORDER BY net_amount DESC;
 | call_price                        | call_price           | Call Price              | NUMERIC(12,4) |                              |
 | payment_freq                      | payment_freq         | Payment Frequency       | TEXT          |                              |
 | bond_features                     | bond_features        | Bond Features           | TEXT          |                              |
-| **-- Position Flags --**          |
-| is_margin                         | -                    | -                       | BOOLEAN       | DEFAULT FALSE                |
-| is_short                          | -                    | -                       | BOOLEAN       | DEFAULT FALSE                |
 | **-- Audit Trail --**             |
 | created_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                |
 | updated_at                        | -                    | -                       | TIMESTAMPTZ   | DEFAULT NOW()                |

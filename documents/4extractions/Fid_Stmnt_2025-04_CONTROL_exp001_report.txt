@@ -1,0 +1,108 @@
+FIDELITY STATEMENT HOLDINGS EXTRACTION REPORT
+==============================================
+
+Extraction Timestamp: 2025.09.29_16.15ET
+Source PDF: /Users/richkernan/Projects/Finances/documents/2staged/Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
+Extraction Mode: HOLDINGS
+Document Hash: e4feb9724c684f281d4fb6a1cda17180
+
+ACCOUNTS PROCESSED
+------------------
+✓ Account Z24-527872 (KernBrok - JOINT WROS - TOD) - Brokerage
+✓ Account Z27-375656 (KernCMA - JOINT WROS - TOD) - Cash Management
+
+EXTRACTION SUMMARY
+------------------
+
+Account Z24-527872 (KernBrok):
+- Core Account: 1 position (SPAXX)
+- Mutual Funds: 6 positions (3 stock funds, 1 bond fund, 1 short-term fund, 1 Core Account)
+- Exchange Traded Products: 1 position
+- Stocks: 46 positions (42 common stock, 4 preferred stock)
+- Bonds: 52 positions (1 corporate bond, 51 municipal bonds)
+- Options: 2 short positions (1 call, 1 put)
+- Other: 5 positions
+- Total Holdings: 113 positions
+- Net Account Value: $6,758,268.05 (includes $17,630.99 accrued interest)
+
+Account Z27-375656 (KernCMA):
+- Core Account: 1 position (FDIC Insured Deposit at Citibank)
+- Mutual Funds: 1 position (FIMM Money Market Portfolio)
+- Bonds: 1 position (Iowa Municipal Bond)
+- Total Holdings: 3 positions
+- Net Account Value: $235,779.71 (includes $433.33 accrued interest)
+
+DOCUMENT-LEVEL DATA EXTRACTED
+------------------------------
+✓ Net Account Value sections (complete for both accounts)
+✓ Income Summary sections (complete for both accounts)
+✓ Realized Gains section (extracted for Z24-527872, not applicable for Z27-375656)
+
+HOLDINGS TOTALS CAPTURED
+-------------------------
+✓ Subsection totals: 10 items across both accounts
+✓ Section totals: 14 items across both accounts
+
+EXTRACTION QUALITY NOTES
+-------------------------
+
+What Went Well:
+- All 116 holdings successfully extracted across 2 accounts
+- Complete document-level summary data captured for both accounts
+- All bond detail lines parsed successfully with CUSIP, ratings, maturity, call features
+- Short positions correctly identified with negative quantities
+- Options positions extracted with complete strike, expiration, and underlying data
+- Municipal bond features including pre-refunded bonds and call provisions captured
+- Stock identifiers (ISIN, SEDOL) extracted where present
+- All totals and subtotals captured exactly as shown
+
+Data Quality:
+- All required fields present and populated
+- No illegible or corrupted data encountered
+- All values transcribed exactly as shown in PDF
+- Currency, percentage, and date formats preserved as-shown
+- Negative values and "unavailable" values captured faithfully
+
+Complex Securities Handled:
+- Multi-line bond descriptions with embedded call features parsed successfully
+- Preferred stocks with dividend rates extracted correctly
+- Short stock positions (SHUTTERSTOCK, ULTA BEAUTY) captured with negative quantities
+- Options with "SHT" markers preserved in descriptions
+- Foreign stocks with ISIN/SEDOL identifiers parsed correctly
+
+Sections Absent (Normal):
+- No additional sections missing - all expected data present
+
+EXTRACTION STATUS
+-----------------
+Status: SUCCESS
+Confidence Level: HIGH
+Pages Processed: 22 pages (trimmed: Account 1 pages 1-12, Account 2 pages 19-21)
+
+OUTPUT FILES
+------------
+JSON: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-04_CONTROL_exp001.json
+Report: /Users/richkernan/Projects/Finances/documents/4extractions/Fid_Stmnt_2025-04_CONTROL_exp001_report.txt
+
+VALIDATION CHECKLIST
+--------------------
+✓ All accounts from statement included in extraction
+✓ JSON output validates against schema structure
+✓ Extraction timestamp matches filename format (YYYY.MM.DD_HH.MMET)
+✓ doc_md5_hash included in metadata
+✓ All required fields populated (no placeholder values in final output)
+✓ Holdings totals match section breakdowns
+✓ Source PDF remains in /documents/2staged/ (no file movement)
+
+NOTES FOR LOADER
+----------------
+- This is a CONTROL extraction test - filename uses CONTROL_exp001 pattern
+- Statement period: April 2025 (2025-04-01 to 2025-04-30)
+- Two accounts extracted into single JSON file
+- All holdings include 'source' field for section identification
+- Bond accrued interest captured separately in accrued_int field
+- Short positions indicated by negative quantity values
+- Cost basis shows "not applicable" for core/money market positions as per statement
+
+==============================================
+End of Extraction Report

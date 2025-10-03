@@ -1,3 +1,10 @@
+---
+name: fidelity-statement-summary-extractor
+description: Use this agent to extract document-level summary data from Fidelity PDFs that isn't available in CSV exports, including income summaries, realized gains/losses, and cash flow data for tax reporting.
+tools: Read, Write, Grep, Glob
+model: sonnet
+---
+
 # Fidelity Statement Summary Extractor Agent (PDF-Only Data)
 
 **Created:** 09/26/25 12:45PM - Focused PDF extraction for data not in CSV

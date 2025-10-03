@@ -7,6 +7,8 @@
 **Updated:** 09/25/25 1:00AM - Frontend Week 1 complete, critical architectural discoveries documented
 **Updated:** 09/25/25 12:30PM - Week 3 frontend complete, navigation architecture operational
 **Updated:** 09/25/25 10:35PM - Rules engine simplified to 2-level structure, all 26 JSON extractions loaded successfully
+**Updated:** 10/01/25 6:52PM - Added Tax Form Import (1099s) navigation section with routes to map and script
+**Updated:** 10/02/25 12:45PM - Added custom Google Sheets MCP documentation and capabilities
 **Purpose:** Navigation hub for Claude-assisted financial management
 
 ## 🎯 What This System Does
@@ -27,6 +29,24 @@
 - Extract financial data with specialized agents
 - Handle Fidelity statements, bank statements, 1099s
 
+### 📋 Tax Form Import
+
+#### 1099 Forms (Interest, Dividends, Broker, Misc)
+Do not read the 1099 unless specifically instructed. It's too big for the token window. 
+**Route:** → `/Taxes/Docs/1099-import-map.md`
+**Script:** → `/Taxes/Scripts/import_1099.py`
+- Import 1099-INT, 1099-DIV, 1099-B, 1099-MISC into consolidated Google Sheets
+- **READ THE "FOR CLAUDE" SECTION FIRST** in 1099-import-map.md
+- Fidelity CSVs: Use Python script
+- Simple PDFs: Use manual MCP Google Sheets API calls
+- **Critical:** All 4 tabs must use same column, account numbers truncated to 9 chars
+
+#### K-1 Forms (Partnership Income)
+**Route:** → `/Taxes/Docs/k1-map.md`
+- Import Schedule K-1 (Form 1065) partnership tax forms
+- **READ THE "FOR CLAUDE" SECTION FIRST** in k1-map.md
+- **Critical:** Box headers, section headers, and blank rows CANNOT be populated
+
 ### 🖥️ Frontend Development
 **Route:** → `/docs/workflows/CLAUDE.md`
 **Quick Start:** → `/frontend/implementer/README.md` (quality gates, gotchas, patterns)
@@ -41,6 +61,34 @@
 - Schema reference and connection details
 - Query patterns and data relationships
 - Multi-entity financial analysis
+
+### 📊 Google Sheets Operations
+**MCP:** Custom lightweight Google Sheets MCP (configured for this project)
+**Location:** `/Users/richkernan/Projects/mcp-gsheet-custom/`
+**Documentation:**
+- Configuration guide: `/Users/richkernan/Projects/mcp-gsheet-custom/CONFIGS.md`
+- Implementation guide: `/Users/richkernan/Projects/mcp-gsheet-custom/TOOL_IMPLEMENTATION_GUIDE.md`
+- Server code: `/Users/richkernan/Projects/mcp-gsheet-custom/server.py`
+
+**Available Tools (4 currently enabled):**
+- ✅ `read_cells` - Read data from any range (always verify before/after changes)
+- ✅ `write_cells` - Write data to specific cells or ranges
+- ✅ `insert_rows` - Insert empty rows at any position
+- ✅ `insert_columns` - Insert empty columns at any position
+
+**Key Capabilities:**
+- Read/verify sheets before making changes
+- Import tax forms (1099s, K-1s) to Google Sheets
+- Manipulate sheet structure (rows/columns)
+- 76% lighter than full MCP (~3k vs 12.5k tokens)
+
+**Adding More Tools:**
+- Top 10 priority tools listed in `server.py` header
+- Code templates in `TOOL_IMPLEMENTATION_GUIDE.md`
+- Add tool name to `config-finances.json` → restart Claude Code
+- Common additions: `sort_range`, `create_sheet`, `set_number_format`
+
+**IMPORTANT:** Always use `read_cells` to verify sheet state before and after operations
 
 ### ⚙️ Configuration Changes
 **Route:** → `/config/CLAUDE.md`

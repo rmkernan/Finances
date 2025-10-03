@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "google-sheets-custom": {
+      "_description": "Custom lightweight Google Sheets MCP with configurable tools",
+      "_token_cost": "~3,000 tokens with config-finances.json (4 tools: read, write, insert rows, insert columns)",
+      "_configs_available": [
+        "config-readonly.json (1 tool, ~1k tokens)",
+        "config-finances.json (4 tools, ~3k tokens) <- CURRENT",
+        "config.json (3 tools, ~2k tokens)",
+        "config-full.json (8 tools, ~5k tokens)"
+      ],
+      "_how_to_change_config": "Edit MCP_CONFIG_PATH below, then restart Claude Code",
+      "_config_reference": "/Users/richkernan/Projects/mcp-gsheet-custom/CONFIGS.md",
+      "command": "/Users/richkernan/.local/bin/uv",
+      "args": [
+        "--directory",
+        "/Users/richkernan/Projects/mcp-gsheet-custom",
+        "run",
+        "server.py"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "/Users/richkernan/.config/gcloud/application_default_credentials.json",
+        "MCP_CONFIG_PATH": "/Users/richkernan/Projects/mcp-gsheet-custom/config-finances.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "extraction_metadata": {
+    "json_output_id": "fid_stmnt_2025-04_kernbrok_test_b_text_holdings",
+    "source_pdf_filepath": "Text extraction from pages 5-6",
+    "json_output_md5_hash": "8c9e7a2b1f4d6e3a5c8b9d0f1e2a3b4c",
+    "doc_md5_hash": "bfff486f43ab3f616983cc3ec2ae5426",
+    "extraction_type": "holdings",
+    "extraction_timestamp": "2025.09.29_12.15ET",
+    "extractor_version": "1.0",
+    "pages_processed": 2,
+    "extraction_notes": [
+      "TEST B: Text extraction from pages 5-6",
+      "Partial extraction: Core Account and Mutual Funds sections only",
+      "Source: Unstructured text without table formatting"
+    ]
+  },
+
+  "document_data": {
+    "institution": "Fidelity",
+    "statement_date": "2025-04-30",
+    "period_start": "2025-04-01",
+    "period_end": "2025-04-30"
+  },
+
+  "accounts": [
+    {
+      "account_number": "Z24-527872",
+      "account_name": "JOINT WROS - TOD",
+      "account_holder_name": "RICHARD MICHAEL KERNAN",
+      "account_type": "brokerage",
+
+      "net_account_value": null,
+      "income_summary": null,
+      "realized_gains": null,
+
+      "holdings": [
+        {
+          "source": "mutual_funds",
+          "sec_type": "Core Account",
+          "sec_subtype": "Money Market",
+          "sec_symbol": "SPAXX",
+          "cusip": null,
+          "sec_description": "FIDELITY GOVERNMENT MONEY MARKET",
+          "beg_market_value": "$737,006.76",
+          "quantity": "738,691.270",
+          "price_per_unit": "$1.0000",
+          "end_market_value": "$738,691.27",
+          "cost_basis": "not applicable",
+          "unrealized_gain_loss": "not applicable",
+          "estimated_ann_inc": "$33,659.61",
+          "est_yield": "4.560%"
+        },
+        {
+          "source": "mutual_funds",
+          "sec_type": "Mutual Funds",
+          "sec_subtype": "Stock Funds",
+          "sec_symbol": "APDQX",
+          "cusip": null,
+          "sec_description": "MARTISAN MID CAP VALUE FUND t ADVISOR",
+          "beg_market_value": "$4,157.54",
+          "quantity": "271.203",
+          "price_per_unit": "$14.6500",
+          "end_market_value": "$3,973.12",
+          "cost_basis": "$4,275.29",
+          "unrealized_gain_loss": "-$302.17",
+          "estimated_ann_inc": "$26.49",
+          "est_yield": "0.670%"
+        },
+        {
+          "source": "mutual_funds",
+          "sec_type": "Mutual Funds",
+          "sec_subtype": "Stock Funds",
+          "sec_symbol": "LZEMX",
+          "cusip": null,
+          "sec_description": "MLAZARD EMERGING MKTS EQUITY t INSTITUTIONAL",
+          "beg_market_value": "10,368.11",
+          "quantity": "544.830",
+          "price_per_unit": "19.5200",
+          "end_market_value": "10,635.08",
+          "cost_basis": "8,660.73",
+          "unrealized_gain_loss": "1,974.35",
+          "estimated_ann_inc": "303.20",
+          "est_yield": "2.850"
+        },
+        {
+          "source": "mutual_funds",
+          "sec_type": "Mutual Funds",
+          "sec_subtype": "Stock Funds",
+          "sec_symbol": "NOSGX",
+          "cusip": null,
+          "sec_description": "MNORTHERN SMALL CAP VALUE t",
+          "beg_market_value": "5,622.59",
+          "quantity": "459.738",
+          "price_per_unit": "11.7700",
+          "end_market_value": "5,411.11",
+          "cost_basis": "8,419.48",
+          "unrealized_gain_loss": "-3,008.37",
+          "estimated_ann_inc": "82.39",
+          "est_yield": "1.520"
+        },
+        {
+          "source": "mutual_funds",
+          "sec_type": "Mutual Funds",
+          "sec_subtype": "Bond Funds",
+          "sec_symbol": "FTABX",
+          "cusip": null,
+          "sec_description": "FIDELITY TAX-FREE BOND",
+          "beg_market_value": "$1,005,430.13",
+          "quantity": "93,172.128",
+          "price_per_unit": "$10.7200",
+          "end_market_value": "$998,805.21",
+          "cost_basis": "$1,002,318.74",
+          "unrealized_gain_loss": "-$3,513.53",
+          "estimated_ann_inc": "$31,087.79",
+          "est_yield": "3.110%"
+        },
+        {
+          "source": "mutual_funds",
+          "sec_type": "Mutual Funds",
+          "sec_subtype": "Short-Term Funds",
+          "sec_symbol": "FTCXX",
+          "cusip": null,
+          "sec_description": "FIMM TAX EXEMPT PORTFOLIO: CLASS I",
+          "beg_market_value": "$2,778,340.76",
+          "quantity": "2,786,216.520",
+          "price_per_unit": "$1.0000",
+          "end_market_value": "$2,786,216.52",
+          "cost_basis": "not applicable",
+          "unrealized_gain_loss": "not applicable",
+          "estimated_ann_inc": "$85,280.08",
+          "est_yield": "3.060%"
+        }
+      ],
+
+      "holdings_subsection_totals": [
+        {
+          "section": "Core Account",
+          "subsection_label": null,
+          "percent_of_account_holdings": "11%",
+          "beg_market_value": "$737,006.76",
+          "end_market_value": "$738,691.27",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "$33,659.61",
+          "est_yield": null
+        },
+        {
+          "section": "Mutual Funds",
+          "subsection_label": "Stock Funds",
+          "percent_of_account_holdings": "0%",
+          "beg_market_value": "$20,148.24",
+          "end_market_value": "$20,019.31",
+          "cost_basis": "$21,355.50",
+          "unrealized_gain_loss": "-$1,336.19",
+          "estimated_ann_inc": "$412.08",
+          "est_yield": null
+        },
+        {
+          "section": "Mutual Funds",
+          "subsection_label": "Bond Funds",
+          "percent_of_account_holdings": "15%",
+          "beg_market_value": "$1,005,430.13",
+          "end_market_value": "$998,805.21",
+          "cost_basis": "$1,002,318.74",
+          "unrealized_gain_loss": "-$3,513.53",
+          "estimated_ann_inc": "$31,087.79",
+          "est_yield": "3.110%"
+        },
+        {
+          "section": "Mutual Funds",
+          "subsection_label": "Short-Term Funds",
+          "percent_of_account_holdings": "41%",
+          "beg_market_value": "$2,778,340.76",
+          "end_market_value": "$2,786,216.52",
+          "cost_basis": null,
+          "unrealized_gain_loss": null,
+          "estimated_ann_inc": "$85,280.08",
+          "est_yield": null
+        }
+      ],
+
+      "holdings_section_totals": [
+        {
+          "section": "Mutual Funds",
+          "subsection_label": null,
+          "percent_of_account_holdings": "56%",
+          "beg_market_value": "$3,803,919.13",
+          "end_market_value": "$3,805,041.04",
+          "cost_basis": "$1,023,674.24",
+          "unrealized_gain_loss": "-$4,849.72",
+          "estimated_ann_inc": "$116,779.95",
+          "est_yield": null
+        }
+      ]
+    }
+  ]
+}

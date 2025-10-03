@@ -8,6 +8,8 @@
 **Updated:** 09/23/25 4:25PM - Added extraction vs classification philosophy and mapping system guidance
 **Updated:** 09/24/25 10:30AM - Updated mapping system references to reflect new three-table configuration-driven approach with enhanced options tracking
 **Updated:** 09/25/25 1:52PM - Fixed extraction_timestamp format from ISO to YYYY.MM.DD_HH.MMET to match agent specifications
+**Updated:** 09/30/25 - Added source field derivation documentation with JSON array to database source mapping table
+**Updated:** 09/30/25 - Added section total fields documentation for statement reconciliation
 **Purpose:** Formal specification for JSON output from Fidelity statement activity extraction
 **Related:** [Map_Stmnt_Fid_Activity.md](./Map_Stmnt_Fid_Activity.md)
 
@@ -47,6 +49,49 @@ Extract transaction descriptions exactly as shown in the PDF. Do not attempt to 
 
 **Complex Transaction Matching:**
 The system can now match complex conditions like "description contains X AND section equals Y" for precise classification, enabling accurate tax categorization of securities that appear in unexpected statement sections.
+
+## Source Field Derivation for Database Loading
+
+The database `transactions` table requires a `source` column (TEXT, NOT NULL) to identify which statement section each transaction originated from. This field is **not present in the JSON output** but must be derived by the loader based on which array the transaction appears in.
+
+### JSON Array → Database Source Mapping
+
+| JSON Array Name | Database source Value | Description |
+|-----------------|----------------------|-------------|
+| `securities_bought_sold` | `'sec_bot_sold'` | Stock, bond, option, and ETF trades |
+| `dividends_interest_income` | `'div_int_income'` | Dividends, interest, and reinvestments |
+| `short_activity` | `'short_activity'` | Mark-to-market short position adjustments |
+| `other_activity_in` | `'other_activity_in'` | Expired options, adjustments, conversions |
+| `other_activity_out` | `'other_activity_out'` | Non-cash deductions and transfers out |
+| `deposits` | `'deposits'` | Cash and check deposits |
+| `withdrawals` | `'withdrawals'` | Checks, ACH debits, bill payments |
+| `exchanges_in` | `'exchanges_in'` | Inter-account transfers (incoming) |
+| `exchanges_out` | `'exchanges_out'` | Inter-account transfers (outgoing) |
+| `fees_charges` | `'fees_charges'` | Account maintenance and transaction fees |
+| `core_fund_activity` | `'core_fund'` | Money market sweep transactions |
+| `trades_pending_settlement` | `'trades_pending'` | Trades not yet settled at period end |
+
+### Loader Implementation Guidance
+
+When iterating through transactions in the JSON:
+
+```python
+# Pseudocode example
+for account in json_data['accounts']:
+    for transaction in account['securities_bought_sold']:
+        transaction['source'] = 'sec_bot_sold'
+        # ... load to database
+
+    for transaction in account['dividends_interest_income']:
+        transaction['source'] = 'div_int_income'
+        # ... load to database
+```
+
+The source value enables:
+- Accurate transaction categorization
+- Statement section reconciliation
+- Source-specific business logic (e.g., core fund transactions update cash balance)
+- Audit trail back to original statement section
 
 ## Overview
 
@@ -392,6 +437,51 @@ Each account should have these activity sections (if present in statement):
 10. `billpay` - Card and bill payments
 11. `core_fund_activity` - Money market transactions
 12. `trades_pending_settlement` - Unsettled trades
+
+## Section Total Fields (Account Level)
+
+Each activity section includes section-level total fields for statement reconciliation and validation. These fields appear at the account level (not within the transaction arrays).
+
+**Field Definitions:**
+
+| Field Name | Type | Description | Example |
+|------------|------|-------------|---------|
+| `total_sec_bot` | string (numeric) | Total value of securities purchased (negative) | `"-9891.01"` |
+| `total_sec_sold` | string (numeric) | Total value of securities sold (positive) | `"7231.70"` |
+| `net_sec_act` | string (numeric) | Net securities activity (bought + sold) | `"-2659.31"` |
+| `total_div_int_inc` | string (numeric) | Total dividends and interest received | `"6819.51"` |
+| `total_short_act` | string (numeric) | Total short activity (typically nets to $0.00) | `"0.00"` |
+| `total_other_in` | string (numeric) | Total other activity in | `"76.53"` |
+| `total_other_out` | string (numeric) | Total other activity out | `"0.00"` |
+| `total_dep` | string (numeric) | Total deposits | `"5255.29"` |
+| `total_withdrwls` | string (numeric) | Total withdrawals (negative) | `"-2241.38"` |
+| `total_exchanges_in` | string (numeric) | Total exchanges in | `"0.00"` |
+| `total_exchanges_out` | string (numeric) | Total exchanges out | `"0.00"` |
+| `total_fees` | string (numeric) | Total fees and charges | `"0.00"` |
+| `total_core` | string (numeric) | Total core fund activity | `"1684.51"` |
+
+**Usage Notes:**
+- These totals should match the sum of corresponding transaction amounts in each section
+- Used for reconciliation to verify extraction completeness
+- **Not typically stored in transactions table** (optional: could use `section_total` column with appropriate `source` value)
+- May be absent if statement section had no activity for that period
+
+**JSON Structure Example:**
+```json
+{
+  "accounts": [
+    {
+      "account_number": "Z24-527872",
+      "securities_bought_sold": [ /* array of transactions */ ],
+      "total_sec_bot": "-9891.01",
+      "total_sec_sold": "7231.70",
+      "net_sec_act": "-2659.31",
+      "dividends_interest_income": [ /* array of transactions */ ],
+      "total_div_int_inc": "6819.51"
+    }
+  ]
+}
+```
 
 ## Extraction Instructions for Claude
 

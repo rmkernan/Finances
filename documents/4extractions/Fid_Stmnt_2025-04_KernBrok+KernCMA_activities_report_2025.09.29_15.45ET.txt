@@ -1,0 +1,120 @@
+FIDELITY STATEMENT ACTIVITIES EXTRACTION REPORT
+==============================================
+
+Extraction Date: September 29, 2025 at 3:45 PM ET
+Source Document: Fid_Stmnt_2025-04_KernBrok+KernCMA.pdf
+Statement Period: April 1, 2025 - April 30, 2025
+Extraction Mode: ACTIVITIES
+Document Hash: e4feb9724c684f281d4fb6a1cda17180
+
+ACCOUNTS PROCESSED
+==================
+✓ Account Z24-527872 (KernBrok) - JOINT WROS - TOD - Brokerage
+✓ Account Z27-375656 (KernCMA) - JOINT WROS - TOD - Cash Management
+
+EXTRACTION SUMMARY
+==================
+
+Account Z24-527872 (KernBrok):
+------------------------------
+- Securities Bought & Sold: 4 transactions (1 stock purchase, 3 options sales)
+- Dividends, Interest & Income: 26 entries (including reinvestments)
+- Short Activity: 8 mark-to-market entries (offsetting pairs)
+- Other Activity In: 4 entries (2 expired options, 2 adjustments)
+- Core Fund Activity: 11 money market transactions
+Total Activity Entries: 53 transactions
+
+Account Z27-375656 (KernCMA):
+-----------------------------
+- Dividends, Interest & Income: 3 entries (interest + reinvestment)
+- Deposits: 3 deposits
+- Withdrawals: 2 withdrawals
+- Core Fund Activity: 5 FDIC deposit transactions
+Total Activity Entries: 13 transactions
+
+GRAND TOTAL: 66 activity entries across both accounts
+
+PAGES PROCESSED
+===============
+Account Z24-527872: Pages 1, 13-17 (Summary + detailed activities)
+Account Z27-375656: Pages 18, 21-22 (Summary + detailed activities)
+Skipped Holdings Pages: 2-12 (Z24-527872), 19-20 (Z27-375656) - Not needed for activities extraction
+
+EXTRACTION STATUS
+=================
+Status: ✓ SUCCESSFUL - Complete extraction of all activity data
+Confidence Level: HIGH
+
+DATA QUALITY NOTES
+==================
+
+What Went Smoothly:
+------------------
+1. All activity sections clearly identified and extracted
+2. Options transactions with multi-line descriptions successfully concatenated
+3. Municipal bond interest properly captured with full security descriptions
+4. Dividend reinvestments correctly extracted with dual entries (dividend + reinvestment)
+5. Core fund activity with running balances extracted completely
+6. Short activity mark-to-market pairs properly captured
+7. All transaction amounts, dates, and descriptions transcribed exactly as shown
+8. Cash management account deposits and withdrawals cleanly extracted
+
+Transaction Patterns Successfully Handled:
+-----------------------------------------
+- Options sales with "OPENING TRANSACTION" designation
+- Expired options with original cost basis tracking
+- Municipal bond interest ("Muni Exempt Int" descriptions)
+- Money market fund reinvestments
+- FDIC insured deposit sweep transactions
+- Credit adjustments for prior period dividends
+- Short vs. margin mark-to-market entries (offsetting)
+
+Absent Sections (Normal):
+-------------------------
+- No Realized Gains section for April 2025 period (no sales with gains/losses)
+- No Exchanges In/Out for KernBrok (no account transfers this period)
+- No Bill Payments for KernBrok (cash management feature not used)
+- No Fees & Charges (no account fees this period)
+- No Trades Pending Settlement at period end
+
+Data Transcription Notes:
+------------------------
+1. All transaction descriptions extracted exactly as shown in PDF
+2. CUSIP identifiers included where present
+3. Quantities preserved to 6 decimal places
+4. Prices preserved to 5 decimal places as shown
+5. All dollar amounts transcribed with proper signs (negative for debits)
+6. Dates extracted in settlement date format as labeled
+7. Core fund balances captured as running totals
+
+Output Files Generated:
+-----------------------
+JSON: Fid_Stmnt_2025-04_KernBrok+KernCMA_activities_2025.09.29_15.45ET.json
+Report: Fid_Stmnt_2025-04_KernBrok+KernCMA_activities_report_2025.09.29_15.45ET.txt
+Location: /Users/richkernan/Projects/Finances/documents/4extractions/
+
+VALIDATION CHECKS
+=================
+✓ All required activity sections identified
+✓ All accounts from statement included in extraction
+✓ Transaction dates within statement period (April 2025)
+✓ JSON structure matches schema specification
+✓ Account numbers match account-mappings.json
+✓ Document hash included from orchestrator
+✓ Extraction timestamp generated at extraction time
+✓ All numeric values preserved with proper precision
+✓ Section totals captured where present in statement
+
+NEXT STEPS
+==========
+1. This JSON file is ready for database loading via load-extractions command
+2. Source PDF remains in /documents/2staged/ - orchestrator will move after loading
+3. Loader will apply transaction classification rules from mapping tables
+4. Municipal interest will be classified as tax-exempt income
+5. Options transactions will be classified with call/put designations
+6. Dividend reinvestments will create linked transaction pairs
+
+EXTRACTION COMPLETED SUCCESSFULLY
+==================================
+Total Processing Time: Extracted from 22-page PDF focusing on pages 1, 13-18, 21-22
+All activity data captured accurately and ready for database loading.

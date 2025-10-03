@@ -57,28 +57,24 @@ Uses institution-statement-period-accounts-type-timestamp format:
 Fid_Stmnt_YYYY-MM_[Accounts]_holdings_YYYY.MM.DD_HH.MMET.json
 ```
 
-Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
-
 **Components:**
-- `Fid` - Institution code (Fidelity)
-- `Stmnt` - Document type (Statement)
-- `YYYY-MM` - Statement period (from document)
-- `[Accounts]` - Account labels from mappings (Brok, CMA, etc.)
-- `holdings` - Extraction type
-- `YYYY.MM.DD_HH.MMET` - Current extraction timestamp
+ - `Fid` - Institution code (Fidelity)
+ - `Stmnt` - Document type (Statement)
+ - `YYYY-MM` - Statement period (from document)
+ - `[Accounts]` - Account labels from mappings (Brok, CMA, etc.)
+ - `holdings` - Extraction type
+ - `YYYY.MM.DD_HH.MMET` - Current extraction timestamp, e.g., "2025.09.25_13.35ET"
 
-## Data Type Rules
+## Data Type Rules (As-Shown Policy)
 
-| Data Type | Format | Example | Notes |
-|-----------|--------|---------|-------|
-| Dates | `YYYY-MM-DD` | `"2024-08-31"` | ISO 8601 format |
-| Currency | String with 2 decimals | `"17525.00"` | Preserve precision, negative for debits |
-| Quantities | String with 6 decimals | `"100.000000"` | Preserve all decimal places shown |
-| Prices | String with 4 decimals | `"175.2500"` | Preserve all decimal places |
-| Percentages | Decimal string | `"0.0525"` | 5.25% = "0.0525" |
-| Missing values | `null` | `null` | Not "unavailable" or empty string |
-| Account numbers | String | `"X12-123456"` | Preserve format exactly |
-| Symbols/CUSIPs | String | `"AAPL"`, `"912828XX5"` | Uppercase as shown |
+All values are captured exactly as shown in the PDF. Do not normalize, convert, or reformat.
+- Dates: store exactly as shown (e.g., "AUG 29 25", "11/01/29").
+- Currency: keep "$" and commas (e.g., "$533,825.00").
+- Quantities: keep sign and formatting as shown (e.g., "-10.000", "2,315,122.290").
+- Prices: keep decimal places as shown (e.g., "213.5300").
+- Percentages: keep the percent sign and up to two decimals as shown (e.g., "4.54%", "0.39%").
+- Placeholders: if the source shows "-", record "-"; if it shows "unavailable"/"not applicable", record the exact text; if truly blank/missing, use `null`.
+- Identifiers and account numbers: copy exactly as shown.
 
 ## Complete JSON Structure for Holdings Extraction
 
@@ -179,6 +175,7 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
 
       "holdings": [
         {
+          "source": "stocks",
           "sec_type": "Stocks",
           "sec_subtype": "Common Stock",
           "sec_symbol": "AAPL",
@@ -194,13 +191,14 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
           "est_yield": "0.500"
         },
         {
+          "source": "bonds",
           "sec_type": "Bonds",
           "sec_subtype": "Municipal Bonds",
           "sec_symbol": null,
           "cusip": "880558HN4",
           "sec_description": "TENNESSEE ST ENERGY ACQUISITI REF-BD TAXABLE",
-          "maturity_date": "2025-09-01",
-          "coupon_rate": "0.0525",
+          "maturity_date": "09/01/25",
+          "coupon_rate": "5.25%",
           "beg_market_value": "95000.00",
           "quantity": "100000.000000",
           "price_per_unit": "98.75",
@@ -211,20 +209,21 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
           "estimated_ann_inc": "5250.00",
           "est_yield": null,
           "agency_ratings": "MOODYS Aa1 S&P AA+",
-          "next_call_date": "2025-11-01",
+          "next_call_date": "11/01/25",
           "call_price": "100.00",
           "payment_freq": "SEMIANNUALLY",
           "bond_features": "PRE-REFUNDED"
         },
         {
+          "source": "options",
           "sec_type": "Options",
           "sec_subtype": "Calls",
           "sec_symbol": null,
           "cusip": null,
           "sec_description": "CALL (GOOG) ALPHABET INC CAP STK SEP 12 25 $215 (100 SHS)",
           "underlying_symbol": "GOOG",
-          "strike_price": "215.00",
-          "expiration_date": "2025-09-12",
+          "strike_price": "$215",
+          "expiration_date": "SEP 12 25",
           "beg_market_value": null,
           "quantity": "1.000000",
           "price_per_unit": "5.50",
@@ -235,6 +234,7 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
           "est_yield": null
         },
         {
+          "source": "mutual_funds",
           "sec_type": "Mutual Funds",
           "sec_subtype": "Stock Funds",
           "sec_symbol": "VTSAX",
@@ -250,6 +250,7 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
           "est_yield": "1.520"
         },
         {
+          "source": "exchange_traded_products",
           "sec_type": "Exchange Traded Products",
           "sec_subtype": "Equity ETPs",
           "sec_symbol": "SPY",
@@ -265,6 +266,7 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
           "est_yield": "1.330"
         },
         {
+          "source": "other",
           "sec_type": "Other",
           "sec_subtype": "REIT",
           "sec_symbol": "NLY",
@@ -280,6 +282,32 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
           "est_yield": "13.100"
         }
       ]
+      ,
+      "holdings_subsection_totals": [
+        {
+          "section": "Mutual Funds",
+          "subsection_label": "Stock Funds",
+          "percent_of_account_holdings": "0%",
+          "beg_market_value": "$21,839.13",
+          "end_market_value": "$22,814.85",
+          "cost_basis": "$21,355.50",
+          "unrealized_gain_loss": "$1,459.35",
+          "estimated_ann_inc": "$412.08",
+          "est_yield": "1.29%"
+        }
+      ],
+      "holdings_section_totals": [
+        {
+          "section": "Stocks",
+          "subsection_label": null,
+          "percent_of_account_holdings": "35%",
+          "beg_market_value": "$1,414,604.80",
+          "end_market_value": "$2,340,512.87",
+          "cost_basis": "$1,925,109.38",
+          "unrealized_gain_loss": "$415,403.49",
+          "estimated_ann_inc": "$24,984.29"
+        }
+      ]
     }
   ]
 }
@@ -290,27 +318,27 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
 ### Required Fields (Never null)
 - All metadata fields (including `doc_md5_hash`)
 - `account_number`
+- `source` (one of: `mutual_funds`, `exchange_traded_products`, `stocks`, `bonds`, `options`, `other`)
 - `sec_type`
+- `sec_subtype` (as shown in the statement, or best-effort for "Other")
 - `sec_description`
 - `quantity`
 - `price_per_unit`
 - `end_market_value`
 
 ### Conditional Fields
-- `sec_symbol`: Required for stocks, funds, ETPs; null for bonds
+- `sec_symbol`: Required for stocks, mutual funds, ETPs, options; null for bonds unless shown
+- `sec_identifiers`: Optional (e.g., ISIN/SEDOL) for stocks/preferred when present
 - `cusip`: Required for bonds; null for others
-- `maturity_date`: Required for bonds only
-- `coupon_rate`: Required for bonds only
-- `accrued_int`: Required for bonds only
-- `underlying_symbol`, `strike_price`, `expiration_date`: Required for options only
+- `maturity_date`: Required for bonds only (store as shown)
+- `coupon_rate`: Required for bonds only (store as shown)
+- `accrued_int`: Required for bonds only (store as shown)
+- `underlying_symbol`, `strike_price`, `expiration_date`: Required for options only (store as shown)
 
 ### Optional Fields (Can be null)
-- `beg_market_value`: May show "unavailable" → null
-- `cost_basis`: May be missing
-- `unrealized_gain_loss`: May be missing
-- `estimated_ann_inc`: May be missing
-- `est_yield`: May be missing
+- `beg_market_value`, `cost_basis`, `unrealized_gain_loss`, `estimated_ann_inc`, `est_yield`
 - Bond optional fields: `agency_ratings`, `next_call_date`, `call_price`, `payment_freq`, `bond_features`
+- Totals arrays: any field may be `null` if truly absent; keep "-" when shown
 
 ## LLM Extraction Instructions
 
@@ -325,48 +353,46 @@ Example: `Fid_Stmnt_2024-08_Brok+CMA_holdings_2025.09.25_14.30ET.json`
 6. **Include all accounts** - Process every account in the statement
 
 ### Fields You Must Extract:
-- **All holdings data:** `sec_type`, `quantity`, `price_per_unit`, `end_market_value`, `cost_basis`, `beg_market_value`, `estimated_ann_inc`, `est_yield`, `unrealized_gain_loss`
-- **Security info:** `sec_symbol`, `sec_description`, `cusip`
-- **Bonds:** `maturity_date`, `coupon_rate`, `accrued_int`, `agency_ratings`, `next_call_date`, `call_price`, `payment_freq`, `bond_features`
-- **Options:** `underlying_symbol`, `strike_price`, `expiration_date`
+- **All holdings data:** `source`, `sec_type`, `sec_subtype`, `sec_description`, `quantity`, `price_per_unit`, `end_market_value`, `cost_basis`, `beg_market_value`, `estimated_ann_inc`, `est_yield`, `unrealized_gain_loss` (all stored as shown)
+- **Security info:** `sec_symbol`, `sec_identifiers` (when present), `cusip`
+- **Bonds:** `maturity_date`, `coupon_rate`, `accrued_int`, `agency_ratings`, `next_call_date`, `call_price`, `payment_freq`, `bond_features` (as shown)
+- **Options:** `underlying_symbol`, `strike_price`, `expiration_date` (as shown). Long/short is implied solely by the sign of `quantity`; do not add a separate `position` field.
 - **Account metadata:** `account_number`, `account_name`, `account_type`
 - **Document-Level:** Complete `net_account_value`, `income_summary`, `realized_gains` sections
+- **Holdings Totals:** `holdings_subsection_totals[]`, `holdings_section_totals[]` (as shown)
 
 ## Validation Rules
 
-The Python loader will validate:
-1. Required fields are not null
-2. Numeric strings can be parsed as decimals
-3. Dates are valid ISO 8601 format
-4. Account numbers match expected patterns
-5. Security types are from allowed values
+Scribe-only extraction. Validation is limited to structural presence of required fields. No numeric/date normalization or format validation is required in this spec. Values are captured exactly as shown in the source document.
+
+### Source Field Allowed Values
+`source` must be one of: `mutual_funds`, `exchange_traded_products`, `stocks`, `bonds`, `options`, `other`.
 
 ## Example: Handling Special Cases
 
 ### Missing Values
 Statement shows: "unavailable"
-JSON output: `null`
+JSON output: "unavailable"
 
 ### Negative Values
 Statement shows: "($1,250.00)" or "-1,250.00"
-JSON output: `"-1250.00"`
+JSON output: keep exactly as shown
 
 ### Percentages
 Statement shows: "5.25%"
-JSON output: `"5.250"` (as percentage to 3 decimal places, not as decimal)
+JSON output: `"5.25%"`
 
 ### Estimated Yield Format
 Statement shows: "4.88%"
-JSON output: `"4.880"` (NOT `"0.0488"`)
-JSON output: `"0.0525"`
+JSON output: `"4.88%"`
 
 ### Options Description Parsing
 Statement shows: "CALL (GOOG) ALPHABET INC CAP STK SEP 12 25 $215 (100 SHS)"
 JSON outputs:
 - `"sec_description"`: Full text as shown
-- `"underlying_symbol"`: `"GOOG"`
-- `"strike_price"`: `"215.00"`
-- `"expiration_date"`: `"2025-09-12"`
+- `"source"`: `"options"`
+- `"strike_price"`: `"$215"`
+- `"expiration_date"`: `"SEP 12 25"`
 
 ---
 

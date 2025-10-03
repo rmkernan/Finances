@@ -10,19 +10,6 @@
 **Updated:** 09/22/25 6:46PM ET - Simplified PDF text extraction to direct Python code (no temporary files)
 **Updated:** 09/22/25 6:51PM ET - Added note to ignore institution-generated filenames
 **Updated:** 09/22/25 6:59PM ET - Simplified filename handling, merged staging steps, clarified mapping usage
-**Updated:** 09/22/25 7:03PM ET - Changed user prompting to open-ended "What do you want to do next?" with flexible response handling
-**Updated:** 09/22/25 8:55PM ET - Added MD5 hash generation for duplicate prevention and document tracking
-**Updated:** 09/23/25 3:08PM - Added critical Step 2: Account Resolution & Database Setup to ensure complete account metadata before extraction
-**Updated:** 09/23/25 3:33PM - Updated account resolution to use account-mappings.json as definitive source of truth with anti-overwrite protections
-**Updated:** 09/23/25 7:29PM - Added automatic transaction classification section and updated workflow documentation for configuration-driven mapping system
-**Updated:** 09/24/25 10:25AM - Updated transaction classification section to reflect new three-table mapping system and enhanced options tracking
-**Updated:** 09/24/25 10:35AM - Added comprehensive mapping system integration with post-extraction analysis workflow and intelligent rule recommendation process
-**Updated:** 09/24/25 11:16AM - Restructured workflow with parallel processing optimizations, reducing execution time from ~45 to ~15 seconds
-**Updated:** 09/29/25 7:14PM - Steps 3-5 testing complete: Added account key extraction rule, clarified trimmed page number usage in templates
-**Updated:** 09/25/25 12:54PM - Added critical Step 6: Create Database Document Records to complete workflow before PDF archival
-**Updated:** 09/25/25 12:56PM - Simplified Step 6 to use direct SQL commands instead of separate Python script
-**Updated:** 09/25/25 1:08PM - Expanded Step 6 to include missing reference data loading (entities and accounts) before document creation
-**Updated:** 09/29/25 8:30PM - Added explicit page instruction guidance in Step 5 based on EXP001 results showing improved data quality with READ ONLY/DO NOT READ format
 **Updated:** 09/25/25 1:12PM - Added unique constraints for entity_name and institution_name, updated conflict handling to use proper composite keys
 **Updated:** 09/26/25 2:00PM - Restructured extraction workflow with updated agent invocation formats
 **Updated:** 09/26/25 2:12PM - Added PDF validation for holdings extraction workflow

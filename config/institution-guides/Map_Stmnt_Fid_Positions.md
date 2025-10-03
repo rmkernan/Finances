@@ -244,7 +244,7 @@ There is one holding section per Account listed in the document. This section co
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                 |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                 |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                 |
-| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As % (e.g., 5.100 not 0.051).   |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | TEXT     | As shown (e.g., "2.81%")         |
 
 ##### Core Account (Part of Mutual Funds)
 **Target Table:** `positions` with `account_number` from Account Summary Header
@@ -256,7 +256,7 @@ There is one holding section per Account listed in the document. This section co
 | Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - Usually "Money Market" |
 | Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier     |
 | Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                          |
-| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses       |
+| Symbol/Ticker           | sec_symbol           | positions.sec_symbol           | TEXT     | **REQ** - From parentheses       |
 | Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                  |
 | Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                          |
 | Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ** - Usually 1.0000         |
@@ -264,7 +264,7 @@ There is one holding section per Account listed in the document. This section co
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY | Usually "not applicable"         |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY | Usually "not applicable"         |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                  |
-| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As & (e.g., 4.880 not 0.0488)    |
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | TEXT     | As shown (e.g., "2.71%")          |
 
 **Common Core Account Types:**
 - FIDELITY GOVERNMENT MONEY MARKET (SPAXX)
@@ -281,7 +281,7 @@ There is one holding section per Account listed in the document. This section co
 | Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - From section header               |
 | Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier                |
 | Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                                     |
-| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - Extract from parentheses          |
+| Symbol/Ticker           | sec_symbol           | positions.sec_symbol           | TEXT     | **REQ** - Extract from parentheses          |
 | Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                             |
 | Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                                     |
 | Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                                     |
@@ -289,7 +289,7 @@ There is one holding section per Account listed in the document. This section co
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                             |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                             |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                             |
-| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | TEXT     | As shown (e.g., "1.33%")            |
 
 ##### ETP Classification Guidance
 Fidelity groups various traded products under "Exchange Traded Products":
@@ -320,7 +320,7 @@ Fidelity groups various traded products under "Exchange Traded Products":
 | Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | **REQ** - See determination rules  |
 | Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier       |
 | Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                            |
-| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | **REQ** - From parentheses         |
+| Symbol/Ticker           | sec_symbol           | positions.sec_symbol           | TEXT     | **REQ** - From parentheses         |
 | Identifiers             | sec_identifiers      | positions.sec_identifiers      | TEXT     | e.g. ISIN, SEDOL, etc.             |
 | Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                    |
 | Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                            |
@@ -329,7 +329,7 @@ Fidelity groups various traded products under "Exchange Traded Products":
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                    |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                    |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                    |
-| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | NUMBER   | As percentage (e.g., 5.100 not 0.051)|
+| Estimated Yield (EY %)  | est_yield            | positions.est_yield            | TEXT     | As shown (e.g., "0.66%")            |
 
 ##### Stock Description Parsing
 The stock description can contain extra identifiers like ISIN or SEDOL numbers.
@@ -443,6 +443,7 @@ The option description line contains multiple structured attributes.
 - **`expiration_date`**: The date following the underlying name (e.g., "AUG 29 25").
 - **`strike_price`**: The number following the dollar sign.
 - **`sec_symbol`**: Capture the full, structured option symbol from the second set of parentheses (e.g., "TSLA250829P300").
+- **Long/Short**: Determined solely by the sign of `quantity` (e.g., `-10.000` indicates short). Keep broker markers like "SHT" in `sec_description`; do not create a separate `position` field.
 
 **Example:** "M PUT (TSLA) TESLA INC COM AUG 29 25 $300 (100 SHS) (TSLA250829P300) SHT"
 - `sec_subtype`: "Puts"
@@ -453,15 +454,15 @@ The option description line contains multiple structured attributes.
 
 #### 6. Other Holdings
 **Target Table:** `positions` with `account_number` from Account Summary Header
-**Security Type:** "Other" | **Security Subtype:** Derived from description
+**Security Type:** "Other" | **Security Subtype:** Best-effort classification from description
 
 | Source Label            | JSON Field           | Database Column                | Type     | Notes                             |
 |-------------------------|----------------------|--------------------------------|----------|-----------------------------------|
 | Security Type           | sec_type             | positions.sec_type             | TEXT     | **REQ** - Always "Other"          |
-| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | Derive from description           |
-| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier     |
+| Security Subtype        | sec_subtype          | positions.sec_subtype          | TEXT     | See determination rules below     |
+| Source                  | source               | positions.source               | TEXT     | **REQ** - Section identifier      |
 | Description             | sec_description      | positions.sec_name             | TEXT     | **REQ**                           |
-| Symbol/Ticker           | sec_symbol           | positions.sec_ticker           | TEXT     | Extract if present in parentheses |
+| Symbol/Ticker           | sec_symbol           | positions.sec_symbol           | TEXT     | Extract if present in parentheses |
 | Beginning Market Value  | beg_market_value     | positions.beg_market_value     | CURRENCY |                                   |
 | Quantity                | quantity             | positions.quantity             | NUMBER   | **REQ**                           |
 | Price Per Unit          | price_per_unit       | positions.price                | CURRENCY | **REQ**                           |
@@ -469,15 +470,21 @@ The option description line contains multiple structured attributes.
 | Total Cost Basis        | cost_basis           | positions.cost_basis           | CURRENCY |                                   |
 | Unrealized Gain/Loss    | unrealized_gain_loss | positions.unrealized_gain_loss | CURRENCY |                                   |
 | Est Annual Income (EAI) | estimated_ann_inc    | positions.estimated_ann_inc    | CURRENCY |                                   |
-| Estimated Yield (EY)    | est_yield            | positions.eai_percentage       | NUMBER   |                                   |
+| Estimated Yield (EY)    | est_yield            | positions.est_yield            | TEXT     | As shown (e.g., "12.74%")        |
 
-**Common "Other" Types (with examples from statements):**
-- REITs: "ANNALY CAPITAL MANAGEMENT INC COM NEW (NLY)"
-- Partnerships: "MPLX LP COM UNIT REP LTD (MPLX)"
-- Trusts: "CAMDEN PROPERTY TRUST SBI USD0.01 (CPT)"
-- Warrants: "THE CANNABIST CO HLDGS CO 0.14 RESTRICTED WTS EXP 05/29/2027"
-- Specialty: "NET LEASE OFFICE PROPERTIES COM (NLOP)"
-- Income trusts: "WP CAREY INC COM (WPC)"
+**Subtype Determination:**
+The `sec_subtype` should be determined by performing a "best effort" classification based on keywords found directly in the security's description text. This is an exception to the pure transcription rule, applied only for this section.
+
+- If description contains "LP" → set `sec_subtype` to "Limited Partnership"
+- If description contains "TRUST" → set `sec_subtype` to "Trust"
+- If description contains "WTS" → set `sec_subtype` to "Warrant"
+- If no specific keyword is found → set `sec_subtype` to `null`
+
+**Examples:**
+- "MPLX LP COM UNIT REP LTD" → `sec_subtype`: "Limited Partnership"
+- "CAMDEN PROPERTY TRUST SBI" → `sec_subtype`: "Trust"
+- "THE CANNABIST CO HLDGS CO... WTS..." → `sec_subtype`: "Warrant"
+- "NET LEASE OFFICE PROPERTIES COM" → `sec_subtype`: `null` (No keyword present)
 
 
 
@@ -490,6 +497,22 @@ The option description line contains multiple structured attributes.
 - Bonds: Market value on top, accrued interest in italics below
 - Options: May show "unavailable" for some values
 
+## Holdings Totals Capture
+
+The statement shows totals at the end of subsections (e.g., "Total Stock Funds") and sections (e.g., "Total Stocks"), often with a parenthetical percent of account holdings.
+
+- Extract these totals exactly as shown and place them in JSON under the account:
+  - `holdings_subsection_totals[]` items for totals like "Total Stock Funds", "Total Municipal Bonds", etc.
+  - `holdings_section_totals[]` items for totals like "Total Stocks", "Total Bonds", etc.
+- For each total item, capture fields as shown:
+  - `section` (e.g., "Mutual Funds", "Stocks", "Bonds", "Options", "Other")
+  - `subsection_label` (e.g., "Stock Funds", "Preferred Stock", or `null` for section totals)
+  - `percent_of_account_holdings` (e.g., "48%", "0%", with percent sign)
+  - `beg_market_value`, `end_market_value`, `cost_basis`, `unrealized_gain_loss`, and when present `estimated_ann_inc`, `est_yield`
+- Keep placeholders exactly as shown (e.g., "-", "unavailable"); if truly absent/blank, use `null`.
+
+These totals are optional but recommended for reconciliation and audits. They do not replace computing aggregates downstream.
+
 
 ## Special Cases
 
@@ -501,6 +524,11 @@ The option description line contains multiple structured attributes.
 ### Options
 - Description pattern: TYPE SYMBOL COMPANY EXPIRY STRIKE
 - Values may show "unavailable"
+
+### As-Shown Policy
+- Do not normalize values. Capture currency with "$" and commas, percentages with "%", dates in the statement's display (e.g., "AUG 29 25", "11/01/29").
+- `source` must be one of: `mutual_funds`, `exchange_traded_products`, `stocks`, `bonds`, `options`, `other`.
+- `sec_subtype` is captured exactly as shown in the statement's subsection headers (no normalization). For "Other", use best-effort from description; may be `null`.
 
 ### Data Format Notes
 - Include minus signs when present
